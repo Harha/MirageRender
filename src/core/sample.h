@@ -10,52 +10,17 @@ namespace mirage
 class Sample
 {
 public:
-    Sample(vec4 color = vec4(), int numSamples = 0) : m_color(color), m_numSamples(numSamples) { }
+    Sample(vec4 color = vec4(), int numSamples = 0);
 
-    void setColor(const vec4 &color)
-    {
-        m_color = color;
-    }
-
-    void addColor(const vec4 &color)
-    {
-        m_color += color;
-    }
-
-    void decColor(const vec4 &color)
-    {
-        m_color -= color;
-    }
-
-    void setNumSamples(const int numSamples)
-    {
-        m_numSamples = numSamples;
-    }
-
-    void incNumSamples()
-    {
-        m_numSamples++;
-    }
-
-    void decNumSamples()
-    {
-        m_numSamples--;
-    }
-
-    vec4 getColor() const
-    {
-        return m_color;
-    }
-
-    vec4 getColorAveraged() const
-    {
-        return m_color / m_numSamples;
-    }
-
-    int getNumSamples() const
-    {
-        return m_numSamples;
-    }
+    void setColor(const vec4 &color);
+    void addColor(const vec4 &color);
+    void decColor(const vec4 &color);
+    void setNumSamples(const int numSamples);
+    void incNumSamples();
+    void decNumSamples();
+    vec4 getColor() const;
+    vec4 getColorAveraged() const;
+    int getNumSamples() const;
 private:
     vec4 m_color;
     int m_numSamples;

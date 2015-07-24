@@ -31,18 +31,17 @@ int main(int argc, char **argv)
     // Set-up atexit hooks
     atexit(SDL_Quit);
 
+    // Initialize multithreading related stuff
 #if THREADS>0
     const unsigned int tcount = THREADS;
 #else
     const unsigned int tcount = SDL_GetCPUCount();
 #endif
-
     std::thread *threads = new std::thread[tcount];
 
     // Initialize miragerender related variables/objects
     Display display("MirageRender", WIDTH, HEIGHT, SCALE);
 
-    // Initialize main loop variables/objects
     uint32_t startTime = SDL_GetTicks();
     uint32_t currentTime = SDL_GetTicks();
     uint32_t lastTime = 0;
@@ -50,10 +49,6 @@ int main(int argc, char **argv)
     float deltaTime = 0;
     float fps = 0;
     bool running = true;
-
-    CameraOrtho camera;
-    camera.getTransform().setPosition(vec4(1, 5, -10, 1));
-    std::cout << camera.getTransform().getModelMatrix().toString() << std::endl;
 
     while (running)
     {

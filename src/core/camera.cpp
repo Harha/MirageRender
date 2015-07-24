@@ -4,6 +4,8 @@
 // mirage includes
 #include "camera.h"
 #include "../macros.h"
+#include "../math/vec4.h"
+#include "../math/quaternion.h"
 
 namespace mirage
 {
@@ -18,7 +20,17 @@ Camera::Camera(Transform transform, Film film) : m_transform(transform), m_film(
 
 void Camera::calcCamRay(const int x, const int y, Ray *ray) const
 {
-    ERR("Illegal call to Camera::calcCameraRay!\nThis is an abstract base class method and should never be called!")
+    ERR("Illegal call to Camera::calcCameraRay!\nThis is an abstract base class method and should never be called!");
+}
+
+Transform &Camera::getTransform()
+{
+    return m_transform;
+}
+
+Film &Camera::getFilm()
+{
+    return m_film;
 }
 
 /*

@@ -15,11 +15,8 @@ public:
     Camera(Transform transform = Transform(), Film film = Film());
 
     virtual void calcCamRay(const int x, const int y, Ray *ray) const;
-
-    Transform &getTransform()
-    {
-        return m_transform;
-    }
+    Transform &getTransform();
+    Film &getFilm();
 protected:
     Transform m_transform;
     Film m_film;
