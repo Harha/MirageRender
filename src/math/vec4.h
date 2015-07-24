@@ -146,25 +146,46 @@ struct vec4
         return vec4(x / f, y / f, z / f, w / f);
     }
 
-    vec4 negate() const
+    vec4 negate4() const
     {
         return vec4(-x, -y, -z, -w);
     }
 
-    float length() const
+    vec4 negate3() const
+    {
+        return vec4(-x, -y, -z, w);
+    }
+
+    float length4() const
     {
         return std::sqrt(x * x + y * y + z * z + w * w);
     }
 
-    vec4 normalize() const
+    float length3() const
     {
-        float l = 1.0f / length();
+        return std::sqrt(x * x + y * y + z * z);
+    }
+
+    vec4 normalize4() const
+    {
+        float l = 1.0f / length4();
         return vec4(x * l, y * l, z * l, w * l);
     }
 
-    static float dot(const vec4 &left, const vec4 &right)
+    vec4 normalize3() const
+    {
+        float l = 1.0f / length3();
+        return vec4(x * l, y * l, z * l, w);
+    }
+
+    static float dot4(const vec4 &left, const vec4 &right)
     {
         return left.x * right.x + left.y * right.y + left.z * right.z + left.w * right.w;
+    }
+
+    static float dot3(const vec4 &left, const vec4 &right)
+    {
+        return left.x * right.x + left.y * right.y + left.z * right.z;
     }
 
     static vec4 cross(const vec4 &left, const vec4 &right)
@@ -174,16 +195,16 @@ struct vec4
 
     static vec4 reflect(const vec4 &I, const vec4 &N)
     {
-        return I - (N * dot(N, I) * 2.0f);
+        return I - (N * dot3(N, I) * 2.0f);
     }
 
     static vec4 refract(const vec4 &I, const vec4 &N, float eta)
     {
-        float k = 1.0f - eta * eta * (1.0f - dot(N, I) * dot(N, I));
+        float k = 1.0f - eta * eta * (1.0f - dot3(N, I) * dot3(N, I));
         if (k < 0.0f)
             return vec4();
         else
-            return eta * I - (eta * dot(N, I) + std::sqrt(k)) * N;
+            return eta * I - (eta * dot3(N, I) + std::sqrt(k)) * N;
     }
 
 };

@@ -22,7 +22,7 @@ void Camera::calcCamRay(const int x, const int y, Ray *ray) const
 }
 
 /*
- * Camera child cslass CameraOrtho definitions below
+ * Camera child class CameraOrtho definitions below
  */
 CameraOrtho::CameraOrtho(Transform transform, Film film, float zoom) : Camera(transform, film), m_zoom(zoom)
 {
@@ -36,7 +36,7 @@ void CameraOrtho::calcCamRay(const int x, const int y, Ray *ray) const
     vec4 s = e + vec4(x - m_film.getResolutionX() * 0.5f + 0.5f, m_film.getResolutionY() * 0.5f - y + 0.5f, 5.0f);
 
     // Get the ray's direction vector
-    vec4 p = m_transform.getOrientation().getForwardVector().negate();
+    vec4 p = m_transform.getOrientation().getForwardVector().negate3();
 
     // Rotate the ray origin based on camera orientation
     quaternion q = m_transform.getOrientation();

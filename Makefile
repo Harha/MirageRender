@@ -1,7 +1,7 @@
 # Makefile for building mirage render
 
 # Linker
-LD = g++
+LD = gcc
 
 # Linker flags
 LDFLAGS = -Wl,--as-needed
@@ -10,10 +10,10 @@ LDFLAGS = -Wl,--as-needed
 ifeq ($(OS), Windows_NT)
   LDLIBS = -lmingw32 -lSDL2main
 endif
-LDLIBS += -lSDL2
+LDLIBS += -lSDL2 -lstdc++
 
 # Compiler
-CXX = g++
+CXX = gcc
 
 # Compiler flags
 CXXFLAGS = -std=c++11 -Wall -Wextra
