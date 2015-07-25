@@ -6,13 +6,13 @@
 
 // mirage includes
 #include "math.h"
-#include "vec4.h"
+#include "vec3.h"
 
 namespace mirage
 {
 
 struct quaternion;
-extern vec4 operator*(const vec4 &v, const quaternion &q);
+extern vec3 operator*(const vec3 &v, const quaternion &q);
 
 struct quaternion
 {
@@ -34,7 +34,7 @@ struct quaternion
         return result;
     }
 
-    quaternion operator*(const vec4 &v) const
+    quaternion operator*(const vec3 &v) const
     {
         quaternion result;
 
@@ -84,28 +84,28 @@ struct quaternion
         return quaternion(w * l, x * l, y * l, z * l);
     }
 
-    vec4 getRightVector() const
+    vec3 getRightVector() const
     {
-        return vec4(1, 0, 0, 0) **this;
+        return vec3(1, 0, 0) **this;
     }
 
-    vec4 getUpVector() const
+    vec3 getUpVector() const
     {
-        return vec4(0, 1, 0, 0) **this;
+        return vec3(0, 1, 0) **this;
     }
 
-    vec4 getForwardVector() const
+    vec3 getForwardVector() const
     {
-        return vec4(0, 0, 1, 0) **this;
+        return vec3(0, 0, 1) **this;
     }
 
 };
 
-inline vec4 operator*(const vec4 &v, const quaternion &q)
+inline vec3 operator*(const vec3 &v, const quaternion &q)
 {
     quaternion result;
     result = q * v * q.conjugate();
-    return vec4(result.x, result.y, result.z, v.w);
+    return vec3(result.x, result.y, result.z);
 }
 
 }

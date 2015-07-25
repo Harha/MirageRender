@@ -4,22 +4,22 @@
 namespace mirage
 {
 
-Sample::Sample(vec4 color, int numSamples) : m_color(color), m_numSamples(numSamples)
+Sample::Sample(vec3 color, int numSamples) : m_color(color), m_numSamples(numSamples)
 {
 
 }
 
-void Sample::setColor(const vec4 &color)
+void Sample::setColor(const vec3 &color)
 {
     m_color = color;
 }
 
-void Sample::addColor(const vec4 &color)
+void Sample::addColor(const vec3 &color)
 {
     m_color += color;
 }
 
-void Sample::decColor(const vec4 &color)
+void Sample::decColor(const vec3 &color)
 {
     m_color -= color;
 }
@@ -39,12 +39,12 @@ void Sample::decNumSamples()
     m_numSamples--;
 }
 
-vec4 Sample::getColor() const
+vec3 Sample::getColor() const
 {
     return m_color;
 }
 
-vec4 Sample::getColorAveraged() const
+vec3 Sample::getColorAveraged() const
 {
     return m_color / m_numSamples;
 }

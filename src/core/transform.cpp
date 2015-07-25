@@ -8,12 +8,12 @@
 namespace mirage
 {
 
-Transform::Transform(vec4 position, quaternion orientation, vec4 scale) : m_position(position), m_orientation(orientation), m_scale(scale)
+Transform::Transform(vec3 position, quaternion orientation, vec3 scale) : m_position(position), m_orientation(orientation), m_scale(scale)
 {
 
 }
 
-void Transform::setPosition(const vec4 &position)
+void Transform::setPosition(const vec3 &position)
 {
     m_position = position;
 }
@@ -23,12 +23,12 @@ void Transform::setOrientation(const quaternion &orientation)
     m_orientation = orientation;
 }
 
-void Transform::setScale(const vec4 &scale)
+void Transform::setScale(const vec3 &scale)
 {
     m_scale = scale;
 }
 
-vec4 Transform::getPosition() const
+vec3 Transform::getPosition() const
 {
     return m_position;
 }
@@ -38,7 +38,7 @@ quaternion Transform::getOrientation() const
     return m_orientation;
 }
 
-vec4 Transform::getScale() const
+vec3 Transform::getScale() const
 {
     return m_scale;
 }

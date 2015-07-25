@@ -13,8 +13,7 @@ class Camera
 {
 public:
     Camera(Transform transform = Transform(), Film film = Film());
-
-    virtual void calcCamRay(const int x, const int y, Ray *ray) const;
+    virtual void calcCamRay(const int x, const int y, Ray &ray) const;
     Transform &getTransform();
     Film &getFilm();
 protected:
@@ -26,8 +25,7 @@ class CameraOrtho : public Camera
 {
 public:
     CameraOrtho(Transform transform = Transform(), Film film = Film(), float zoom = 0.1f);
-
-    virtual void calcCamRay(const int x, const int y, Ray *ray) const override;
+    virtual void calcCamRay(const int x, const int y, Ray &ray) const override;
 private:
     float m_zoom;
 };

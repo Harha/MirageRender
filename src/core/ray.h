@@ -2,7 +2,7 @@
 #define RAY_H
 
 // mirage includes
-#include "../math/vec4.h"
+#include "../math/vec3.h"
 
 namespace mirage
 {
@@ -10,17 +10,19 @@ namespace mirage
 class Ray
 {
 public:
-    Ray(vec4 origin = vec4(), vec4 direction = vec4());
-
-    void setOrigin(const vec4 &origin);
-    void setDirection(const vec4 &direction);
-    vec4 getOrigin() const;
-    vec4 getDirection() const;
-    vec4 getDirectionInv() const;
+    Ray(vec3 origin = vec3(), vec3 direction = vec3(), float tmin = 0.0f, float tmax = INFINITY);
+    void setOrigin(const vec3 &origin);
+    void setDirection(const vec3 &direction);
+    vec3 getOrigin() const;
+    vec3 getDirection() const;
+    vec3 getDirectionInv() const;
+    vec3 operator()(float t) const;
 private:
-    vec4 m_origin;
-    vec4 m_direction;
-    vec4 m_directionInv;
+    vec3 m_origin;
+    vec3 m_direction;
+    vec3 m_directionInv;
+    float m_tmin;
+    float m_tmax;
 };
 
 }

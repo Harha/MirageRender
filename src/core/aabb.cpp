@@ -7,13 +7,13 @@
 namespace mirage
 {
 
-AABB::AABB(vec4 p1, vec4 p2) : m_pmin(p1), m_pmax(p2)
+AABB::AABB(vec3 p1, vec3 p2) : m_pmin(p1), m_pmax(p2)
 {
-    m_pmin = vec4(std::min(p1.x, p2.x), std::min(p1.y, p2.y), std::min(p1.z, p2.z), std::min(p1.w, p2.w));
-    m_pmax = vec4(std::max(p1.x, p2.x), std::max(p1.y, p2.y), std::max(p1.z, p2.z), std::max(p1.w, p2.w));
+    m_pmin = vec3(std::min(p1.x, p2.x), std::min(p1.y, p2.y), std::min(p1.z, p2.z));
+    m_pmax = vec3(std::max(p1.x, p2.x), std::max(p1.y, p2.y), std::max(p1.z, p2.z));
 }
 
-AABB AABB::addPoint(const vec4 &p) const
+AABB AABB::addPoint(const vec3 &p) const
 {
     AABB result;
 
@@ -60,7 +60,7 @@ bool AABB::overlaps(const AABB &b) const
     return (x && y && z);
 }
 
-bool AABB::inside(const vec4 &p) const
+bool AABB::inside(const vec3 &p) const
 {
     return (p.x >= m_pmin.x && p.x <= m_pmax.x &&
             p.y >= m_pmin.y && p.y <= m_pmax.y &&
@@ -69,19 +69,19 @@ bool AABB::inside(const vec4 &p) const
 
 float AABB::getSurfaceArea() const
 {
-    vec4 d = m_pmax - m_pmin;
+    vec3 d = m_pmax - m_pmin;
     return 2.0f * (d.x * d.y + d.x * d.z + d.y * d.z);
 }
 
 float AABB::getVolume() const
 {
-    vec4 d = m_pmax - m_pmin;
+    vec3 d = m_pmax - m_pmin;
     return d.x * d.y * d.z;
 }
 
 int AABB::getMaximumExtent() const
 {
-    vec4 d = m_pmax - m_pmin;
+    vec3 d = m_pmax - m_pmin;
     if (d.x > d.y && d.x > d.z)
     {
         return 0;

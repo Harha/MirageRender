@@ -4,7 +4,7 @@
 // mirage includes
 #include "camera.h"
 #include "../macros.h"
-#include "../math/vec4.h"
+#include "../math/vec3.h"
 #include "../math/quaternion.h"
 
 namespace mirage
@@ -18,7 +18,7 @@ Camera::Camera(Transform transform, Film film) : m_transform(transform), m_film(
 
 }
 
-void Camera::calcCamRay(const int x, const int y, Ray *ray) const
+void Camera::calcCamRay(const int x, const int y, Ray &ray) const
 {
     ERR("Illegal call to Camera::calcCameraRay!\nThis is an abstract base class method and should never be called!");
 }
@@ -41,14 +41,14 @@ CameraOrtho::CameraOrtho(Transform transform, Film film, float zoom) : Camera(tr
     LOG("Created a new orthographic camera.");
 }
 
-void CameraOrtho::calcCamRay(const int x, const int y, Ray *ray) const
+void CameraOrtho::calcCamRay(const int x, const int y, Ray &ray) const
 {
     // Construct the ray's origin vector
-    vec4 e = m_transform.getPosition();
-    vec4 s = e + vec4(x - m_film.getResolutionX() * 0.5f + 0.5f, m_film.getResolutionY() * 0.5f - y + 0.5f, 5.0f);
+    vec3 e = m_transform.getPosition();
+    vec3 s = e + vec3(x - m_film.getResolutionX() * 0.5f + 0.5f, m_film.getResolutionY() * 0.5f - y + 0.5f, 5.0f);
 
     // Get the ray's direction vector
-    vec4 p = m_transform.getOrientation().getForwardVector().negate3();
+    vec3 p = m_transform.getOrientation().getForwardVector().negate();
 
     // Rotate the ray origin based on camera orientation
     quaternion q = m_transform.getOrientation();
@@ -57,11 +57,11 @@ void CameraOrtho::calcCamRay(const int x, const int y, Ray *ray) const
     quaternion r = q * w * q_inv;
 
     // Finally get the rotated origin vector
-    s = vec4(r.x, r.y, r.z);
+    s = vec3(r.x, r.y, r.z);
 
     // Assign final parameters to the output *ray
-    ray->setOrigin(s);
-    ray->setDirection(p);
+    ray.setOrigin(s);
+    ray.setDirection(p);
 }
 
 }

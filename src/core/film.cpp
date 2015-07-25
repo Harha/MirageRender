@@ -12,19 +12,19 @@ Film::Film(int resolutionX, int resolutionY) : m_resolutionX(resolutionX), m_res
     m_samples.resize(m_resolutionX * m_resolutionY);
 }
 
-void Film::setSample(int x, int y, const vec4 &sample)
+void Film::setSample(int x, int y, const vec3 &sample)
 {
     assert(x >= 0 || x < m_resolutionX || y >= 0 || y < m_resolutionY);
     m_samples[x + y * m_resolutionX].setColor(sample);
 }
 
-void Film::addSample(int x, int y, const vec4 &sample)
+void Film::addSample(int x, int y, const vec3 &sample)
 {
     assert(x >= 0 || x < m_resolutionX || y >= 0 || y < m_resolutionY);
     m_samples[x + y * m_resolutionX].addColor(sample);
 }
 
-void Film::decSample(int x, int y, const vec4 &sample)
+void Film::decSample(int x, int y, const vec3 &sample)
 {
     assert(x >= 0 || x < m_resolutionX || y >= 0 || y < m_resolutionY);
     m_samples[x + y * m_resolutionX].decColor(sample);

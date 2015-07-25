@@ -2,7 +2,7 @@
 #define TRANSFORM_H
 
 // mirage includes
-#include "../math/vec4.h"
+#include "../math/vec3.h"
 #include "../math/quaternion.h"
 #include "../math/mat4.h"
 
@@ -12,19 +12,18 @@ namespace mirage
 class Transform
 {
 public:
-    Transform(vec4 position = vec4(), quaternion orientation = quaternion(), vec4 scale = vec4(1, 1, 1, 1));
-
-    void setPosition(const vec4 &position);
+    Transform(vec3 position = vec3(), quaternion orientation = quaternion(), vec3 scale = vec3(1, 1, 1));
+    void setPosition(const vec3 &position);
     void setOrientation(const quaternion &orientation);
-    void setScale(const vec4 &scale);
-    vec4 getPosition() const;
+    void setScale(const vec3 &scale);
+    vec3 getPosition() const;
     quaternion getOrientation() const;
-    vec4 getScale() const;
+    vec3 getScale() const;
     mat4 getModelMatrix() const;
 private:
-    vec4 m_position;
+    vec3 m_position;
     quaternion m_orientation;
-    vec4 m_scale;
+    vec3 m_scale;
 };
 
 }

@@ -12,6 +12,8 @@
 #include "core/input.h"
 #include "core/display.h"
 #include "core/camera.h"
+#include "core/ray.h"
+#include "core/shape.h"
 
 using namespace mirage;
 

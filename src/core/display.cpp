@@ -77,15 +77,14 @@ void Display::clear(const Uint32 &color)
         m_pixels[i] = color;
 }
 
-void Display::setPixel(const int x, const int y, const vec4 &v)
+void Display::setPixel(const int x, const int y, const vec3 &v)
 {
     assert(x >= 0 || x < m_width || y >= 0 || y < m_height);
 
     auto r = static_cast<Uint32>(v.x * 255.0f);
     auto g = static_cast<Uint32>(v.y * 255.0f);
     auto b = static_cast<Uint32>(v.z * 255.0f);
-    auto a = static_cast<Uint32>(v.w * 255.0f);
-    auto hex = ((a << 24) | (r << 16) | (g << 8) | b);
+    auto hex = ((r << 16) | (g << 8) | b);
 
     m_pixels[x + y * m_width] = hex;
 }

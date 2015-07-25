@@ -38,46 +38,41 @@ mat4 mat4::identity()
     return *this;
 }
 
-mat4 mat4::translation(const vec4 &v)
+mat4 mat4::translation(const vec3 &v)
 {
     identity();
 
     m[0 + 3 * 4] = v.x;
     m[1 + 3 * 4] = v.y;
     m[2 + 3 * 4] = v.z;
-    m[3 + 3 * 4] = v.w;
 
     return *this;
 }
 
-mat4 mat4::rotation(const vec4 &r, const vec4 &u, const vec4 &f)
+mat4 mat4::rotation(const vec3 &r, const vec3 &u, const vec3 &f)
 {
     identity();
 
     m[0 + 0 * 4] = r.x;
     m[0 + 1 * 4] = r.y;
     m[0 + 2 * 4] = r.z;
-    m[0 + 3 * 4] = r.w;
     m[1 + 0 * 4] = u.x;
     m[1 + 1 * 4] = u.y;
     m[1 + 2 * 4] = u.z;
-    m[1 + 3 * 4] = u.w;
     m[2 + 0 * 4] = f.x;
     m[2 + 1 * 4] = f.y;
     m[2 + 2 * 4] = f.z;
-    m[2 + 3 * 4] = f.w;
 
     return *this;
 }
 
-mat4 mat4::scale(const vec4 &v)
+mat4 mat4::scale(const vec3 &v)
 {
-    clear();
+    identity();
 
     m[0 + 0 * 4] = v.x;
     m[1 + 1 * 4] = v.y;
     m[2 + 2 * 4] = v.z;
-    m[3 + 3 * 4] = v.w;
 
     return *this;
 }

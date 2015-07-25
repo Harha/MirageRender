@@ -14,10 +14,9 @@ class Film
 {
 public:
     Film(int resolutionX = 128, int resolutionY = 128);
-
-    void setSample(int x, int y, const vec4 &sample);
-    void addSample(int x, int y, const vec4 &sample);
-    void decSample(int x, int y, const vec4 &sample);
+    void setSample(int x, int y, const vec3 &sample);
+    void addSample(int x, int y, const vec3 &sample);
+    void decSample(int x, int y, const vec3 &sample);
     int getResolutionX() const;
     int getResolutionY() const;
     float getAspectRatio() const;

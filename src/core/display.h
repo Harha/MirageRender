@@ -9,7 +9,7 @@
 #include <SDL2/SDL.h>
 
 // mirage includes
-#include "../math/vec4.h"
+#include "../math/vec3.h"
 
 namespace mirage
 {
@@ -21,7 +21,7 @@ public:
     ~Display();
     void render();
     void clear(const Uint32 &color);
-    void setPixel(const int x, const int y, const vec4 &v);
+    void setPixel(const int x, const int y, const vec3 &v);
     void setTitle(std::string title);
 private:
     void init();
