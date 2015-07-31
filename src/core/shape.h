@@ -8,11 +8,10 @@
 
 namespace mirage
 {
-
-class Shape
+    class Shape
 {
 public:
-    Shape(const Transform &o2w, const Transform &w2o);
+    Shape(const Transform &o2w = Transform(), const Transform &w2o = Transform());
     virtual AABB shapeBound() const;
     virtual AABB worldBound() const;
     virtual bool intersectP(const Ray &ray) const;

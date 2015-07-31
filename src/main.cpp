@@ -13,7 +13,7 @@
 #include "core/display.h"
 #include "core/camera.h"
 #include "core/ray.h"
-#include "core/shape.h"
+#include "shapes/sphere.h"
 
 using namespace mirage;
 
@@ -51,6 +51,12 @@ int main(int argc, char **argv)
     float deltaTime = 0;
     float fps = 0;
     bool running = true;
+
+    Transform objToWorld, worldToObj;
+    Sphere test(objToWorld, worldToObj, 2.5f);
+    objToWorld.setPosition(vec3(5, -2.5f, 10));
+    objToWorld.setOrientation(quaternion().euler(0.5f, 0.5f, 0, 77));
+    std::cout << objToWorld.getModelMatrix().toString() << " " << test.getRadius() << std::endl;
 
     while (running)
     {
