@@ -13,6 +13,16 @@ Transform::Transform(vec3 position, quaternion orientation, vec3 scale) : m_posi
 
 }
 
+Transform Transform::inverse() const
+{
+    Transform result;
+
+    result.setPosition(m_position.negate());
+    result.setOrientation(m_orientation.conjugate());
+
+    return result;
+}
+
 void Transform::setPosition(const vec3 &position)
 {
     m_position = position;
@@ -43,7 +53,7 @@ vec3 Transform::getScale() const
     return m_scale;
 }
 
-mat4 Transform::getModelMatrix() const
+mat4 Transform::getMatrix() const
 {
     mat4 t;
     mat4 r;

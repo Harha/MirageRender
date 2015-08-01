@@ -21,8 +21,13 @@ AABB Shape::shapeBound() const
 
 AABB Shape::worldBound() const
 {
-    ERR("Unimplemented Shape::worldBound function called!");
-    return AABB();
+    return shapeBound() * m_objToWorld.getMatrix();
+}
+
+bool Shape::intersect(const Ray &ray, float &tHit, Intersection &iSect) const
+{
+    ERR("Unimplemented Shape::intersect function called!");
+    return false;
 }
 
 bool Shape::intersectP(const Ray &ray) const

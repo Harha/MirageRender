@@ -1,5 +1,9 @@
+// std includes
+#include <iostream>
+
 // mirage includes
 #include "mat4.h"
+#include "../macros.h"
 
 namespace mirage
 {
@@ -108,6 +112,113 @@ mat4 mat4::perspective(float fov, float ar, float n, float f)
     m[2 + 3 * 4] = 2.0f * f * n / zrange;
 
     return *this;
+}
+
+mat4 mat4::transpose()
+{
+    mat4 result;
+
+    result[0 + 0 * 4] = m[0 + 0 * 4];
+    result[0 + 1 * 4] = m[1 + 0 * 4];
+    result[0 + 2 * 4] = m[2 + 0 * 4];
+    result[0 + 3 * 4] = m[3 + 0 * 4];
+
+    result[1 + 0 * 4] = m[0 + 1 * 4];
+    result[1 + 1 * 4] = m[1 + 1 * 4];
+    result[1 + 2 * 4] = m[2 + 1 * 4];
+    result[1 + 3 * 4] = m[3 + 1 * 4];
+
+    result[2 + 0 * 4] = m[0 + 2 * 4];
+    result[2 + 1 * 4] = m[1 + 2 * 4];
+    result[2 + 2 * 4] = m[2 + 2 * 4];
+    result[2 + 3 * 4] = m[3 + 2 * 4];
+
+    result[3 + 0 * 4] = m[0 + 3 * 4];
+    result[3 + 1 * 4] = m[1 + 3 * 4];
+    result[3 + 2 * 4] = m[2 + 3 * 4];
+    result[3 + 3 * 4] = m[3 + 3 * 4];
+
+    return result;
+}
+
+mat4 mat4::inverse() // 4x4 Matrix inverse, uses the numerically stable Gauss-Jordan elimination routine.
+{
+    int indxc[4], indxr[4];
+    int ipiv[4] = {0, 0, 0, 0};
+    mat4 minv(m);
+
+    for (int i = 0; i < 4; i++)
+    {
+        int irow = -1, icol = -1;
+        float big = 0.f;
+
+        // Choose pivot
+        for (int j = 0; j < 4; j++)
+        {
+            if (ipiv[j] != 1)
+            {
+                for (int k = 0; k < 4; k++)
+                {
+                    if (ipiv[k] == 0)
+                    {
+                        if (std::abs(minv[j + k * 4]) >= big)
+                        {
+                            big = std::abs(minv[j + k * 4]);
+                            irow = j;
+                            icol = k;
+                        }
+                    }
+                    else if (ipiv[k] > 1)
+                    {
+                        ERR("Singular matrix in mat4::inverse()");
+                    }
+                }
+            }
+        }
+        ++ipiv[icol];
+
+        // Swap rows irow and icol for pivot
+        if (irow != icol)
+        {
+            for (int k = 0; k < 4; ++k) std::swap(minv[irow + k * 4], minv[icol + k * 4]);
+        }
+
+        indxr[i] = irow;
+        indxc[i] = icol;
+
+        if (minv[icol + icol * 4] == 0.f)
+        {
+            ERR("Singular matrix in mat4::inverse()");
+        }
+
+        // Set $m[icol][icol]$ to one by scaling row icol appropriately
+        float pivinv = 1. / minv[icol + icol * 4];
+        minv[icol + icol * 4] = 1.;
+        for (int j = 0; j < 4; j++) minv[icol + j * 4] *= pivinv;
+
+        // Subtract this row from others to zero out their columns
+        for (int j = 0; j < 4; j++)
+        {
+            if (j != icol)
+            {
+                float save = minv[j + icol * 4];
+                minv[j + icol * 4] = 0;
+                for (int k = 0; k < 4; k++) minv[j + k * 4] -= minv[icol + k * 4] * save;
+            }
+        }
+    }
+
+    // Swap columns to reflect permutation
+    for (int j = 3; j >= 0; j--)
+    {
+        if (indxr[j] != indxc[j])
+        {
+            for (int k = 0; k < 4; k++)
+                std::swap(minv[k + indxr[j] * 4], minv[k + indxc[j] * 4]);
+        }
+    }
+
+    return minv;
 }
 
 }

@@ -4,34 +4,19 @@
 namespace mirage
 {
 
-Intersection::Intersection(float t, vec3 position, vec3 normal, Shape shape) : m_t(t), m_position(position), m_normal(normal), m_shape(shape)
-{
-
-}
-
-void Intersection::setT(const float t)
+Intersection::Intersection(vec3 position, vec3 normal) : m_position(position), m_normal(normal)
 {
 
 }
 
 void Intersection::setPosition(const vec3 &v)
 {
-
+    m_position = v;
 }
 
 void Intersection::setNormal(const vec3 &v)
 {
-
-}
-
-void Intersection::setShape(const Shape &s)
-{
-
-}
-
-float Intersection::getT() const
-{
-    return m_t;
+    m_normal = v;
 }
 
 vec3 Intersection::getPosition() const
@@ -42,11 +27,6 @@ vec3 Intersection::getPosition() const
 vec3 Intersection::getNormal() const
 {
     return m_normal;
-}
-
-Shape Intersection::getShape() const
-{
-    return m_shape;
 }
 
 }

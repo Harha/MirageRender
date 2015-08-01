@@ -13,6 +13,11 @@ AABB::AABB(vec3 p1, vec3 p2) : m_pmin(p1), m_pmax(p2)
     m_pmax = vec3(std::max(p1.x, p2.x), std::max(p1.y, p2.y), std::max(p1.z, p2.z));
 }
 
+std::string AABB::toString() const
+{
+    return "AABB[" + m_pmin.toString() + " " + m_pmax.toString() + "]";
+}
+
 AABB AABB::addPoint(const vec3 &p) const
 {
     AABB result;

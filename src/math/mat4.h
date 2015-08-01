@@ -16,10 +16,20 @@ struct mat4
 {
     float m[16];
 
-    mat4() : m {0, 0, 0, 0,
-             0, 0, 0, 0,
-             0, 0, 0, 0,
-             0, 0, 0, 0
+    mat4(float m[16]) : m
+    {
+        m[0], m[1], m[2], m[3],
+        m[4], m[5], m[6], m[7],
+        m[8], m[9], m[10], m[11],
+        m[12], m[13], m[14], m[15],
+    } { }
+
+    mat4() : m
+    {
+        0, 0, 0, 0,
+        0, 0, 0, 0,
+        0, 0, 0, 0,
+        0, 0, 0, 0
     } { }
 
     std::string toString() const;
@@ -48,14 +58,34 @@ struct mat4
 
         for (size_t i = 0; i < 4; i++)
         {
-            result[i] = v[0] * m[0 + i * 4] + v[1] * m[1 + i * 4] + v[2] * m[2 + i * 4] + v[3] * m[3 + i * 4];
+            result[i] = v[0] * m[i + 0 * 4] + v[1] * m[i + 1 * 4] + v[2] * m[i + 2 * 4] + v[3] * m[i + 3 * 4];
         }
 
-        result[0] /= result[3];
-        result[1] /= result[3];
-        result[2] /= result[3];
+        return result;
+    }
+
+    vec3 operator*(const vec3 &v) const
+    {
+        vec3 result;
+
+        for (size_t i = 0; i < 3; i++)
+        {
+            result[i] = v[0] * m[i + 0 * 4] + v[1] * m[i + 1 * 4] + v[2] * m[i + 2 * 4];
+        }
 
         return result;
+    }
+
+    float operator[](int i) const
+    {
+        assert(i >= 0 && i <= 15);
+        return m[i];
+    }
+
+    float &operator[](int i)
+    {
+        assert(i >= 0 && i <= 15);
+        return m[i];
     }
 
     mat4 clear();
@@ -65,6 +95,8 @@ struct mat4
     mat4 scale(const vec3 &v);
     mat4 orthographic(const float l, const float r, const float b, const float t, const float n, const float f);
     mat4 perspective(float fov, float ar, float n, float f);
+    mat4 transpose();
+    mat4 inverse();
 
 };
 

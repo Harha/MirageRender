@@ -45,7 +45,7 @@ void CameraOrtho::calcCamRay(const int x, const int y, Ray &ray) const
 {
     // Construct the ray's origin vector
     vec3 e = m_transform.getPosition();
-    vec3 s = e + vec3(x - m_film.getResolutionX() * 0.5f + 0.5f, m_film.getResolutionY() * 0.5f - y + 0.5f, 5.0f);
+    vec3 s = e + vec3(x - m_film.getResolutionX() * 0.5f + 0.5f, m_film.getResolutionY() * 0.5f - y + 0.5f, 5.0f) * m_zoom;
 
     // Get the ray's direction vector
     vec3 p = m_transform.getOrientation().getForwardVector().negate();
@@ -57,10 +57,10 @@ void CameraOrtho::calcCamRay(const int x, const int y, Ray &ray) const
     quaternion r = q * w * q_inv;
 
     // Finally get the rotated origin vector
-    s = vec3(r.x, r.y, r.z);
+    //s = vec3(r.x, r.y, r.z);
 
     // Assign final parameters to the output *ray
-    ray.setOrigin(s);
+    ray.setOrigin(vec3(r.x, r.y, r.z));
     ray.setDirection(p);
 }
 

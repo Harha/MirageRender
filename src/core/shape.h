@@ -5,17 +5,20 @@
 #include "transform.h"
 #include "aabb.h"
 #include "ray.h"
+#include "intersection.h"
 
 namespace mirage
 {
-    class Shape
+
+class Shape
 {
 public:
     Shape(const Transform &o2w = Transform(), const Transform &w2o = Transform());
-    virtual AABB shapeBound() const;
+    virtual AABB shapeBound() const = 0;
     virtual AABB worldBound() const;
-    virtual bool intersectP(const Ray &ray) const;
-    virtual float getSurfaceArea() const;
+    virtual bool intersect(const Ray &ray, float &tHit, Intersection &iSect) const = 0;
+    virtual bool intersectP(const Ray &ray) const = 0;
+    virtual float getSurfaceArea() const = 0;
 protected:
     const Transform &m_objToWorld;
     const Transform &m_worldToObj;

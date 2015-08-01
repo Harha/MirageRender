@@ -52,11 +52,18 @@ int main(int argc, char **argv)
     float fps = 0;
     bool running = true;
 
+    // Testing...
     Transform objToWorld, worldToObj;
-    Sphere test(objToWorld, worldToObj, 2.5f);
-    objToWorld.setPosition(vec3(5, -2.5f, 10));
-    objToWorld.setOrientation(quaternion().euler(0.5f, 0.5f, 0, 77));
-    std::cout << objToWorld.getModelMatrix().toString() << " " << test.getRadius() << std::endl;
+    objToWorld.setPosition(vec3(-4.0f, 0.0f, 0.0f));
+    worldToObj = objToWorld.inverse();
+    Sphere test(objToWorld, worldToObj, 4.0f);
+    std::cout << test.shapeBound().toString() << std::endl;
+    std::cout << test.worldBound().toString() << std::endl;
+    std::cout << objToWorld.getMatrix().toString() << std::endl;
+    std::cout << worldToObj.getMatrix().toString() << std::endl;
+
+    Film film(WIDTH, HEIGHT);
+    CameraOrtho camera(Transform(), film, 0.1f);
 
     while (running)
     {
@@ -68,6 +75,24 @@ int main(int argc, char **argv)
 
         // Update and render scene
         display.clear(0x00000000);
+
+        // Test rendering of a sphere
+        Ray r_primary;
+        for (size_t j = 0; j < camera.getFilm().getResolutionY(); j++)
+        {
+            for (size_t i = 0; i < camera.getFilm().getResolutionY(); i++)
+            {
+                Intersection x;
+                float t = 0;
+                camera.calcCamRay(i, j, r_primary);
+                if (test.intersect(r_primary, t, x))
+                {
+                    camera.getFilm().setSample(i, j, vec3(1, 1, 1));
+                    display.setPixel(i, j, camera.getFilm().getSample(i, j).getColor() * std::max(vec3::dot(x.getNormal(), vec3(1, 1, -1).normalize()), 0.25f));
+                }
+            }
+        }
+
         display.render();
 
         // Display info

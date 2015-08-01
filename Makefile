@@ -38,9 +38,11 @@ TARGET = $(BINDIR)/mirage
 CPPS := $(wildcard $(SRCDIR)/*.cpp)
 CPPS += $(wildcard $(SRCDIR)/core/*.cpp)
 CPPS += $(wildcard $(SRCDIR)/math/*.cpp)
+CPPS += $(wildcard $(SRCDIR)/shapes/*.cpp)
 INCS := $(wildcard $(SRCDIR)/*.h)
 INCS += $(wildcard $(SRCDIR)/core/*.h)
 INCS += $(wildcard $(SRCDIR)/math/*.h)
+INCS += $(wildcard $(SRCDIR)/shapes/*.h)
 OBJS := $(CPPS:$(SRCDIR)/%.cpp=$(BINDIR)/%.o)
 
 # Build target
