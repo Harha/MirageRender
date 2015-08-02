@@ -3,7 +3,7 @@
 #define VERSION_A 1
 #define WIDTH 480
 #define HEIGHT 270
-#define SCALE 2
+#define SCALE 1
 #define THREADS -1
 #define GAMMA 2.2f
 #define MAX_RECURSION 1

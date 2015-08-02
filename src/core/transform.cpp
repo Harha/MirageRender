@@ -10,32 +10,39 @@ namespace mirage
 
 Transform::Transform(vec3 position, quaternion orientation, vec3 scale) : m_position(position), m_orientation(orientation), m_scale(scale)
 {
-
-}
-
-Transform Transform::inverse() const
-{
-    Transform result;
-
-    result.setPosition(m_position.negate());
-    result.setOrientation(m_orientation.conjugate());
-
-    return result;
+    m_stateChanged = true;
 }
 
 void Transform::setPosition(const vec3 &position)
 {
-    m_position = position;
+    if (m_position != position)
+    {
+        m_position = position;
+        setState(true);
+    }
 }
 
 void Transform::setOrientation(const quaternion &orientation)
 {
-    m_orientation = orientation;
+    if(m_orientation != orientation)
+    {
+        m_orientation = orientation;
+        setState(true);
+    }
 }
 
 void Transform::setScale(const vec3 &scale)
 {
-    m_scale = scale;
+    if (m_scale != scale)
+    {
+        m_scale = scale;
+        setState(true);
+    }
+}
+
+void Transform::setState(const bool state)
+{
+    m_stateChanged = state;
 }
 
 vec3 Transform::getPosition() const
@@ -53,6 +60,16 @@ vec3 Transform::getScale() const
     return m_scale;
 }
 
+Transform Transform::inverse() const
+{
+    Transform result;
+
+    result.setPosition(m_position.negate());
+    result.setOrientation(m_orientation.conjugate());
+
+    return result;
+}
+
 mat4 Transform::getMatrix() const
 {
     mat4 t;
@@ -62,6 +79,11 @@ mat4 Transform::getMatrix() const
     r.rotation(m_orientation.getRightVector(), m_orientation.getUpVector(), m_orientation.getForwardVector());
     s.scale(m_scale);
     return t * r * s;
+}
+
+bool Transform::reqStateUpdate() const
+{
+    return m_stateChanged;
 }
 
 }

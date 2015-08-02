@@ -13,6 +13,11 @@ Shape::Shape(const Transform &o2w, const Transform &w2o) : m_objToWorld(o2w), m_
 
 }
 
+void Shape::update()
+{
+    ERR("Unimplemented Shape::update function called!");
+}
+
 AABB Shape::shapeBound() const
 {
     ERR("Unimplemented Shape::shapeBound function called!");

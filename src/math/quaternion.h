@@ -22,6 +22,16 @@ struct quaternion
 
     std::string toString() const;
 
+    bool operator==(const quaternion &other) const
+    {
+        return w == other.w && x == other.x && y == other.y && z == other.z;
+    }
+
+    bool operator!=(const quaternion &other) const
+    {
+        return !(*this == other);
+    }
+
     quaternion operator*(const quaternion &q) const
     {
         quaternion result;
