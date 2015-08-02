@@ -1,5 +1,5 @@
-#ifndef vec3_H
-#define vec3_H
+#ifndef VEC3_H
+#define VEC3_H
 
 // std includes
 #include <string>
@@ -215,4 +215,4 @@ inline vec3 operator/(const float f, const vec3 &other)
 
 }
 
-#endif // vec3_H
+#endif // VEC3_H

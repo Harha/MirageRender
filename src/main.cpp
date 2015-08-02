@@ -11,11 +11,19 @@
 #include "macros.h"
 #include "core/input.h"
 #include "core/display.h"
-#include "core/camera.h"
 #include "core/ray.h"
 #include "shapes/sphere.h"
+#include "cameras/orthographic.h"
+#include "cameras/perspective.h"
 
 using namespace mirage;
+
+void dispose()
+{
+    SDL_Quit();
+
+    LOG("atexit(dispose) Hook called.");
+}
 
 int main(int argc, char **argv)
 {
@@ -31,7 +39,7 @@ int main(int argc, char **argv)
     SDL_Event event;
 
     // Set-up atexit hooks
-    atexit(SDL_Quit);
+    atexit(dispose);
 
     // Initialize multithreading related stuff
 #if THREADS>0
@@ -56,14 +64,17 @@ int main(int argc, char **argv)
     Transform objToWorld, worldToObj;
     objToWorld.setPosition(vec3(0.0f, 0.0f, 0.0f));
     worldToObj = objToWorld.inverse();
-    Sphere test(objToWorld, worldToObj, vec3(0.0f, 0.0f, 0.0f), 4.0f);
+    Sphere test(objToWorld, worldToObj, vec3(0.0f, 0.0f, 0.0f), 1.0f);
     std::cout << test.shapeBound().toString() << std::endl;
     std::cout << test.worldBound().toString() << std::endl;
     std::cout << objToWorld.getMatrix().toString() << std::endl;
     std::cout << worldToObj.getMatrix().toString() << std::endl;
 
     Film film(WIDTH, HEIGHT);
-    CameraOrtho camera(Transform(), film, 0.1f);
+    CameraOrtho camera2(Transform(vec3(0.0f, 0.0f, -10.0f)), film, 0.1f);
+    CameraPersp camera(Transform(vec3(0.0f, 0.0f, -10.0f)), film, 70.0f);
+
+    std::cout << camera.getTransform().getOrientation().getForwardVector().toString() << std::endl;
 
     while (running)
     {
@@ -76,10 +87,10 @@ int main(int argc, char **argv)
         // Update and render scene
         display.clear(0x00000000);
 
-        objToWorld.setPosition(vec3(std::cos(frameCount * 0.01f) * 5.0f, std::sin(frameCount * 0.01f) * 5.0f, 0.0f));
-        objToWorld.setScale(vec3(std::sin(frameCount * 0.05f) * 0.5f + 1.0f, 0.0f, 0.0f));
-
-        test.update();
+        //objToWorld.setPosition(vec3(std::cos(frameCount * 0.001f) * 5.0f, std::sin(frameCount * 0.0025f) * 5.0f, 0.0f));
+        //objToWorld.setScale(vec3(std::sin(frameCount * 0.005f) * 0.5f + 1.0f, 0.0f, 0.0f));
+        //test.update();
+        //objToWorld.setState(false);
 
         // Test rendering of a sphere
         Ray r_primary;
@@ -92,7 +103,7 @@ int main(int argc, char **argv)
                 camera.calcCamRay(i, j, r_primary);
                 if (test.intersect(r_primary, t, x))
                 {
-                    camera.getFilm().setSample(i, j, vec3(1, 1, 1));
+                    camera.getFilm().setSample(i, j, vec3(0, 1, 1));
                     display.setPixel(i, j, camera.getFilm().getSample(i, j).getColor() * std::max(vec3::dot(x.getNormal(), vec3(1, 1, -1).normalize()), 0.1f));
                 }
             }
@@ -107,6 +118,41 @@ int main(int argc, char **argv)
             std::string dt_str = std::to_string(deltaTime);
             std::string title = "MirageRender | FPS: " + fps_str + " DT: " + dt_str;
             display.setTitle(title);
+        }
+
+        // Process input
+        if (g_keys[SDL_SCANCODE_W])
+        {
+            camera.move(camera.getTransform().getOrientation().getForwardVector(), deltaTime);
+        }
+        else if (g_keys[SDL_SCANCODE_S])
+        {
+            camera.move(camera.getTransform().getOrientation().getForwardVector(), -deltaTime);
+        }
+        if (g_keys[SDL_SCANCODE_A])
+        {
+            camera.move(camera.getTransform().getOrientation().getRightVector(), -deltaTime);
+        }
+        else if (g_keys[SDL_SCANCODE_D])
+        {
+            camera.move(camera.getTransform().getOrientation().getRightVector(), deltaTime);
+        }
+
+        if (g_keys[SDL_SCANCODE_UP])
+        {
+            camera.rotate(camera.getTransform().getOrientation().getRightVector(), -deltaTime * 32);
+        }
+        if (g_keys[SDL_SCANCODE_DOWN])
+        {
+            camera.rotate(camera.getTransform().getOrientation().getRightVector(), deltaTime * 32);
+        }
+        if (g_keys[SDL_SCANCODE_LEFT])
+        {
+            camera.rotate(camera.getTransform().getOrientation().getUpVector(), -deltaTime * 32);
+        }
+        if (g_keys[SDL_SCANCODE_RIGHT])
+        {
+            camera.rotate(camera.getTransform().getOrientation().getUpVector(), deltaTime * 32);
         }
 
         // Process SDL events

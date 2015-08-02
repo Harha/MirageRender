@@ -51,8 +51,8 @@ void Display::init()
         std::exit(1);
     }
 
-    m_pixels = new Uint32[m_width * m_height];
-    if (m_pixels == nullptr)
+    m_pixels = new(std::nothrow) Uint32[m_width * m_height];
+    if (m_pixels == NULL)
     {
         SDL_DestroyTexture(m_texture);
         SDL_DestroyRenderer(m_renderer);
