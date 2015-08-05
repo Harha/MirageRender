@@ -2,6 +2,7 @@
 #include <iostream>
 #include <thread>
 #include <string>
+#include <vector>
 
 // lib includes
 #include "SDL2/SDL.h"
@@ -12,9 +13,13 @@
 #include "core/input.h"
 #include "core/display.h"
 #include "core/ray.h"
+#include "core/primitive.h"
+#include "core/accelerator.h"
+#include "core/shape.h"
 #include "shapes/sphere.h"
 #include "cameras/orthographic.h"
 #include "cameras/perspective.h"
+#include "accelerators/kdtree.h"
 
 using namespace mirage;
 
@@ -64,17 +69,42 @@ int main(int argc, char **argv)
     Transform objToWorld, worldToObj;
     objToWorld.setPosition(vec3(0.0f, 0.0f, 0.0f));
     worldToObj = objToWorld.inverse();
-    Sphere test(objToWorld, worldToObj, vec3(0.0f, 0.0f, 0.0f), 1.0f);
-    std::cout << test.shapeBound().toString() << std::endl;
+    Sphere test(objToWorld, worldToObj, vec3(2.0f, 0.0f, 0.0f), 1.0f);
+    Sphere test2(objToWorld, worldToObj, vec3(-5.0f, 2.0f, 1.0f), 1.0f);
+    std::cout << test.objectBound().toString() << std::endl;
     std::cout << test.worldBound().toString() << std::endl;
     std::cout << objToWorld.getMatrix().toString() << std::endl;
     std::cout << worldToObj.getMatrix().toString() << std::endl;
 
     Film film(WIDTH, HEIGHT);
-    CameraOrtho camera2(Transform(vec3(0.0f, 0.0f, -10.0f)), film, 0.1f);
-    CameraPersp camera(Transform(vec3(0.0f, 0.0f, -10.0f)), film, 70.0f);
+    CameraOrtho camera(Transform(vec3(0.0f, 0.0f, -10.0f)), film, 0.15f);
+    CameraPersp camera2(Transform(vec3(0.0f, 0.0f, -10.0f)), film, 70.0f);
 
     std::cout << camera.getTransform().getOrientation().getForwardVector().toString() << std::endl;
+
+    std::vector<Shape *> shapes;
+
+    int numShapes = 1028;
+    for (size_t i = 0; i < numShapes; i++)
+    {
+        shapes.push_back(new Sphere(objToWorld, worldToObj, vec3(g_rng() * 10 - 5, g_rng() * 10 - 5, g_rng() * 10 - 5), 0.5f + g_rng() * 0.5f));
+    }
+
+    Accelerator *testaccelstruct = new KDTreeAccel(objToWorld, worldToObj, shapes, 1, 1, 128, 1);
+    testaccelstruct->build();
+    std::cout << testaccelstruct->objectBound().toString() << std::endl;
+    std::cout << testaccelstruct->worldBound().toString() << std::endl;
+
+    /*
+    std::vector<Shape *> shapes;
+    shapes.push_back(&test);
+
+    Primitive testprim(Transform(), Transform(), shapes);
+
+    testprim.intersectP(Ray());
+
+    std::cout << shapes.front()->worldBound().toString() << std::endl;
+    */
 
     while (running)
     {
@@ -87,17 +117,21 @@ int main(int argc, char **argv)
         // Update and render scene
         display.clear(0x00000000);
 
-        //objToWorld.setPosition(vec3(std::cos(frameCount * 0.001f) * 5.0f, std::sin(frameCount * 0.0025f) * 5.0f, 0.0f));
-        //objToWorld.setScale(vec3(std::sin(frameCount * 0.005f) * 0.5f + 1.0f, 0.0f, 0.0f));
-        //test.update();
-        //objToWorld.setState(false);
-
-        // Test rendering of a sphere
+        // Test rendering of a k-d tree of shapes
         Ray r_primary;
         for (size_t j = 0; j < camera.getFilm().getResolutionY(); j++)
         {
             for (size_t i = 0; i < camera.getFilm().getResolutionX(); i++)
             {
+                Intersection iSect;
+                float t = 0;
+                camera.calcCamRay(i, j, r_primary);
+                if (testaccelstruct->intersect(r_primary, iSect))
+                {
+                    camera.getFilm().setSample(i, j, vec3(1, 1, 1) * std::max(vec3::dot(iSect.getNormal(), vec3(1, 1, -1).normalize()), 0.1f));
+                    display.setPixel(i, j, camera.getFilm().getSample(i, j).getColor());
+                }
+                /*
                 Intersection x;
                 float t = 0;
                 camera.calcCamRay(i, j, r_primary);
@@ -106,13 +140,14 @@ int main(int argc, char **argv)
                     camera.getFilm().setSample(i, j, vec3(0, 1, 1));
                     display.setPixel(i, j, camera.getFilm().getSample(i, j).getColor() * std::max(vec3::dot(x.getNormal(), vec3(1, 1, -1).normalize()), 0.1f));
                 }
+                */
             }
         }
 
         display.render();
 
         // Display info
-        if (frameCount % 128 == 1)
+        if (frameCount % 16 == 1)
         {
             std::string fps_str = std::to_string(fps);
             std::string dt_str = std::to_string(deltaTime);
@@ -187,6 +222,7 @@ int main(int argc, char **argv)
         frameCount++;
     }
 
+    delete testaccelstruct;
     delete[] threads;
     LOG("MirageRender, exit program successfully.");
 

@@ -8,6 +8,7 @@
 #include "../math/vec3.h"
 #include "../math/vec4.h"
 #include "../math/mat4.h"
+#include "ray.h"
 
 namespace mirage
 {
@@ -34,8 +35,10 @@ public:
     AABB addPoint(const vec3 &p) const;
     AABB addBox(const AABB &b) const;
     AABB expand(const float delta) const;
+    bool intersectP(const Ray &ray, float &tHit1, float &tHit2) const;
     bool overlaps(const AABB &b) const;
     bool inside(const vec3 &p) const;
+    vec3 getCentroid() const;
     float getSurfaceArea() const;
     float getVolume() const;
     int getMaximumExtent() const;

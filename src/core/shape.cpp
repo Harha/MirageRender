@@ -18,7 +18,7 @@ void Shape::update()
     ERR("Unimplemented Shape::update function called!");
 }
 
-AABB Shape::shapeBound() const
+AABB Shape::objectBound() const
 {
     ERR("Unimplemented Shape::shapeBound function called!");
     return AABB();
@@ -26,7 +26,7 @@ AABB Shape::shapeBound() const
 
 AABB Shape::worldBound() const
 {
-    return shapeBound() * m_objToWorld.getMatrix();
+    return objectBound() * m_objToWorld.getMatrix();
 }
 
 bool Shape::intersect(const Ray &ray, float &tHit, Intersection &iSect) const

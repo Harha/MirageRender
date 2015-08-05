@@ -24,9 +24,9 @@ void Sphere::update()
     }
 }
 
-AABB Sphere::shapeBound() const
+AABB Sphere::objectBound() const
 {
-    return AABB(vec3(-m_radiusTransformed, -m_radiusTransformed, -m_radiusTransformed), vec3(m_radiusTransformed, m_radiusTransformed, m_radiusTransformed));
+    return AABB(vec3(-m_radiusTransformed, -m_radiusTransformed, -m_radiusTransformed) + m_centerInit, vec3(m_radiusTransformed, m_radiusTransformed, m_radiusTransformed) + m_centerInit);
 }
 
 bool Sphere::intersect(const Ray &ray, float &tHit, Intersection &iSect) const

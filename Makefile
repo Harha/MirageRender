@@ -40,11 +40,13 @@ CPPS += $(wildcard $(SRCDIR)/core/*.cpp)
 CPPS += $(wildcard $(SRCDIR)/math/*.cpp)
 CPPS += $(wildcard $(SRCDIR)/shapes/*.cpp)
 CPPS += $(wildcard $(SRCDIR)/cameras/*.cpp)
+CPPS += $(wildcard $(SRCDIR)/accelerators/*.cpp)
 INCS := $(wildcard $(SRCDIR)/*.h)
 INCS += $(wildcard $(SRCDIR)/core/*.h)
 INCS += $(wildcard $(SRCDIR)/math/*.h)
 INCS += $(wildcard $(SRCDIR)/shapes/*.h)
 INCS += $(wildcard $(SRCDIR)/cameras/*.h)
+INCS += $(wildcard $(SRCDIR)/accelerators/*.h)
 OBJS := $(CPPS:$(SRCDIR)/%.cpp=$(BINDIR)/%.o)
 
 # Build target

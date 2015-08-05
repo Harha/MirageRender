@@ -12,7 +12,7 @@ class Sphere : public Shape
 public:
     Sphere(const Transform &o2w, const Transform &w2o, vec3 c = vec3(), float r = 1.0f);
     virtual void update() override;
-    virtual AABB shapeBound() const override;
+    virtual AABB objectBound() const override;
     virtual bool intersect(const Ray &ray, float &tHit, Intersection &iSect) const;
     virtual bool intersectP(const Ray &ray) const override;
     virtual float getSurfaceArea() const override;

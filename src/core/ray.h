@@ -17,12 +17,11 @@ public:
     vec3 getDirection() const;
     vec3 getDirectionInv() const;
     vec3 operator()(float t) const;
+    float mint, maxt;
 private:
     vec3 m_origin;
     vec3 m_direction;
     vec3 m_directionInv;
-    float m_tmin;
-    float m_tmax;
 };
 
 }

@@ -56,6 +56,51 @@ AABB AABB::expand(const float delta) const
     return result;
 }
 
+bool AABB::intersectP(const Ray &ray, float &tHit0, float &tHit1) const
+{
+    vec3 ro = ray.getOrigin();
+    vec3 rd = ray.getDirection();
+    vec3 rd_inv = ray.getDirectionInv();
+
+    float t1 = (m_pmin.x - ro.x) * rd_inv.x;
+    float t2 = (m_pmax.x - ro.x) * rd_inv.x;
+    float t3 = (m_pmin.y - ro.y) * rd_inv.y;
+    float t4 = (m_pmax.y - ro.y) * rd_inv.y;
+    float t5 = (m_pmin.z - ro.z) * rd_inv.z;
+    float t6 = (m_pmax.z - ro.z) * rd_inv.z;
+
+    float tboxmin = std::max(std::max(std::min(t1, t2), std::min(t3, t4)), std::min(t5, t6));
+    float tboxmax = std::min(std::min(std::max(t1, t2), std::max(t3, t4)), std::max(t5, t6));
+
+    if (tboxmax < 0.0f || tboxmin > tboxmax)
+    {
+        return false;
+    }
+
+    tHit0 = tboxmin;
+    tHit1 = tboxmax;
+    return true;
+
+    /*
+    float t0 = ray.mint, t1 = ray.maxt;
+
+    for (size_t i = 0; i < 3; i++)
+    {
+        float invRayDir = ray.getDirection()[i];
+        float tNear = (m_pmin[i] - ray.getOrigin()[i]) * invRayDir;
+        float tFar = (m_pmax[i] - ray.getOrigin()[i]) * invRayDir;
+        if (tNear > tFar) std::swap(tNear, tFar);
+        t0 = tNear > t0 ? tNear : t0;
+        t1 = tFar < t1 ? tFar : t1;
+        if (t0 > t1) return false;
+    }
+
+    tHit0 = t0;
+    tHit1 = t1;
+    return true;
+    */
+}
+
 bool AABB::overlaps(const AABB &b) const
 {
     bool x = (m_pmax.x >= b.m_pmin.x) && (m_pmin.x <= b.m_pmax.x);
@@ -70,6 +115,11 @@ bool AABB::inside(const vec3 &p) const
     return (p.x >= m_pmin.x && p.x <= m_pmax.x &&
             p.y >= m_pmin.y && p.y <= m_pmax.y &&
             p.z >= m_pmin.z && p.z <= m_pmax.z);
+}
+
+vec3 AABB::getCentroid() const
+{
+    return 0.5f * (m_pmin + m_pmax);
 }
 
 float AABB::getSurfaceArea() const
