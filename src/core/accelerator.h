@@ -16,7 +16,7 @@ public:
     virtual AABB worldBound() const;
     virtual bool intersect(const Ray &ray, Intersection &iSect) = 0;
     virtual bool intersectP(const Ray &ray) const = 0;
-    virtual void build() = 0;
+    virtual void init() = 0;
 private:
 protected:
     const Transform &m_objToWorld;

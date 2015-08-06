@@ -10,12 +10,38 @@
 namespace mirage
 {
 
+KDNode::KDNode(int axis, float pos, std::vector<Shape *> data, AABB bbox) : split_axis(axis), split_pos(pos), data(data), aabb(bbox)
+{
+    lChild = nullptr;
+    rChild = nullptr;
+}
+
+KDNode::~KDNode()
+{
+    if (lChild)
+        delete lChild;
+    if (rChild)
+        delete rChild;
+}
+
+bool KDNode::isLeaf()
+{
+    return (lChild == nullptr) && (rChild == nullptr);
+}
+
 KDTreeAccel::KDTreeAccel(const Transform &o2w, const Transform &w2o, std::vector<Shape *> shapes,
                          const float iCost, const float tCost, const float maxP, const float maxD, const float lThreshold)
     : Accelerator(o2w, w2o, shapes), m_iSectCost(iCost), m_travCost(tCost),
       m_maxPrims(maxP), m_maxDepth(maxD), m_leafThreshold(lThreshold)
 {
-    LOG("a New k-d tree accelerator was constructed! Number of shapes: " << m_shapes.size());
+    LOG("a New k-d tree accelerator object was created!");
+    LOG("Number of shapes: " << m_shapes.size());
+}
+
+KDTreeAccel::~KDTreeAccel()
+{
+    if (m_root)
+        delete m_root;
 }
 
 void KDTreeAccel::update() const
@@ -29,9 +55,7 @@ bool KDTreeAccel::intersect(const Ray &ray, Intersection &iSect)
     float tHit = INFINITY;
     float tHit0 = 0.0f;
     float tHit1 = INFINITY;
-    traverse(&m_root, ray, result, tHit, tHit0, tHit1, iSect);
-    //if (result)
-    //    LOG("Test!");
+    traverse(m_root, ray, result, tHit, tHit0, tHit1, iSect);
     return result;
 }
 
@@ -41,12 +65,13 @@ bool KDTreeAccel::intersectP(const Ray &ray) const
     return false;
 }
 
-void KDTreeAccel::build()
+void KDTreeAccel::init()
 {
     LOG("Started building the k-d tree...");
     std::clock_t startTime = std::clock(); // Re-using my old code
 
-    buildRecursive(&m_root, 0, m_shapes);
+    m_root = new KDNode;
+    buildRecursive(m_root, 0, m_shapes);
 
     std::clock_t endTime = std::clock();
     std::clock_t time = endTime - startTime;
@@ -75,10 +100,9 @@ void KDTreeAccel::buildRecursive(KDNode *node, int depth, std::vector<Shape *> &
     node->split_pos = shapes[median]->worldBound().getCentroid()[axis];
 
     // Create a leaf
-    if (shapes.size() <= m_leafThreshold || depth >= m_maxDepth)
+    if (shapes.size() <= m_leafThreshold)
     {
         node->data.insert(node->data.end(), shapes.begin(), shapes.end());
-        //LOG("Leaf: " << node->data.size() << " | " << node->split_axis << " | " << node->split_pos);
         return;
     }
 
@@ -93,8 +117,8 @@ void KDTreeAccel::buildRecursive(KDNode *node, int depth, std::vector<Shape *> &
     std::copy(shapes.begin() + median, shapes.end(), rList.begin());
 
     // Recursive call to build the child nodes
-    buildRecursive(node->lChild, depth++, lList);
-    buildRecursive(node->rChild, depth++, rList);
+    buildRecursive(node->lChild, depth + 1, lList);
+    buildRecursive(node->rChild, depth + 1, rList);
 }
 
 void KDTreeAccel::traverse(KDNode *node, const Ray &ray, bool &bHit, float &tHit, float &tHit0, float &tHit1, Intersection &iSect)
@@ -102,11 +126,13 @@ void KDTreeAccel::traverse(KDNode *node, const Ray &ray, bool &bHit, float &tHit
     if (node->isLeaf())
     {
         bool bInit = false;
-        float tInit = INFINITY;
+        float tInit = tHit1;
+
         for (auto *s : node->data)
         {
             Intersection iSectInit;
             bInit = s->intersect(ray, tInit, iSectInit);
+
             if (bInit && tInit < tHit)
             {
                 bHit = bInit;

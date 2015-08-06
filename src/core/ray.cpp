@@ -17,9 +17,7 @@ void Ray::setOrigin(const vec3 &origin)
 void Ray::setDirection(const vec3 &direction)
 {
     m_direction = direction.normalize();
-    m_directionInv.x = 1.0f / m_direction.x;
-    m_directionInv.y = 1.0f / m_direction.y;
-    m_directionInv.z = 1.0f / m_direction.z;
+    m_directionInv = 1.0f / m_direction;
 }
 
 vec3 Ray::getOrigin() const
@@ -36,18 +34,6 @@ vec3 Ray::getDirectionInv() const
 {
     return m_directionInv;
 }
-
-/*
-float Ray::getMinT() const
-{
-    return m_tmin;
-}
-
-float Ray::getMaxT() const
-{
-    return m_tmax;
-}
-*/
 
 vec3 Ray::operator()(float t) const
 {

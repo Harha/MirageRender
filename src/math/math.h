@@ -13,7 +13,6 @@ namespace mirage
 #define EPSILON 1e-3f
 
 // Static objects
-//static std::random_device g_randomDevice();
 static std::mt19937 g_randomGen(time(NULL));
 static std::uniform_real_distribution<float>g_randomRealDis(0.0f, 1.0f);
 

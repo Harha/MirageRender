@@ -71,40 +71,28 @@ int main(int argc, char **argv)
     worldToObj = objToWorld.inverse();
     Sphere test(objToWorld, worldToObj, vec3(2.0f, 0.0f, 0.0f), 1.0f);
     Sphere test2(objToWorld, worldToObj, vec3(-5.0f, 2.0f, 1.0f), 1.0f);
-    std::cout << test.objectBound().toString() << std::endl;
-    std::cout << test.worldBound().toString() << std::endl;
-    std::cout << objToWorld.getMatrix().toString() << std::endl;
-    std::cout << worldToObj.getMatrix().toString() << std::endl;
+    //std::cout << test.objectBound().toString() << std::endl;
+    //std::cout << test.worldBound().toString() << std::endl;
+    //std::cout << objToWorld.getMatrix().toString() << std::endl;
+    //std::cout << worldToObj.getMatrix().toString() << std::endl;
 
     Film film(WIDTH, HEIGHT);
-    CameraOrtho camera(Transform(vec3(0.0f, 0.0f, -10.0f)), film, 0.15f);
+    CameraOrtho camera(Transform(vec3(0.0f, 0.0f, -10.0f)), film, 0.2f);
     CameraPersp camera2(Transform(vec3(0.0f, 0.0f, -10.0f)), film, 70.0f);
 
-    std::cout << camera.getTransform().getOrientation().getForwardVector().toString() << std::endl;
+    //std::cout << camera.getTransform().getOrientation().getForwardVector().toString() << std::endl;
 
     std::vector<Shape *> shapes;
-
-    int numShapes = 1028;
+    int numShapes = 512;
     for (size_t i = 0; i < numShapes; i++)
     {
-        shapes.push_back(new Sphere(objToWorld, worldToObj, vec3(g_rng() * 10 - 5, g_rng() * 10 - 5, g_rng() * 10 - 5), 0.5f + g_rng() * 0.5f));
+        shapes.push_back(new Sphere(objToWorld, worldToObj, vec3(g_rng() * 10 - 5, g_rng() * 10 - 5, g_rng() * 10 - 5), 0.1f + g_rng() * 0.5f));
     }
 
-    Accelerator *testaccelstruct = new KDTreeAccel(objToWorld, worldToObj, shapes, 1, 1, 128, 1);
-    testaccelstruct->build();
-    std::cout << testaccelstruct->objectBound().toString() << std::endl;
-    std::cout << testaccelstruct->worldBound().toString() << std::endl;
-
-    /*
-    std::vector<Shape *> shapes;
-    shapes.push_back(&test);
-
-    Primitive testprim(Transform(), Transform(), shapes);
-
-    testprim.intersectP(Ray());
-
-    std::cout << shapes.front()->worldBound().toString() << std::endl;
-    */
+    KDTreeAccel testaccelstruct(objToWorld, worldToObj, shapes, 1, 1, 128, 1);
+    testaccelstruct.init();
+    //std::cout << testaccelstruct.objectBound().toString() << std::endl;
+    //std::cout << testaccelstruct.worldBound().toString() << std::endl;
 
     while (running)
     {
@@ -124,23 +112,12 @@ int main(int argc, char **argv)
             for (size_t i = 0; i < camera.getFilm().getResolutionX(); i++)
             {
                 Intersection iSect;
-                float t = 0;
                 camera.calcCamRay(i, j, r_primary);
-                if (testaccelstruct->intersect(r_primary, iSect))
+                if (testaccelstruct.intersect(r_primary, iSect))
                 {
-                    camera.getFilm().setSample(i, j, vec3(1, 1, 1) * std::max(vec3::dot(iSect.getNormal(), vec3(1, 1, -1).normalize()), 0.1f));
+                    camera.getFilm().setSample(i, j, vec3(0.75f, 0.25f, 1) * std::max(vec3::dot(iSect.getNormal(), vec3(1, 1, -1).normalize()), 0.1f));
                     display.setPixel(i, j, camera.getFilm().getSample(i, j).getColor());
                 }
-                /*
-                Intersection x;
-                float t = 0;
-                camera.calcCamRay(i, j, r_primary);
-                if (test.intersect(r_primary, t, x))
-                {
-                    camera.getFilm().setSample(i, j, vec3(0, 1, 1));
-                    display.setPixel(i, j, camera.getFilm().getSample(i, j).getColor() * std::max(vec3::dot(x.getNormal(), vec3(1, 1, -1).normalize()), 0.1f));
-                }
-                */
             }
         }
 
@@ -222,7 +199,6 @@ int main(int argc, char **argv)
         frameCount++;
     }
 
-    delete testaccelstruct;
     delete[] threads;
     LOG("MirageRender, exit program successfully.");
 

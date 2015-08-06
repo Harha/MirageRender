@@ -24,29 +24,9 @@ struct KDCompareShapes
 
 struct KDNode
 {
-    KDNode(int axis = 0.0f, float pos = 0, std::vector<Shape *> data = std::vector<Shape *>(), AABB bbox = AABB()) : split_axis(axis), split_pos(pos), data(data), aabb(bbox)
-    {
-        lChild = nullptr;
-        rChild = nullptr;
-    }
-
-    ~KDNode()
-    {
-        if (lChild)
-        {
-            delete lChild;
-        }
-
-        if (rChild)
-        {
-            delete rChild;
-        }
-    }
-
-    bool isLeaf()
-    {
-        return (lChild == nullptr) && (rChild == nullptr);
-    }
+    KDNode(int axis = 0.0f, float pos = 0, std::vector<Shape *> data = std::vector<Shape *>(), AABB bbox = AABB());
+    ~KDNode();
+    bool isLeaf();
 
     int split_axis;
     float split_pos;
@@ -61,10 +41,11 @@ class KDTreeAccel : public Accelerator
 public:
     KDTreeAccel(const Transform &o2w = Transform(), const Transform &w2o = Transform(), const std::vector<Shape *> shapes = std::vector<Shape *>(),
                 const float iCost = 1, const float tCost = 1, const float maxP = 1028, const float maxD = 5, const float lThreshold = 1);
+    ~KDTreeAccel();
     virtual void update() const override;
     virtual bool intersect(const Ray &ray, Intersection &iSect) override;
     virtual bool intersectP(const Ray &ray) const override;
-    virtual void build() override;
+    virtual void init() override;
     void buildRecursive(KDNode *node, int depth, std::vector<Shape *> &shapes);
     void traverse(KDNode *node, const Ray &ray, bool &bHit, float &tHit, float &tHit0, float &tHit1, Intersection &iSect);
 private:
@@ -73,7 +54,7 @@ private:
     int m_maxPrims;
     int m_maxDepth;
     int m_leafThreshold;
-    KDNode m_root;
+    KDNode *m_root;
 };
 
 }

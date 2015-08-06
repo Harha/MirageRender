@@ -4,6 +4,7 @@
 // mirage includes
 #include "shape.h"
 #include "../macros.h"
+#include "../math/math.h"
 
 namespace mirage
 {

@@ -10,7 +10,7 @@ namespace mirage
 
 Accelerator::Accelerator(const Transform &o2w, const Transform &w2o, std::vector<Shape *> shapes) : m_objToWorld(o2w), m_worldToObj(w2o), m_shapes(shapes)
 {
-    LOG("a New accelerator was constructed! Number of shapes: " << m_shapes.size());
+
 }
 
 void Accelerator::update() const
@@ -47,7 +47,7 @@ bool Accelerator::intersectP(const Ray &ray) const
     return false;
 }
 
-void Accelerator::build()
+void Accelerator::init()
 {
     ERR("Purely virtual function Accelerator::build called!");
 }

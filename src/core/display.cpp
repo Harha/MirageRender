@@ -11,6 +11,7 @@ namespace mirage
 Display::Display(std::string title, int width, int height, int scale) : m_title(title), m_width(width), m_height(height), m_scale(scale)
 {
     init();
+
     LOG("a New display object has been initialized succesfully.");
 }
 

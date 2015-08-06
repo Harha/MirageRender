@@ -59,7 +59,6 @@ AABB AABB::expand(const float delta) const
 bool AABB::intersectP(const Ray &ray, float &tHit0, float &tHit1) const
 {
     vec3 ro = ray.getOrigin();
-    vec3 rd = ray.getDirection();
     vec3 rd_inv = ray.getDirectionInv();
 
     float t1 = (m_pmin.x - ro.x) * rd_inv.x;
@@ -80,25 +79,6 @@ bool AABB::intersectP(const Ray &ray, float &tHit0, float &tHit1) const
     tHit0 = tboxmin;
     tHit1 = tboxmax;
     return true;
-
-    /*
-    float t0 = ray.mint, t1 = ray.maxt;
-
-    for (size_t i = 0; i < 3; i++)
-    {
-        float invRayDir = ray.getDirection()[i];
-        float tNear = (m_pmin[i] - ray.getOrigin()[i]) * invRayDir;
-        float tFar = (m_pmax[i] - ray.getOrigin()[i]) * invRayDir;
-        if (tNear > tFar) std::swap(tNear, tFar);
-        t0 = tNear > t0 ? tNear : t0;
-        t1 = tFar < t1 ? tFar : t1;
-        if (t0 > t1) return false;
-    }
-
-    tHit0 = t0;
-    tHit1 = t1;
-    return true;
-    */
 }
 
 bool AABB::overlaps(const AABB &b) const
