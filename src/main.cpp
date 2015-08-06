@@ -13,13 +13,14 @@
 #include "core/input.h"
 #include "core/display.h"
 #include "core/ray.h"
-#include "core/primitive.h"
 #include "core/accelerator.h"
 #include "core/shape.h"
 #include "shapes/sphere.h"
 #include "cameras/orthographic.h"
 #include "cameras/perspective.h"
 #include "accelerators/kdtree.h"
+#include "core/vertex.h"
+#include "shapes/mesh.h"
 
 using namespace mirage;
 
@@ -67,7 +68,7 @@ int main(int argc, char **argv)
 
     // Testing...
     Transform objToWorld, worldToObj;
-    objToWorld.setPosition(vec3(0.0f, 0.0f, 0.0f));
+    objToWorld.setPosition(vec3(0.0f, -4.0f, 0.0f));
     worldToObj = objToWorld.inverse();
     Sphere test(objToWorld, worldToObj, vec3(2.0f, 0.0f, 0.0f), 1.0f);
     Sphere test2(objToWorld, worldToObj, vec3(-5.0f, 2.0f, 1.0f), 1.0f);
@@ -77,19 +78,24 @@ int main(int argc, char **argv)
     //std::cout << worldToObj.getMatrix().toString() << std::endl;
 
     Film film(WIDTH, HEIGHT);
-    CameraOrtho camera(Transform(vec3(0.0f, 0.0f, -10.0f)), film, 0.2f);
-    CameraPersp camera2(Transform(vec3(0.0f, 0.0f, -10.0f)), film, 70.0f);
+    CameraOrtho camera(Transform(vec3(0.0f, 0.0f, -128.0f)), film, 0.2f);
+    CameraPersp camera2(Transform(vec3(0.0f, 0.0f, -16.0f)), film, 70.0f);
 
     //std::cout << camera.getTransform().getOrientation().getForwardVector().toString() << std::endl;
 
+    Mesh testmesh(objToWorld, worldToObj, "dragon.obj"); // Buddha has too many trianglez, k-d tree goes nuts I guess.
+
+    // Something wrong with triangle normal interpolation
+
+    std::vector<Triangle> tris = testmesh.getTriangles();
     std::vector<Shape *> shapes;
-    int numShapes = 512;
-    for (size_t i = 0; i < numShapes; i++)
+    shapes.reserve(tris.size());
+    for (size_t i = 0; i < tris.size(); i++)
     {
-        shapes.push_back(new Sphere(objToWorld, worldToObj, vec3(g_rng() * 10 - 5, g_rng() * 10 - 5, g_rng() * 10 - 5), 0.1f + g_rng() * 0.5f));
+        shapes.push_back(&tris[i]);
     }
 
-    KDTreeAccel testaccelstruct(objToWorld, worldToObj, shapes, 1, 1, 128, 1);
+    KDTreeAccel testaccelstruct(shapes, 1, 1, 128, 1);
     testaccelstruct.init();
     //std::cout << testaccelstruct.objectBound().toString() << std::endl;
     //std::cout << testaccelstruct.worldBound().toString() << std::endl;
@@ -115,7 +121,7 @@ int main(int argc, char **argv)
                 camera.calcCamRay(i, j, r_primary);
                 if (testaccelstruct.intersect(r_primary, iSect))
                 {
-                    camera.getFilm().setSample(i, j, vec3(0.75f, 0.25f, 1) * std::max(vec3::dot(iSect.getNormal(), vec3(1, 1, -1).normalize()), 0.1f));
+                    camera.getFilm().setSample(i, j, vec3(1, 1, 1) * std::max(vec3::dot(iSect.getNormal(), vec3(1, 1, -1).normalize()), 0.1f));
                     display.setPixel(i, j, camera.getFilm().getSample(i, j).getColor());
                 }
             }
@@ -135,36 +141,44 @@ int main(int argc, char **argv)
         // Process input
         if (g_keys[SDL_SCANCODE_W])
         {
-            camera.move(camera.getTransform().getOrientation().getForwardVector(), deltaTime);
+            camera.move(camera.getTransform().getOrientation().getForwardVector(), deltaTime * 8);
         }
         else if (g_keys[SDL_SCANCODE_S])
         {
-            camera.move(camera.getTransform().getOrientation().getForwardVector(), -deltaTime);
+            camera.move(camera.getTransform().getOrientation().getForwardVector(), -deltaTime * 8);
         }
         if (g_keys[SDL_SCANCODE_A])
         {
-            camera.move(camera.getTransform().getOrientation().getRightVector(), -deltaTime);
+            camera.move(camera.getTransform().getOrientation().getRightVector(), -deltaTime * 8);
         }
         else if (g_keys[SDL_SCANCODE_D])
         {
-            camera.move(camera.getTransform().getOrientation().getRightVector(), deltaTime);
+            camera.move(camera.getTransform().getOrientation().getRightVector(), deltaTime * 8);
         }
 
         if (g_keys[SDL_SCANCODE_UP])
         {
-            camera.rotate(camera.getTransform().getOrientation().getRightVector(), -deltaTime * 32);
+            camera.rotate(camera.getTransform().getOrientation().getRightVector(), -deltaTime * 64);
         }
-        if (g_keys[SDL_SCANCODE_DOWN])
+        else if (g_keys[SDL_SCANCODE_DOWN])
         {
-            camera.rotate(camera.getTransform().getOrientation().getRightVector(), deltaTime * 32);
+            camera.rotate(camera.getTransform().getOrientation().getRightVector(), deltaTime * 64);
         }
         if (g_keys[SDL_SCANCODE_LEFT])
         {
-            camera.rotate(camera.getTransform().getOrientation().getUpVector(), -deltaTime * 32);
+            camera.rotate(camera.getTransform().getOrientation().getUpVector(), -deltaTime * 64);
         }
-        if (g_keys[SDL_SCANCODE_RIGHT])
+        else if (g_keys[SDL_SCANCODE_RIGHT])
         {
-            camera.rotate(camera.getTransform().getOrientation().getUpVector(), deltaTime * 32);
+            camera.rotate(camera.getTransform().getOrientation().getUpVector(), deltaTime * 64);
+        }
+        if (g_keys[SDL_SCANCODE_Q])
+        {
+            camera.rotate(camera.getTransform().getOrientation().getForwardVector(), -deltaTime * 64);
+        }
+        else if (g_keys[SDL_SCANCODE_E])
+        {
+            camera.rotate(camera.getTransform().getOrientation().getForwardVector(), deltaTime * 64);
         }
 
         // Process SDL events

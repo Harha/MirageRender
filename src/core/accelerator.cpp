@@ -8,7 +8,7 @@
 namespace mirage
 {
 
-Accelerator::Accelerator(const Transform &o2w, const Transform &w2o, std::vector<Shape *> shapes) : m_objToWorld(o2w), m_worldToObj(w2o), m_shapes(shapes)
+Accelerator::Accelerator(std::vector<Shape *> shapes) : m_shapes(shapes)
 {
 
 }
@@ -32,7 +32,14 @@ AABB Accelerator::objectBound() const
 
 AABB Accelerator::worldBound() const
 {
-    return objectBound() * m_objToWorld.getMatrix();
+    AABB result = m_shapes[0]->worldBound();
+
+    for (size_t i = 0; i < m_shapes.size(); i++)
+    {
+        result = result.addBox(m_shapes[i]->worldBound());
+    }
+
+    return result;
 }
 
 bool Accelerator::intersect(const Ray &ray, Intersection &iSect)

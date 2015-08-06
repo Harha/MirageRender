@@ -2,7 +2,7 @@
 #define ACCELERATOR_H
 
 // mirage includes
-#include "primitive.h"
+#include "shape.h"
 
 namespace mirage
 {
@@ -10,7 +10,7 @@ namespace mirage
 class Accelerator
 {
 public:
-    Accelerator(const Transform &o2w = Transform(), const Transform &w2o = Transform(), const std::vector<Shape *> shapes = std::vector<Shape *>());
+    Accelerator(const std::vector<Shape *> shapes = std::vector<Shape *>());
     virtual void update() const = 0;
     virtual AABB objectBound() const;
     virtual AABB worldBound() const;
@@ -19,8 +19,6 @@ public:
     virtual void init() = 0;
 private:
 protected:
-    const Transform &m_objToWorld;
-    const Transform &m_worldToObj;
     std::vector<Shape *> m_shapes;
 };
 

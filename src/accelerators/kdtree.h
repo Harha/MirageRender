@@ -39,8 +39,8 @@ struct KDNode
 class KDTreeAccel : public Accelerator
 {
 public:
-    KDTreeAccel(const Transform &o2w = Transform(), const Transform &w2o = Transform(), const std::vector<Shape *> shapes = std::vector<Shape *>(),
-                const float iCost = 1, const float tCost = 1, const float maxP = 1028, const float maxD = 5, const float lThreshold = 1);
+    KDTreeAccel(const std::vector<Shape *> shapes = std::vector<Shape *>(), const float iCost = 1, const float tCost = 1,
+                const float maxP = 1028, const float maxD = 5, const float lThreshold = 1);
     ~KDTreeAccel();
     virtual void update() const override;
     virtual bool intersect(const Ray &ray, Intersection &iSect) override;

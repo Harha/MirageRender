@@ -10,7 +10,7 @@ LDFLAGS = -Wl,--as-needed
 ifeq ($(OS), Windows_NT)
   LDLIBS = -lmingw32 -lSDL2main
 endif
-LDLIBS += -lSDL2 -lstdc++
+LDLIBS += -lSDL2 -lstdc++ -lm
 
 # Compiler
 CXX = gcc
@@ -75,4 +75,7 @@ init:
 	@$(MKDIR) $(BINDIR)
 	@$(MKDIR) $(BINDIR)/core
 	@$(MKDIR) $(BINDIR)/math
+	@$(MKDIR) $(BINDIR)/shapes
+	@$(MKDIR) $(BINDIR)/cameras
+	@$(MKDIR) $(BINDIR)/accelerators
 	@echo "Initialization done."

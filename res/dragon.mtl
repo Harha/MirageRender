@@ -1,0 +1,11 @@
+# Blender MTL File: 'dragon.blend'
+# Material Count: 1
+
+newmtl material
+Ns 29.411765
+Ka 0.000000 0.000000 0.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.350000 0.350000 0.350000
+Ni 1.000000
+d 1.000000
+illum 2

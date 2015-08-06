@@ -29,9 +29,9 @@ bool KDNode::isLeaf()
     return (lChild == nullptr) && (rChild == nullptr);
 }
 
-KDTreeAccel::KDTreeAccel(const Transform &o2w, const Transform &w2o, std::vector<Shape *> shapes,
-                         const float iCost, const float tCost, const float maxP, const float maxD, const float lThreshold)
-    : Accelerator(o2w, w2o, shapes), m_iSectCost(iCost), m_travCost(tCost),
+KDTreeAccel::KDTreeAccel(std::vector<Shape *> shapes, const float iCost, const float tCost,
+                         const float maxP, const float maxD, const float lThreshold)
+    : Accelerator(shapes), m_iSectCost(iCost), m_travCost(tCost),
       m_maxPrims(maxP), m_maxDepth(maxD), m_leafThreshold(lThreshold)
 {
     LOG("a New k-d tree accelerator object was created!");
@@ -68,7 +68,7 @@ bool KDTreeAccel::intersectP(const Ray &ray) const
 void KDTreeAccel::init()
 {
     LOG("Started building the k-d tree...");
-    std::clock_t startTime = std::clock(); // Re-using my old code
+    std::clock_t startTime = std::clock();
 
     m_root = new KDNode;
     buildRecursive(m_root, 0, m_shapes);
@@ -77,7 +77,7 @@ void KDTreeAccel::init()
     std::clock_t time = endTime - startTime;
     float duration = time / (double) CLOCKS_PER_SEC;
 
-    LOG("K-d tree build finished! Time taken: " << duration);
+    LOG("K-d tree build finished! Time taken: " << duration << "s");
 }
 
 void KDTreeAccel::buildRecursive(KDNode *node, int depth, std::vector<Shape *> &shapes)
@@ -90,6 +90,13 @@ void KDTreeAccel::buildRecursive(KDNode *node, int depth, std::vector<Shape *> &
     }
     node->aabb = node_bbox;
 
+    // Create a leaf if recursion limit was reached
+    if (shapes.size() <= m_leafThreshold)
+    {
+        node->data.insert(node->data.end(), shapes.begin(), shapes.end());
+        return;
+    }
+
     // Split along the longest axis, find it...
     const int axis = node_bbox.getMaximumExtent();
     node->split_axis = axis;
@@ -98,13 +105,6 @@ void KDTreeAccel::buildRecursive(KDNode *node, int depth, std::vector<Shape *> &
     const int median = shapes.size() >> 1;
     std::nth_element(shapes.begin(), shapes.begin() + median, shapes.end(), KDCompareShapes(axis));
     node->split_pos = shapes[median]->worldBound().getCentroid()[axis];
-
-    // Create a leaf
-    if (shapes.size() <= m_leafThreshold)
-    {
-        node->data.insert(node->data.end(), shapes.begin(), shapes.end());
-        return;
-    }
 
     // Create branches
     node->lChild = new KDNode;
