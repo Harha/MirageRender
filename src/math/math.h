@@ -10,7 +10,7 @@ namespace mirage
 
 // Constant definitions
 #define PI 3.14159265359f
-#define EPSILON 1e-3f
+#define EPSILON 1e-6f
 
 // Static objects
 static std::mt19937 g_randomGen(time(NULL));

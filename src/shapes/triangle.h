@@ -14,10 +14,10 @@ namespace mirage
 class Triangle : public Shape
 {
 public:
-    Triangle(const Transform &o2w, const Transform &w2o, std::array<Vertex, 3> vertices = { });
+    Triangle(const Transform &o2w, const Transform &w2o, Material m = Material(), std::array<Vertex, 3> vertices = { });
     virtual void update() override;
     virtual AABB objectBound() const override;
-    virtual bool intersect(const Ray &ray, float &tHit, Intersection &iSect) const;
+    virtual bool intersect(const Ray &ray, float &tHit, Intersection &iSect) const override;
     virtual bool intersectP(const Ray &ray) const override;
     virtual float getSurfaceArea() const override;
     void getBarycentric(const vec3 &p, const vec3 &e1, const vec3 &e2, float &u, float &v, float &w) const;

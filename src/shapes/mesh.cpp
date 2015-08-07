@@ -11,7 +11,7 @@
 namespace mirage
 {
 
-Mesh::Mesh(const Transform &o2w, const Transform &w2o, std::string fileName) : Shape(o2w, w2o), m_mdlFileName(fileName)
+Mesh::Mesh(const Transform &o2w, const Transform &w2o, Material m, std::string fileName) : Shape(o2w, w2o, m), m_mdlFileName(fileName)
 {
     if (loadObj() != 0)
     {
@@ -42,11 +42,13 @@ AABB Mesh::objectBound() const
 bool Mesh::intersect(const Ray &ray, float &tHit, Intersection &iSect) const
 {
     ERR("Unimplemented function Mesh::intersect was called!");
+    return false;
 }
 
 bool Mesh::intersectP(const Ray &ray) const
 {
     ERR("Unimplemented function Mesh::intersectP was called!");
+    return false;
 }
 
 float Mesh::getSurfaceArea() const
@@ -207,11 +209,11 @@ int Mesh::loadObj()
         verts[1].setPosition(vertices[indices[i].vb]);
         verts[2].setPosition(vertices[indices[i].vc]);
 
-        // Material mtl = m_material; right.. xD No materials yet, will add that after I get this working...
+        Material mtl = m_material;
 
         if (!str_currentMaterial.empty() || !materials.empty())
         {
-            //mtl = materials.at(indices[i].material);
+            mtl = materials.at(indices[i].material);
         }
 
         if (normals.size() > 0)
@@ -221,7 +223,7 @@ int Mesh::loadObj()
             verts[2].setNormal(normals[indices[i].nc]);
         }
 
-        m_triangles.push_back(Triangle(m_objToWorld, m_worldToObj, verts));
+        m_triangles.push_back(Triangle(m_objToWorld, m_worldToObj, mtl, verts));
     }
 
     return 0;

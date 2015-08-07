@@ -24,7 +24,7 @@ struct face
 class Mesh : public Shape
 {
 public:
-    Mesh(const Transform &o2w, const Transform &w2o, std::string fileName = "null");
+    Mesh(const Transform &o2w, const Transform &w2o, Material m = Material(), std::string fileName = "null");
     virtual void update() override;
     virtual AABB objectBound() const override;
     virtual bool intersect(const Ray &ray, float &tHit, Intersection &iSect) const;

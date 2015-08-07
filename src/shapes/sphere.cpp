@@ -8,7 +8,7 @@
 namespace mirage
 {
 
-Sphere::Sphere(const Transform &o2w, const Transform &w2o, vec3 c, float r) : Shape(o2w, w2o), m_centerInit(c), m_radiusInit(r)
+Sphere::Sphere(const Transform &o2w, const Transform &w2o, Material m, vec3 c, float r) : Shape(o2w, w2o, m), m_centerInit(c), m_radiusInit(r)
 {
     update();
 }
@@ -64,6 +64,7 @@ bool Sphere::intersect(const Ray &ray, float &tHit, Intersection &iSect) const
     tHit = t;
     iSect.setPosition(ray(t));
     iSect.setNormal((iSect.getPosition() - C) / r);
+    iSect.setMaterial(m_material);
 
     return true;
 }

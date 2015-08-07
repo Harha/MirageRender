@@ -8,7 +8,7 @@
 namespace mirage
 {
 
-Triangle::Triangle(const Transform &o2w, const Transform &w2o, std::array<Vertex, 3> vertices) : Shape(o2w, w2o), m_verticesInit(vertices)
+Triangle::Triangle(const Transform &o2w, const Transform &w2o, Material m, std::array<Vertex, 3> vertices) : Shape(o2w, w2o, m), m_verticesInit(vertices)
 {
     update();
 }
@@ -72,6 +72,7 @@ bool Triangle::intersect(const Ray &ray, float &tHit, Intersection &iSect) const
 
     iSect.setPosition(hit);
     iSect.setNormal(N.normalize());
+    iSect.setMaterial(m_material);
 
     return true;
 }
@@ -79,7 +80,7 @@ bool Triangle::intersect(const Ray &ray, float &tHit, Intersection &iSect) const
 bool Triangle::intersectP(const Ray &ray) const
 {
     vec3 P, Q, T;
-    float d, inv_d, u, v, t, b0, b1, b2;
+    float d, inv_d, u, v, t;
 
     std::array<Vertex, 3> vertices = m_verticesTransformed;
 
@@ -123,7 +124,7 @@ void Triangle::getBarycentric(const vec3 &p, const vec3 &e1, const vec3 &e2, flo
     // Find the point from first vertice to the requested point
     const vec3 w = p - m_verticesTransformed[0].getPosition();
 
-    // Find the perpedicular vectors
+    // Find the perpendicular vectors
     const vec3 vCrossW = vec3::cross(e1, w);
     const vec3 uCrossW = vec3::cross(e2, w);
     const vec3 uCrossV = vec3::cross(e2, e1);

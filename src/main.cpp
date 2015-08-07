@@ -68,24 +68,17 @@ int main(int argc, char **argv)
 
     // Testing...
     Transform objToWorld, worldToObj;
-    objToWorld.setPosition(vec3(0.0f, -4.0f, 0.0f));
+    objToWorld.setPosition(vec3(0.0f, 0.0f, 0.0f));
+    //objToWorld.setScale(vec3(16, 16, 16));
     worldToObj = objToWorld.inverse();
-    Sphere test(objToWorld, worldToObj, vec3(2.0f, 0.0f, 0.0f), 1.0f);
-    Sphere test2(objToWorld, worldToObj, vec3(-5.0f, 2.0f, 1.0f), 1.0f);
-    //std::cout << test.objectBound().toString() << std::endl;
-    //std::cout << test.worldBound().toString() << std::endl;
-    //std::cout << objToWorld.getMatrix().toString() << std::endl;
-    //std::cout << worldToObj.getMatrix().toString() << std::endl;
 
     Film film(WIDTH, HEIGHT);
-    CameraOrtho camera(Transform(vec3(0.0f, 0.0f, -128.0f)), film, 0.2f);
-    CameraPersp camera2(Transform(vec3(0.0f, 0.0f, -16.0f)), film, 70.0f);
+    CameraOrtho camera2(Transform(vec3(0.0f, 0.0f, -10280.0f)), film, 0.5f);
+    CameraPersp camera(Transform(vec3(0.0f, 0.0f, -16.0f)), film, 70.0f);
 
     //std::cout << camera.getTransform().getOrientation().getForwardVector().toString() << std::endl;
 
-    Mesh testmesh(objToWorld, worldToObj, "dragon.obj"); // Buddha has too many trianglez, k-d tree goes nuts I guess.
-
-    // Something wrong with triangle normal interpolation
+    Mesh testmesh(objToWorld, worldToObj, Material(), "dragon.obj");
 
     std::vector<Triangle> tris = testmesh.getTriangles();
     std::vector<Shape *> shapes;
@@ -121,7 +114,7 @@ int main(int argc, char **argv)
                 camera.calcCamRay(i, j, r_primary);
                 if (testaccelstruct.intersect(r_primary, iSect))
                 {
-                    camera.getFilm().setSample(i, j, vec3(1, 1, 1) * std::max(vec3::dot(iSect.getNormal(), vec3(1, 1, -1).normalize()), 0.1f));
+                    camera.getFilm().setSample(i, j, iSect.getMaterial().getKd() * std::max(vec3::dot(iSect.getNormal(), vec3(1, 1, -1).normalize()), 0.25f));
                     display.setPixel(i, j, camera.getFilm().getSample(i, j).getColor());
                 }
             }
