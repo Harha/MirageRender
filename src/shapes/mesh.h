@@ -27,10 +27,11 @@ public:
     Mesh(const Transform &o2w, const Transform &w2o, Material m = Material(), std::string fileName = "null");
     virtual void update() override;
     virtual AABB objectBound() const override;
-    virtual bool intersect(const Ray &ray, float &tHit, Intersection &iSect) const;
+    virtual AABB worldBound() const override;
+    virtual bool intersect(const Ray &ray, Intersection &iSect) const override;
     virtual bool intersectP(const Ray &ray) const override;
     virtual float getSurfaceArea() const override;
-    std::vector<Triangle> &getTriangles(); // lets copy them, for now.
+    std::vector<Shape *> getShapes();
 private:
     int loadObj();
     int loadMTL(std::map<std::string, Material> &materials);

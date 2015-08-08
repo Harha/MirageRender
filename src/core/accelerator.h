@@ -15,11 +15,12 @@ public:
     virtual AABB objectBound() const;
     virtual AABB worldBound() const;
     virtual bool intersect(const Ray &ray, Intersection &iSect) = 0;
-    virtual bool intersectP(const Ray &ray) const = 0;
+    virtual bool intersectP(const Ray &ray) = 0;
     virtual void init() = 0;
 private:
 protected:
     std::vector<Shape *> m_shapes;
+    bool m_initialized;
 };
 
 }

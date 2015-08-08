@@ -59,10 +59,14 @@ bool KDTreeAccel::intersect(const Ray &ray, Intersection &iSect)
     return result;
 }
 
-bool KDTreeAccel::intersectP(const Ray &ray) const
+bool KDTreeAccel::intersectP(const Ray &ray)
 {
-    ERR("Unimplemented function KDTreeAccel::intersectP called!");
-    return false;
+    bool result = false;
+    float tHit = INFINITY;
+    float tHit0 = 0.0f;
+    float tHit1 = INFINITY;
+    traverseP(m_root, ray, result, tHit, tHit0, tHit1);
+    return result;
 }
 
 void KDTreeAccel::init()
@@ -77,6 +81,7 @@ void KDTreeAccel::init()
     std::clock_t time = endTime - startTime;
     float duration = time / (double) CLOCKS_PER_SEC;
 
+    m_initialized = true;
     LOG("K-d tree build finished! Time taken: " << duration << "s");
 }
 
@@ -123,24 +128,22 @@ void KDTreeAccel::buildRecursive(KDNode *node, int depth, std::vector<Shape *> &
 
 void KDTreeAccel::traverse(KDNode *node, const Ray &ray, bool &bHit, float &tHit, float &tHit0, float &tHit1, Intersection &iSect)
 {
+    // Intersect against each shape in the node if it's a leaf node
     if (node->isLeaf())
     {
-        bool bInit = false;
         float tInit = tHit1;
-
         for (auto *s : node->data)
         {
             Intersection iSectInit;
-            bInit = s->intersect(ray, tInit, iSectInit);
-
-            if (bInit && tInit < tHit)
+            if (s->intersect(ray, iSectInit) && tInit < tHit)
             {
-                bHit = bInit;
+                bHit = true;
                 tHit = tInit;
                 iSect = iSectInit;
             }
         }
     }
+    // Otherwise intersect & possibly traverse child nodes
     else
     {
         if (node->lChild->aabb.intersectP(ray, tHit0, tHit1))
@@ -150,6 +153,34 @@ void KDTreeAccel::traverse(KDNode *node, const Ray &ray, bool &bHit, float &tHit
         if (node->rChild->aabb.intersectP(ray, tHit0, tHit1))
         {
             traverse(node->rChild, ray, bHit, tHit, tHit0, tHit1, iSect);
+        }
+    }
+}
+
+void KDTreeAccel::traverseP(KDNode *node, const Ray &ray, bool &bHit, float &tHit, float &tHit0, float &tHit1)
+{
+    // Find first intersection in the leaf, don't care about z-sorting
+    if (node->isLeaf())
+    {
+        for (auto *s : node->data)
+        {
+            if (s->intersectP(ray))
+            {
+                bHit = true;
+                return;
+            }
+        }
+    }
+    // Otherwise intersect & possibly traverse child nodes
+    else
+    {
+        if (node->lChild->aabb.intersectP(ray, tHit0, tHit1))
+        {
+            traverseP(node->lChild, ray, bHit, tHit, tHit0, tHit1);
+        }
+        if (node->rChild->aabb.intersectP(ray, tHit0, tHit1))
+        {
+            traverseP(node->rChild, ray, bHit, tHit, tHit0, tHit1);
         }
     }
 }

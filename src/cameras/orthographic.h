@@ -10,7 +10,8 @@ namespace mirage
 class CameraOrtho : public Camera
 {
 public:
-    CameraOrtho(Transform transform = Transform(), Film film = Film(), float zoom = 0.1f);
+    CameraOrtho(Transform transform = Transform(), Film film = Film(), float speed = 16, float sensitivity = 32, float zoom = 0.1f);
+    virtual void update(float dt, bool keys[256]) override;
     virtual void calcCamRay(const int x, const int y, Ray &ray) const override;
 private:
     float m_zoom;

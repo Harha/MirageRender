@@ -10,7 +10,8 @@ namespace mirage
 class CameraPersp : public Camera
 {
 public:
-    CameraPersp(Transform transform = Transform(), Film film = Film(), float fov = 70.0f);
+    CameraPersp(Transform transform = Transform(), Film film = Film(), float speed = 16, float sensitivity = 32, float fov = 70.0f);
+    virtual void update(float dt, bool keys[256]) override;
     virtual void calcCamRay(const int x, const int y, Ray &ray) const override;
     void setFoV(float fov);
     float getFoV() const;

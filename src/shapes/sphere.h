@@ -13,7 +13,8 @@ public:
     Sphere(const Transform &o2w, const Transform &w2o, Material m = Material(), vec3 c = vec3(), float r = 1.0f);
     virtual void update() override;
     virtual AABB objectBound() const override;
-    virtual bool intersect(const Ray &ray, float &tHit, Intersection &iSect) const override;
+    virtual AABB worldBound() const override;
+    virtual bool intersect(const Ray &ray, Intersection &iSect) const override;
     virtual bool intersectP(const Ray &ray) const override;
     virtual float getSurfaceArea() const override;
     vec3 getCenterInit() const;

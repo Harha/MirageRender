@@ -23,8 +23,8 @@ DEBUG ?= 0
 ifeq ($(DEBUG), 1)
 	CXXFLAGS += Og -g
 else
-	CXXFLAGS += -Ofast
-	LDFLAGS += -Ofast
+	CXXFLAGS += -Ofast -flto
+	LDFLAGS += -Ofast -flto
 endif
 
 # src & bin directories
@@ -41,12 +41,14 @@ CPPS += $(wildcard $(SRCDIR)/math/*.cpp)
 CPPS += $(wildcard $(SRCDIR)/shapes/*.cpp)
 CPPS += $(wildcard $(SRCDIR)/cameras/*.cpp)
 CPPS += $(wildcard $(SRCDIR)/accelerators/*.cpp)
+CPPS += $(wildcard $(SRCDIR)/renderers/*.cpp)
 INCS := $(wildcard $(SRCDIR)/*.h)
 INCS += $(wildcard $(SRCDIR)/core/*.h)
 INCS += $(wildcard $(SRCDIR)/math/*.h)
 INCS += $(wildcard $(SRCDIR)/shapes/*.h)
 INCS += $(wildcard $(SRCDIR)/cameras/*.h)
 INCS += $(wildcard $(SRCDIR)/accelerators/*.h)
+INCS += $(wildcard $(SRCDIR)/renderers/*.h)
 OBJS := $(CPPS:$(SRCDIR)/%.cpp=$(BINDIR)/%.o)
 
 # Build target

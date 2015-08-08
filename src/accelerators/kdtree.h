@@ -44,10 +44,11 @@ public:
     ~KDTreeAccel();
     virtual void update() const override;
     virtual bool intersect(const Ray &ray, Intersection &iSect) override;
-    virtual bool intersectP(const Ray &ray) const override;
+    virtual bool intersectP(const Ray &ray) override;
     virtual void init() override;
     void buildRecursive(KDNode *node, int depth, std::vector<Shape *> &shapes);
     void traverse(KDNode *node, const Ray &ray, bool &bHit, float &tHit, float &tHit0, float &tHit1, Intersection &iSect);
+    void traverseP(KDNode *node, const Ray &ray, bool &bHit, float &tHit, float &tHit0, float &tHit1);
 private:
     int m_iSectCost;
     int m_travCost;

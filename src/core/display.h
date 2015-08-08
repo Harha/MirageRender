@@ -21,7 +21,7 @@ public:
     ~Display();
     void render();
     void clear(const Uint32 &color);
-    void setPixel(const int x, const int y, const vec3 &v);
+    void setPixel(const int x, const int y, vec3 v);
     void setTitle(std::string title);
 private:
     void init();

@@ -21,6 +21,8 @@
 #include "accelerators/kdtree.h"
 #include "core/vertex.h"
 #include "shapes/mesh.h"
+#include "core/scene.h"
+#include "renderers/pathtracer.h"
 
 using namespace mirage;
 
@@ -66,32 +68,56 @@ int main(int argc, char **argv)
     float fps = 0;
     bool running = true;
 
-    // Testing...
-    Transform objToWorld, worldToObj;
-    objToWorld.setPosition(vec3(0.0f, 0.0f, 0.0f));
-    //objToWorld.setScale(vec3(16, 16, 16));
-    worldToObj = objToWorld.inverse();
-
+    // Main film
     Film film(WIDTH, HEIGHT);
-    CameraOrtho camera2(Transform(vec3(0.0f, 0.0f, -10280.0f)), film, 0.5f);
-    CameraPersp camera(Transform(vec3(0.0f, 0.0f, -16.0f)), film, 70.0f);
 
-    //std::cout << camera.getTransform().getOrientation().getForwardVector().toString() << std::endl;
+    // 2 Main cameras
+    CameraOrtho cam_ortho(Transform(vec3(0, -1, -128)), film, 8, 64, 0.05f);
+    CameraPersp cam_persp(Transform(vec3(0, 0.5f, -10)), film, 8, 64, 70.0f);
 
-    Mesh testmesh(objToWorld, worldToObj, Material(), "dragon.obj");
+    // Main camera pointer
+    Camera *camera = &cam_ortho;
 
-    std::vector<Triangle> tris = testmesh.getTriangles();
-    std::vector<Shape *> shapes;
-    shapes.reserve(tris.size());
-    for (size_t i = 0; i < tris.size(); i++)
+    // Create 1 area light source
+    Transform lTransformW;
+    Transform lTransformO;
+    Sphere light(lTransformW, lTransformO, Material(vec3(), vec3(), vec3(1, 1, 1) * 10), vec3(8, -2, -4), 2.0f);
+    Sphere lightb(lTransformW, lTransformO, Material(vec3(), vec3(), vec3(0, 0.25f, 1) * 10), vec3(-8, 5, -4), 2.0f);
+
+    // Create 1 mesh to render
+    //Mesh sponza(Transform(), Transform(), Material(vec3(1, 1, 1)), "sponza.obj");
+    Mesh dragon(Transform(vec3(0, -4, 0), quaternion().euler(0, 1, 0, 170), vec3(1, 1, 1)), Transform(), Material(vec3(1, 1, 1)), "dragon.obj");
+    Mesh bunny(Transform(vec3(-8, -4, -4), quaternion().euler(0, 1, 0, 170), vec3(5, 5, 5)), Transform(), Material(vec3(0.9f, 0.1f, 0.1f)), "bunny.obj");
+    Mesh plane(Transform(vec3(0, -4, 0), quaternion(), vec3(16, 16, 16)), Transform(), Material(vec3(1, 1, 1)), "plane.obj");
+
+    std::vector<Shape *> shapes = dragon.getShapes();
+    std::vector<Shape *> plane_shapes = plane.getShapes();
+    std::vector<Shape *> bunny_shapes = bunny.getShapes();
+
+    for (size_t i = 0; i < bunny_shapes.size(); i++)
     {
-        shapes.push_back(&tris[i]);
+        shapes.push_back(bunny_shapes[i]);
     }
 
-    KDTreeAccel testaccelstruct(shapes, 1, 1, 128, 1);
-    testaccelstruct.init();
-    //std::cout << testaccelstruct.objectBound().toString() << std::endl;
-    //std::cout << testaccelstruct.worldBound().toString() << std::endl;
+    for (size_t i = 0; i < plane_shapes.size(); i++)
+    {
+        shapes.push_back(plane_shapes[i]);
+    }
+
+    shapes.push_back(&light);
+    shapes.push_back(&lightb);
+
+    // Create 1 acceleration structure
+    KDTreeAccel accelerator(shapes);
+
+    // Build the tree
+    accelerator.init();
+
+    // Initialize a new scene
+    Scene scene(&accelerator, camera);
+
+    // Initialize pathtracer renderer
+    Pathtracer ptracer(5);
 
     while (running)
     {
@@ -100,27 +126,6 @@ int main(int argc, char **argv)
         deltaTime = static_cast<float>(currentTime - lastTime) / 1000.0f;
         fps = frameCount / (static_cast<float>(SDL_GetTicks() - startTime) / 1000.0f);
         lastTime = currentTime;
-
-        // Update and render scene
-        display.clear(0x00000000);
-
-        // Test rendering of a k-d tree of shapes
-        Ray r_primary;
-        for (size_t j = 0; j < camera.getFilm().getResolutionY(); j++)
-        {
-            for (size_t i = 0; i < camera.getFilm().getResolutionX(); i++)
-            {
-                Intersection iSect;
-                camera.calcCamRay(i, j, r_primary);
-                if (testaccelstruct.intersect(r_primary, iSect))
-                {
-                    camera.getFilm().setSample(i, j, iSect.getMaterial().getKd() * std::max(vec3::dot(iSect.getNormal(), vec3(1, 1, -1).normalize()), 0.25f));
-                    display.setPixel(i, j, camera.getFilm().getSample(i, j).getColor());
-                }
-            }
-        }
-
-        display.render();
 
         // Display info
         if (frameCount % 16 == 1)
@@ -131,48 +136,12 @@ int main(int argc, char **argv)
             display.setTitle(title);
         }
 
-        // Process input
-        if (g_keys[SDL_SCANCODE_W])
-        {
-            camera.move(camera.getTransform().getOrientation().getForwardVector(), deltaTime * 8);
-        }
-        else if (g_keys[SDL_SCANCODE_S])
-        {
-            camera.move(camera.getTransform().getOrientation().getForwardVector(), -deltaTime * 8);
-        }
-        if (g_keys[SDL_SCANCODE_A])
-        {
-            camera.move(camera.getTransform().getOrientation().getRightVector(), -deltaTime * 8);
-        }
-        else if (g_keys[SDL_SCANCODE_D])
-        {
-            camera.move(camera.getTransform().getOrientation().getRightVector(), deltaTime * 8);
-        }
+        // Update everything
+        camera->update(deltaTime, g_keys);
 
-        if (g_keys[SDL_SCANCODE_UP])
-        {
-            camera.rotate(camera.getTransform().getOrientation().getRightVector(), -deltaTime * 64);
-        }
-        else if (g_keys[SDL_SCANCODE_DOWN])
-        {
-            camera.rotate(camera.getTransform().getOrientation().getRightVector(), deltaTime * 64);
-        }
-        if (g_keys[SDL_SCANCODE_LEFT])
-        {
-            camera.rotate(camera.getTransform().getOrientation().getUpVector(), -deltaTime * 64);
-        }
-        else if (g_keys[SDL_SCANCODE_RIGHT])
-        {
-            camera.rotate(camera.getTransform().getOrientation().getUpVector(), deltaTime * 64);
-        }
-        if (g_keys[SDL_SCANCODE_Q])
-        {
-            camera.rotate(camera.getTransform().getOrientation().getForwardVector(), -deltaTime * 64);
-        }
-        else if (g_keys[SDL_SCANCODE_E])
-        {
-            camera.rotate(camera.getTransform().getOrientation().getForwardVector(), deltaTime * 64);
-        }
+        // Render everything
+        ptracer.render(&scene, &display);
+        display.render();
 
         // Process SDL events
         while (SDL_PollEvent(&event))

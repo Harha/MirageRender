@@ -26,10 +26,15 @@ void Triangle::update()
 
 AABB Triangle::objectBound() const
 {
-    return AABB(getMinimum(), getMaximum());
+    return AABB(getMinimum(m_verticesInit), getMaximum(m_verticesInit));
 }
 
-bool Triangle::intersect(const Ray &ray, float &tHit, Intersection &iSect) const
+AABB Triangle::worldBound() const
+{
+    return AABB(getMinimum(m_verticesTransformed), getMaximum(m_verticesTransformed));
+}
+
+bool Triangle::intersect(const Ray &ray, Intersection &iSect) const
 {
     vec3 P, Q, T;
     float d, inv_d, u, v, t, b0, b1, b2;
@@ -133,29 +138,31 @@ void Triangle::getBarycentric(const vec3 &p, const vec3 &e1, const vec3 &e2, flo
     const float denom = uCrossV.length();
     const float r = vCrossW.length() / denom;
     const float t = uCrossW.length() / denom;
+
+    // Insert found values to the output variables
     b0 = 1.0f - r - t;
     b1 = r;
     b2 = t;
 }
 
-vec3 Triangle::getMinimum() const
+vec3 Triangle::getMinimum(const std::array<Vertex, 3> &v) const
 {
     vec3 result;
 
-    result.x = std::min(m_verticesInit[0].getPosition().x, std::min(m_verticesInit[1].getPosition().x, m_verticesInit[2].getPosition().x));
-    result.y = std::min(m_verticesInit[0].getPosition().y, std::min(m_verticesInit[1].getPosition().y, m_verticesInit[2].getPosition().y));
-    result.z = std::min(m_verticesInit[0].getPosition().z, std::min(m_verticesInit[1].getPosition().z, m_verticesInit[2].getPosition().z));
+    result.x = std::min(v[0].getPosition().x, std::min(v[1].getPosition().x, v[2].getPosition().x));
+    result.y = std::min(v[0].getPosition().y, std::min(v[1].getPosition().y, v[2].getPosition().y));
+    result.z = std::min(v[0].getPosition().z, std::min(v[1].getPosition().z, v[2].getPosition().z));
 
     return result;
 }
 
-vec3 Triangle::getMaximum() const
+vec3 Triangle::getMaximum(const std::array<Vertex, 3> &v) const
 {
     vec3 result;
 
-    result.x = std::max(m_verticesInit[0].getPosition().x, std::max(m_verticesInit[1].getPosition().x, m_verticesInit[2].getPosition().x));
-    result.y = std::max(m_verticesInit[0].getPosition().y, std::max(m_verticesInit[1].getPosition().y, m_verticesInit[2].getPosition().y));
-    result.z = std::max(m_verticesInit[0].getPosition().z, std::max(m_verticesInit[1].getPosition().z, m_verticesInit[2].getPosition().z));
+    result.x = std::max(v[0].getPosition().x, std::max(v[1].getPosition().x, v[2].getPosition().x));
+    result.y = std::max(v[0].getPosition().y, std::max(v[1].getPosition().y, v[2].getPosition().y));
+    result.z = std::max(v[0].getPosition().z, std::max(v[1].getPosition().z, v[2].getPosition().z));
 
     return result;
 }

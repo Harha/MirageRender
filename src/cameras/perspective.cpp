@@ -1,6 +1,9 @@
 // std includes
 #include <iostream>
 
+// lib includes
+#include "SDL2/SDL.h"
+
 // mirage includes
 #include "perspective.h"
 #include "../macros.h"
@@ -10,9 +13,65 @@
 namespace mirage
 {
 
-CameraPersp::CameraPersp(Transform transform, Film film, float fov) : Camera(transform, film), m_fov(std::tan((fov * 180.0f / PI) / 2.0f))
+CameraPersp::CameraPersp(Transform transform, Film film, float speed, float sensitivity, float fov) : Camera(transform, film, speed, sensitivity), m_fov(std::tan((fov * 180.0f / PI) / 2.0f))
 {
     LOG("Created a new perspective camera.");
+}
+
+void CameraPersp::update(float dt, bool keys[256])
+{
+    if (keys[SDL_SCANCODE_W])
+    {
+        move(m_transform.getOrientation().getForwardVector(), dt * m_speed);
+    }
+    else if (keys[SDL_SCANCODE_S])
+    {
+        move(m_transform.getOrientation().getForwardVector(), -dt * m_speed);
+    }
+    if (keys[SDL_SCANCODE_A])
+    {
+        move(m_transform.getOrientation().getRightVector(), -dt * m_speed);
+    }
+    else if (keys[SDL_SCANCODE_D])
+    {
+        move(m_transform.getOrientation().getRightVector(), dt * m_speed);
+    }
+
+    if (keys[SDL_SCANCODE_UP])
+    {
+        rotate(m_transform.getOrientation().getRightVector(), -dt * m_sensitivity);
+    }
+    else if (keys[SDL_SCANCODE_DOWN])
+    {
+        rotate(m_transform.getOrientation().getRightVector(), dt * m_sensitivity);
+    }
+    if (keys[SDL_SCANCODE_LEFT])
+    {
+        rotate(m_transform.getOrientation().getUpVector(), -dt * m_sensitivity);
+    }
+    else if (keys[SDL_SCANCODE_RIGHT])
+    {
+        rotate(m_transform.getOrientation().getUpVector(), dt * m_sensitivity);
+    }
+    if (keys[SDL_SCANCODE_Q])
+    {
+        rotate(m_transform.getOrientation().getForwardVector(), -dt * m_sensitivity);
+    }
+    else if (keys[SDL_SCANCODE_E])
+    {
+        rotate(m_transform.getOrientation().getForwardVector(), dt * m_sensitivity);
+    }
+
+    if (keys[SDL_SCANCODE_KP_PLUS])
+    {
+        m_fov += 0.1f * dt;
+        m_film.clearSamples();
+    }
+    else if (keys[SDL_SCANCODE_KP_MINUS])
+    {
+        m_fov -= 0.1f * dt;
+        m_film.clearSamples();
+    }
 }
 
 void CameraPersp::calcCamRay(const int x, const int y, Ray &ray) const

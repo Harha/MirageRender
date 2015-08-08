@@ -3,6 +3,7 @@
 
 // mirage includes
 #include "display.h"
+#include "../config.h"
 #include "../macros.h"
 
 namespace mirage
@@ -78,9 +79,12 @@ void Display::clear(const Uint32 &color)
         m_pixels[i] = color;
 }
 
-void Display::setPixel(const int x, const int y, const vec3 &v)
+void Display::setPixel(const int x, const int y, vec3 v)
 {
     assert(x >= 0 || x < m_width || y >= 0 || y < m_height);
+
+    v = vec3::powv(v, 1.0f / GAMMA);
+    v = vec3::clampv(v, 0.0f, 1.0f);
 
     auto r = static_cast<Uint32>(v.x * 255.0f);
     auto g = static_cast<Uint32>(v.y * 255.0f);

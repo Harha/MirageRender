@@ -191,6 +191,35 @@ struct vec3
             return eta * I - (eta * dot(N, I) + std::sqrt(k)) * N;
     }
 
+    static vec3 sampleHemisphere(const vec3 &N)
+    {
+        float r1 = 2.0f * PI * pseudorand(); // Spherical coordinates
+        float r2 = pseudorand();
+        float r2s = std::sqrt(r2);
+        vec3 w = N; // w = normal
+        vec3 u = (cross((std::abs(w.x) > 0.1f ? vec3(0, 1) : vec3(1)), w)).normalize(); // u is perpendicular to w
+        vec3 v = cross(w, u); // v is perpendicular to u and w
+        return (u * std::cos(r1) * r2s + v * std::sin(r1) * r2s + w * std::sqrt(1.0f - r2)).normalize();
+    }
+
+    static vec3 powv(const vec3 &v, float f)
+    {
+        auto x = std::pow(v.x, f);
+        auto y = std::pow(v.y, f);
+        auto z = std::pow(v.z, f);
+
+        return vec3(x, y, z);
+    }
+
+    static vec3 clampv(const vec3 &v, float min, float max)
+    {
+        auto x = clampf(v.x, min, max);
+        auto y = clampf(v.y, min, max);
+        auto z = clampf(v.z, min, max);
+
+        return vec3(x, y, z);
+    }
+
 };
 
 inline vec3 operator+(const float f, const vec3 &other)

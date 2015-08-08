@@ -10,7 +10,7 @@ namespace mirage
 
 Accelerator::Accelerator(std::vector<Shape *> shapes) : m_shapes(shapes)
 {
-
+    m_initialized = false;
 }
 
 void Accelerator::update() const
@@ -48,7 +48,7 @@ bool Accelerator::intersect(const Ray &ray, Intersection &iSect)
     return false;
 }
 
-bool Accelerator::intersectP(const Ray &ray) const
+bool Accelerator::intersectP(const Ray &ray)
 {
     ERR("Purely virtual function Accelerator::intersectP called!");
     return false;

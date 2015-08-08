@@ -17,6 +17,7 @@ public:
     void setSample(int x, int y, const vec3 &sample);
     void addSample(int x, int y, const vec3 &sample);
     void decSample(int x, int y, const vec3 &sample);
+    void clearSamples();
     int getResolutionX() const;
     int getResolutionY() const;
     float getAspectRatio() const;

@@ -29,7 +29,12 @@ AABB Sphere::objectBound() const
     return AABB(vec3(-m_radiusTransformed, -m_radiusTransformed, -m_radiusTransformed) + m_centerInit, vec3(m_radiusTransformed, m_radiusTransformed, m_radiusTransformed) + m_centerInit);
 }
 
-bool Sphere::intersect(const Ray &ray, float &tHit, Intersection &iSect) const
+AABB Sphere::worldBound() const
+{
+    return objectBound() * m_objToWorld.getMatrix();
+}
+
+bool Sphere::intersect(const Ray &ray, Intersection &iSect) const
 {
     vec3 C, SP;
     float r, b, d, t;
@@ -61,7 +66,6 @@ bool Sphere::intersect(const Ray &ray, float &tHit, Intersection &iSect) const
     }
 
     // Set final surface intersection info
-    tHit = t;
     iSect.setPosition(ray(t));
     iSect.setNormal((iSect.getPosition() - C) / r);
     iSect.setMaterial(m_material);

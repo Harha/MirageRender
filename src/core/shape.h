@@ -17,8 +17,8 @@ public:
     Shape(const Transform &o2w = Transform(), const Transform &w2o = Transform(), Material m = Material());
     virtual void update() = 0;
     virtual AABB objectBound() const = 0;
-    virtual AABB worldBound() const;
-    virtual bool intersect(const Ray &ray, float &tHit, Intersection &iSect) const = 0;
+    virtual AABB worldBound() const = 0;
+    virtual bool intersect(const Ray &ray, Intersection &iSect) const = 0;
     virtual bool intersectP(const Ray &ray) const = 0;
     virtual float getSurfaceArea() const = 0;
     virtual void setMaterial(const Material &m);

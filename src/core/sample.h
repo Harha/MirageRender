@@ -17,6 +17,7 @@ public:
     void setNumSamples(const int numSamples);
     void incNumSamples();
     void decNumSamples();
+    void clearSample();
     vec3 getColor() const;
     vec3 getColorAveraged() const;
     int getNumSamples() const;

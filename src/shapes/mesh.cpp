@@ -39,7 +39,13 @@ AABB Mesh::objectBound() const
     return AABB();
 }
 
-bool Mesh::intersect(const Ray &ray, float &tHit, Intersection &iSect) const
+AABB Mesh::worldBound() const
+{
+    ERR("Called unimplemented method Mesh::worldBound!");
+    return AABB();
+}
+
+bool Mesh::intersect(const Ray &ray, Intersection &iSect) const
 {
     ERR("Unimplemented function Mesh::intersect was called!");
     return false;
@@ -56,9 +62,15 @@ float Mesh::getSurfaceArea() const
     return 0.0f;
 }
 
-std::vector<Triangle> &Mesh::getTriangles()
+std::vector<Shape *> Mesh::getShapes()
 {
-    return m_triangles;
+    std::vector<Shape *> result;
+    result.reserve(m_triangles.size());
+    for (size_t i = 0; i < m_triangles.size(); i++)
+    {
+        result.push_back(&m_triangles[i]);
+    }
+    return result;
 }
 
 int Mesh::loadObj()
