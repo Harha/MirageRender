@@ -202,6 +202,25 @@ struct vec3
         return (u * std::cos(r1) * r2s + v * std::sin(r1) * r2s + w * std::sqrt(1.0f - r2)).normalize();
     }
 
+    static vec3 sampleHemisphere(const vec3 &N, float scalar, float chance)
+    {
+        std::uniform_real_distribution<float>brdf_dis(0.0f, scalar);
+
+        float r1 = 2.0f * PI * pseudorand(); // Spherical coordinates
+        float r2;
+
+        if (pseudorand() < chance) // Importance sampling, should we bias the distribution or not?
+            r2 = brdf_dis(g_randomGen);
+        else
+            r2 = pseudorand();
+
+        float r2s = std::sqrt(r2);
+        vec3 w = N; // w = normal
+        vec3 u = (cross((std::abs(w.x) > 0.1f ? vec3(0, 1) : vec3(1)), w)).normalize(); // u is perpendicular to w
+        vec3 v = cross(w, u); // v is perpendicular to u and w
+        return (u * std::cos(r1) * r2s + v * std::sin(r1) * r2s + w * std::sqrt(1.0f - r2)).normalize();
+    }
+
     static vec3 powv(const vec3 &v, float f)
     {
         auto x = std::pow(v.x, f);

@@ -1,9 +1,9 @@
 #define VERSION_R 0
 #define VERSION_B 0
-#define VERSION_A 12
-#define WIDTH 480
-#define HEIGHT 270
-#define SCALE 1
-#define THREADS -1
+#define VERSION_A 13
+#define WIDTH 1280/2
+#define HEIGHT 720/2
+#define SCALE 2
+#define THREADS 10
 #define GAMMA 2.2f
 #define MAX_RECURSION 1

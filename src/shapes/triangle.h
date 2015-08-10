@@ -14,7 +14,7 @@ namespace mirage
 class Triangle : public Shape
 {
 public:
-    Triangle(const Transform &o2w, const Transform &w2o, Material m = Material(), std::array<Vertex, 3> vertices = { });
+    Triangle(const Transform &o2w, const Transform &w2o, Material *m = nullptr, std::array<Vertex, 3> vertices = { });
     virtual void update() override;
     virtual AABB objectBound() const override;
     virtual AABB worldBound() const override;

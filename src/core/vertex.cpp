@@ -18,7 +18,7 @@ void Vertex::setPosition(const vec3 &v)
 
 void Vertex::setNormal(const vec3 &n)
 {
-    m_n = n;
+    m_n = n.normalize();
 }
 
 vec3 Vertex::getPosition() const

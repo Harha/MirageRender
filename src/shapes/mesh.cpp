@@ -11,8 +11,14 @@
 namespace mirage
 {
 
-Mesh::Mesh(const Transform &o2w, const Transform &w2o, Material m, std::string fileName) : Shape(o2w, w2o, m), m_mdlFileName(fileName)
+Mesh::Mesh(const Transform &o2w, const Transform &w2o, Material *m, MatFactory *matFactory, std::string fileName) : Shape(o2w, w2o, m), m_matFactory(matFactory), m_mdlFileName(fileName)
 {
+    if (!m_matFactory)
+    {
+        ERR("Supplied instance MatFactory is not loaded! Exiting program...");
+        std::exit(1);
+    }
+
     if (loadObj() != 0)
     {
         ERR("Error loading: " << m_mdlFileName);
@@ -78,7 +84,7 @@ int Mesh::loadObj()
     std::vector<vec3> vertices;
     std::vector<vec3> normals;
     std::vector<face> indices;
-    std::map<std::string, Material> materials;
+    std::map<std::string, Material *> materials;
     std::string str_currentMaterial = "";
 
     std::ifstream file;
@@ -221,7 +227,7 @@ int Mesh::loadObj()
         verts[1].setPosition(vertices[indices[i].vb]);
         verts[2].setPosition(vertices[indices[i].vc]);
 
-        Material mtl = m_material;
+        Material *mtl = m_material;
 
         if (!str_currentMaterial.empty() || !materials.empty())
         {
@@ -241,10 +247,10 @@ int Mesh::loadObj()
     return 0;
 }
 
-int Mesh::loadMTL(std::map<std::string, Material> &materials)
+int Mesh::loadMTL(std::map<std::string, Material *> &materials)
 {
     std::string str_currentMaterial;
-    Material mat_currentMaterial;
+    Material *mat_currentMaterial;
 
     std::ifstream file;
     std::string line;
@@ -262,8 +268,9 @@ int Mesh::loadMTL(std::map<std::string, Material> &materials)
             if (line.substr(0, 7) == "newmtl ")
             {
                 str_currentMaterial = line.substr(7);
-                mat_currentMaterial = Material();
-                materials.insert(std::pair<std::string, Material>(str_currentMaterial, mat_currentMaterial));
+                mat_currentMaterial = m_matFactory->initDiffuseMaterial();
+                //m_matFactory->initDiffuseMaterial(mat_currentMaterial);
+                materials.insert(std::pair<std::string, Material *>(str_currentMaterial, mat_currentMaterial));
             }
             else if (line.substr(0, 3) == "Kd ") // Diffuse color
             {
@@ -272,7 +279,7 @@ int Mesh::loadMTL(std::map<std::string, Material> &materials)
                 s >> kd.x;
                 s >> kd.y;
                 s >> kd.z;
-                materials.at(str_currentMaterial).setKd(kd);
+                materials.at(str_currentMaterial)->setKd(kd);
             }
             else if (line.substr(0, 3) == "Ke ") // Emissive color (Blender doesn't want to export it, so it has to be added manually to the .mtl file)
             {
@@ -281,7 +288,7 @@ int Mesh::loadMTL(std::map<std::string, Material> &materials)
                 s >> ke.x;
                 s >> ke.y;
                 s >> ke.z;
-                materials.at(str_currentMaterial).setKe(ke);
+                materials.at(str_currentMaterial)->setKe(ke);
             }
             else if (line.substr(0, 3) == "Ni ") // Index of refraction
             {

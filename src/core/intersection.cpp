@@ -4,7 +4,7 @@
 namespace mirage
 {
 
-Intersection::Intersection(vec3 position, vec3 normal, Material material) : m_position(position), m_normal(normal), m_material(material)
+Intersection::Intersection(vec3 position, vec3 normal, Material *material) : m_position(position), m_normal(normal), m_material(material)
 {
 
 }
@@ -19,7 +19,7 @@ void Intersection::setNormal(const vec3 &v)
     m_normal = v;
 }
 
-void Intersection::setMaterial(const Material &m)
+void Intersection::setMaterial(Material *m)
 {
     m_material = m;
 }
@@ -34,7 +34,7 @@ vec3 Intersection::getNormal() const
     return m_normal;
 }
 
-Material Intersection::getMaterial() const
+Material *Intersection::getMaterial() const
 {
     return m_material;
 }

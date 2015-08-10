@@ -9,7 +9,7 @@
 namespace mirage
 {
 
-Shape::Shape(const Transform &o2w, const Transform &w2o, Material m) : m_objToWorld(o2w), m_worldToObj(w2o), m_material(m)
+Shape::Shape(const Transform &o2w, const Transform &w2o, Material *m) : m_objToWorld(o2w), m_worldToObj(w2o), m_material(m)
 {
 
 }
@@ -48,12 +48,12 @@ float Shape::getSurfaceArea() const
     return 0.0f;
 }
 
-void Shape::setMaterial(const Material &m)
+void Shape::setMaterial(Material &m)
 {
-    m_material = m;
+    m_material = &m;
 }
 
-Material Shape::getMaterial() const
+Material *Shape::getMaterial() const
 {
     return m_material;
 }

@@ -76,9 +76,14 @@ void CameraPersp::update(float dt, bool keys[256])
 
 void CameraPersp::calcCamRay(const int x, const int y, Ray &ray) const
 {
+    // Tent filter for each ray's xy directions
+    float r1 = 2.0f * pseudorand(), dx = r1 < 1.0f ? std::sqrt(r1) - 1.0f : 1.0f - std::sqrt(2.0f - r1);
+    float r2 = 2.0f * pseudorand(), dy = r2 < 1.0f ? std::sqrt(r2) - 1.0f : 1.0f - std::sqrt(2.0f - r2);
+
+
     // Construct the ray's direction vector and aim it towards the virtual screen's pixel
-    auto x_norm = ((x - m_film.getResolutionX() * 0.5f) / m_film.getResolutionX() * m_film.getAspectRatio()) * m_fov;
-    auto y_norm = ((m_film.getResolutionY() * 0.5f - y) / m_film.getResolutionY()) * m_fov;
+    auto x_norm = ((x + dx - m_film.getResolutionX() * 0.5f) / m_film.getResolutionX() * m_film.getAspectRatio()) * m_fov;
+    auto y_norm = ((m_film.getResolutionY() * 0.5f - y + dy) / m_film.getResolutionY()) * m_fov;
     auto v_norm = vec3(x_norm, y_norm, 1.0f);
 
     // Rotate the ray direction based on camera orientation

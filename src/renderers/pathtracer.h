@@ -14,10 +14,12 @@ namespace mirage
 class Pathtracer : public Renderer
 {
 public:
-    Pathtracer(int maxRecursion = 1);
-    virtual void render(const Scene *scene, Display *display) override;
-    vec3 radiance(const Scene *scene, const Ray &r, int n);
+    Pathtracer(vec3 ka = vec3(), float maxRadiance = 10.0f, int maxRecursion = 1);
+    virtual void render(const Scene *scene, Display *display, const int w, const int h, const int xa, const int ya) override;
+    vec3 radiance(const Scene *scene, const Ray &r, float weight, int n);
 private:
+    vec3 m_ka;
+    float m_maxRadiance;
     int m_maxRecursion;
 };
 

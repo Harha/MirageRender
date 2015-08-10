@@ -9,6 +9,8 @@
 #include "../core/shape.h"
 #include "../core/vertex.h"
 #include "../core/material.h"
+#include "../core/matfactory.h"
+#include "../materials/diffusemat.h"
 #include "triangle.h"
 
 namespace mirage
@@ -24,7 +26,7 @@ struct face
 class Mesh : public Shape
 {
 public:
-    Mesh(const Transform &o2w, const Transform &w2o, Material m = Material(), std::string fileName = "null");
+    Mesh(const Transform &o2w, const Transform &w2o, Material *m = nullptr, MatFactory *matFactory = nullptr, std::string fileName = "null");
     virtual void update() override;
     virtual AABB objectBound() const override;
     virtual AABB worldBound() const override;
@@ -34,8 +36,9 @@ public:
     std::vector<Shape *> getShapes();
 private:
     int loadObj();
-    int loadMTL(std::map<std::string, Material> &materials);
+    int loadMTL(std::map<std::string, Material *> &materials);
 
+    MatFactory *m_matFactory;
     std::string m_mdlFileName;
     std::string m_mtlFileName;
     std::vector<Triangle> m_triangles;

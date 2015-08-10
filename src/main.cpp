@@ -23,6 +23,11 @@
 #include "shapes/mesh.h"
 #include "core/scene.h"
 #include "renderers/pathtracer.h"
+#include "materials/diffusemat.h"
+#include "materials/specmat.h"
+#include "materials/glassmat.h"
+#include "materials/glossymat.h"
+#include "core/matfactory.h"
 
 using namespace mirage;
 
@@ -68,27 +73,60 @@ int main(int argc, char **argv)
     float fps = 0;
     bool running = true;
 
-    // Main film
+    // Initialize test scene data / seed scene, build acc, etc...
     Film film(WIDTH, HEIGHT);
-
-    // 2 Main cameras
-    CameraOrtho cam_ortho(Transform(vec3(0, -1, -128)), film, 8, 64, 0.05f);
+    CameraOrtho cam_ortho(Transform(vec3(0, 0, -128)), film, 8, 64, 0.1f);
     CameraPersp cam_persp(Transform(vec3(0, 0.5f, -10)), film, 8, 64, 70.0f);
-
-    // Main camera pointer
     Camera *camera = &cam_ortho;
 
-    // Create 1 area light source
+    MatFactory matfactory;
+
     Transform lTransformW;
     Transform lTransformO;
-    Sphere light(lTransformW, lTransformO, Material(vec3(), vec3(), vec3(1, 1, 1) * 10), vec3(8, -2, -4), 2.0f);
-    Sphere lightb(lTransformW, lTransformO, Material(vec3(), vec3(), vec3(0, 0.25f, 1) * 10), vec3(-8, 5, -4), 2.0f);
+    DiffuseMaterial matl1(vec3(), vec3(), vec3(1, 1, 1) * 10);
+    DiffuseMaterial matl2(vec3(), vec3(), vec3(0.1f, 0.5f, 1) * 10);
+    Sphere light(lTransformW, lTransformO, &matl1, vec3(8, -1, 4), 2.0f);
+    Sphere lightb(lTransformW, lTransformO, &matl1, vec3(-8, 5, -4), 2.0f);
 
-    // Create 1 mesh to render
-    //Mesh sponza(Transform(), Transform(), Material(vec3(1, 1, 1)), "sponza.obj");
-    Mesh dragon(Transform(vec3(0, -4, 0), quaternion().euler(0, 1, 0, 170), vec3(1, 1, 1)), Transform(), Material(vec3(1, 1, 1)), "dragon.obj");
-    Mesh bunny(Transform(vec3(-8, -4, -4), quaternion().euler(0, 1, 0, 170), vec3(5, 5, 5)), Transform(), Material(vec3(0.9f, 0.1f, 0.1f)), "bunny.obj");
-    Mesh plane(Transform(vec3(0, -4, 0), quaternion(), vec3(16, 16, 16)), Transform(), Material(vec3(1, 1, 1)), "plane.obj");
+    DiffuseMaterial matdwhite(vec3(0.9f, 0.9f, 0.9f), vec3(), vec3());
+    DiffuseMaterial matdgreen(vec3(0.1f, 0.9f, 0.1f), vec3(), vec3());
+    DiffuseMaterial matdblue(vec3(0.1f, 0.1f, 0.9f), vec3(), vec3());
+    SpecularMaterial matsmirror(vec3(1, 1, 1), vec3(), vec3());
+    GlossyMaterial matglossy(vec3(0.87843137254f, 0.87450980392f, 0.85882352941f), vec3(), vec3(),  0.15f, 0.95f, 0.1f);
+    GlossyMaterial matglossy2(vec3(0.80392156862f, 0.49803921568f, 0.19607843137f), vec3(), vec3(),  0.1f, 0.95f, 0.25f);
+    Mesh dragon(Transform(vec3(0, -4, 0), quaternion().euler(0, 1, 0, 170), vec3(1, 1, 1)), Transform(), &matdblue, &matfactory, "dragon.obj");
+    Mesh bunny1(Transform(vec3(-8, -4, -4), quaternion().euler(0, 1, 0, 170), vec3(5, 5, 5)), Transform(), &matglossy2, &matfactory, "bunny.obj");
+    Mesh bunny2(Transform(vec3(8, -4, -6), quaternion().euler(0, 1, 0, 0), vec3(5, 5, 5)), Transform(), &matdgreen, &matfactory, "bunny.obj");
+    Mesh plane(Transform(vec3(0, -4, 0), quaternion(), vec3(16, 16, 16)), Transform(), &matglossy, &matfactory, "plane.obj");
+    Mesh cornellbox(Transform(vec3(0, 0, 0), quaternion().euler(0, 1, 0, 180), vec3(1, 1, 1)), Transform(), &matdwhite, &matfactory, "cornellbox_1.obj");
+
+    std::vector<Shape *> shapes = dragon.getShapes();
+    std::vector<Shape *> plane_shapes = plane.getShapes();
+    std::vector<Shape *> bunny1_shapes = bunny1.getShapes();
+    std::vector<Shape *> bunny2_shapes = bunny2.getShapes();
+
+    for (size_t i = 0; i < bunny1_shapes.size(); i++)
+    {
+        shapes.push_back(bunny1_shapes[i]);
+    }
+
+    for (size_t i = 0; i < bunny2_shapes.size(); i++)
+    {
+        shapes.push_back(bunny2_shapes[i]);
+    }
+
+    for (size_t i = 0; i < plane_shapes.size(); i++)
+    {
+        shapes.push_back(plane_shapes[i]);
+    }
+
+    shapes.push_back(&light);
+    shapes.push_back(&lightb);
+
+    /*
+    Mesh dragon(Transform(vec3(0, -4, 0), quaternion().euler(0, 1, 0, 170), vec3(1, 1, 1)), Transform(), &matdwhite, &matfactory, "dragon.obj");
+    Mesh bunny(Transform(vec3(-8, -4, -4), quaternion().euler(0, 1, 0, 180), vec3(5, 5, 5)), Transform(), &matdred, &matfactory, "bunny.obj");
+    Mesh plane(Transform(vec3(0, -4, 0), quaternion(), vec3(16, 16, 16)), Transform(), &matdwhite, &matfactory, "plane.obj");
 
     std::vector<Shape *> shapes = dragon.getShapes();
     std::vector<Shape *> plane_shapes = plane.getShapes();
@@ -103,21 +141,12 @@ int main(int argc, char **argv)
     {
         shapes.push_back(plane_shapes[i]);
     }
+    */
 
-    shapes.push_back(&light);
-    shapes.push_back(&lightb);
-
-    // Create 1 acceleration structure
     KDTreeAccel accelerator(shapes);
-
-    // Build the tree
     accelerator.init();
-
-    // Initialize a new scene
     Scene scene(&accelerator, camera);
-
-    // Initialize pathtracer renderer
-    Pathtracer ptracer(5);
+    Pathtracer ptracer(vec3(0.75f, 0.87f, 0.98f) * 0.0f, 10.0f, 10);
 
     while (running)
     {
@@ -139,8 +168,29 @@ int main(int argc, char **argv)
         // Update everything
         camera->update(deltaTime, g_keys);
 
-        // Render everything
-        ptracer.render(&scene, &display);
+        if (g_keys[SDL_SCANCODE_SPACE])
+        {
+            LOG("cam pos: " << camera->getTransform().getPosition().toString() << " rot: " << camera->getTransform().getOrientation().toString());
+        }
+
+        // Render a portion of the screen per thread
+        int width = camera->getFilm().getResolutionX();
+        int height = camera->getFilm().getResolutionY();
+        for (unsigned int i = 0; i < tcount; i++)
+        {
+            threads[i] = std::thread ([=,&ptracer, &scene, &display]
+            {
+                ptracer.render(&scene, &display, width, height/tcount, 0, height/tcount * i);
+            });
+        }
+
+        // Wait for all the threads to finish on the main thread by joining them.
+        for (unsigned int i = 0; i < tcount; i++)
+        {
+            threads[i].join();
+        }
+
+        // Display results on screen
         display.render();
 
         // Process SDL events

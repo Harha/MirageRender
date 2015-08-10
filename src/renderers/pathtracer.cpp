@@ -1,35 +1,36 @@
 // std includes
+#include <iostream>
 
 // mirage includes
 #include "pathtracer.h"
+#include "../macros.h"
 #include "../core/intersection.h"
 
 namespace mirage
 {
 
 static vec3 COLOR_NULL(0, 0, 0);
-static vec3 COLOR_AMBI = vec3(0.75f, 0.87f, 0.98f) * 0.1f;
 
-Pathtracer::Pathtracer(int maxRecursion) : m_maxRecursion(maxRecursion)
+Pathtracer::Pathtracer(vec3 ka, float maxRadiance, int maxRecursion) : m_ka(ka), m_maxRadiance(maxRadiance), m_maxRecursion(maxRecursion)
 {
 
 }
 
-void Pathtracer::render(const Scene *scene, Display *display)
+void Pathtracer::render(const Scene *scene, Display *display, const int w, const int h, const int xa, const int ya)
 {
     Camera *camera = scene->getCamera();
     Film *film = &camera->getFilm();
     Ray r_primary;
 
-    for (size_t j = 0; j < film->getResolutionY(); j++)
+    for (size_t j = ya; j < ya + h; j++)
     {
-        for (size_t i = 0; i < film->getResolutionX(); i++)
+        for (size_t i = xa; i < xa + w; i++)
         {
             // Project the primary ray through the camera's lens
             camera->calcCamRay(i, j, r_primary);
 
             // Let's find the final radiance along the ray
-            vec3 lambda = radiance(scene, r_primary, 0);
+            vec3 lambda = radiance(scene, r_primary, 1.0f, 0);
 
             // Add the radiance to film sample
             film->addSample(i, j, lambda);
@@ -40,10 +41,10 @@ void Pathtracer::render(const Scene *scene, Display *display)
     }
 }
 
-vec3 Pathtracer::radiance(const Scene *scene, const Ray &ray, int n)
+vec3 Pathtracer::radiance(const Scene *scene, const Ray &ray, float weight, int n)
 {
     // Return if recursion limit was reached
-    if (n > m_maxRecursion)
+    if (n > m_maxRecursion || weight <= 0.0f)
     {
         return COLOR_NULL;
     }
@@ -52,49 +53,66 @@ vec3 Pathtracer::radiance(const Scene *scene, const Ray &ray, int n)
     Intersection iSect;
     if (!scene->getAccelerator()->intersect(ray, iSect))
     {
-        return COLOR_AMBI;
+        return weight * m_ka;
     }
 
-    // Return immediately with the emittance if the surface is ONLY emissive
-    if (iSect.getMaterial().getKe().length() > 0.0f && iSect.getMaterial().getKd().length() <= 0.0f)
+    // Get the surface material pointer
+    Material *M = iSect.getMaterial();
+
+    // Get the Kd, Ks & Ke surface data
+    vec3 Kd = iSect.getMaterial()->getKd();
+    vec3 Ks = iSect.getMaterial()->getKs();
+    vec3 Ke = iSect.getMaterial()->getKe();
+
+    // Find the maximum reflectance amount
+    float Kd_max = Kd.x > Kd.y && Kd.x > Kd.z ? Kd.x : Kd.y > Kd.z ? Kd.y : Kd.z;
+
+    // Find the average reflectance amount
+    float Kd_avg = (Kd.x + Kd.y + Kd.z) / 3.0f;
+
+    // Russian roulette, absorb or continue, change weight based on probability
+    float p = Kd_max;
+    if (n > 5 || !p)
     {
-        return iSect.getMaterial().getKe();
+        if (pseudorand() < p)
+        {
+            weight *= (1.0f / p);
+        }
+        else
+        {
+            return weight * Ke;
+        }
     }
 
     // Assign intersection data into aliases
-    auto V_vector = ray.getDirection();
-    auto P_vector = iSect.getPosition();
-    auto N_vector = iSect.getNormal();
-    auto M_info = iSect.getMaterial();
-    auto e = M_info.getKe();
-    auto f = M_info.getKd();
+    vec3 Wo = ray.getDirection().negate();
+    vec3 P = iSect.getPosition();
+    auto N = iSect.getNormal();
 
-    // Russian roulette to stop recursion randomly...
-    auto p = f.x > f.y && f.x > f.z ? f.x : f.y > f.z ? f.y : f.z;
-    if (n > m_maxRecursion/2 || !p)
-        if (pseudorand() < p)
-            f *= (1.0f / p);
+    // Get the Wi vector (incoming)
+    vec3 Wi;
+    M->evalWi(Wo, N, Wi);
 
-    // Calculate the light direction ray
-    auto L_rand = vec3::sampleHemisphere(N_vector);
+    // Get the surface brdf
+    float BRDF;
+    M->evalBRDF(P, N, Wi, Wo, BRDF);
 
-    // Prepare all required information
-    auto L_vector = L_rand.negate();
+    // Get the surface btdf
+    float BTDF;
+    M->evalBTDF(P, N, Wi, Wo, BTDF);
 
-    // Calculate all dot products
-    auto NdotL = std::abs(vec3::dot(N_vector, L_vector));
+    // Get the surface BSDF
+    float BSDF = BRDF + BSDF;
 
-    // Calculate the bidirectional reflectance function value
-    auto BRDF = (f / PI) * NdotL;
+    // Get the surface pdf
+    float PDF;
+    M->evalPDF(PDF);
 
-    // Calculate the probability density function value (1.0f / PI)
-    auto PDF = PI_1;
-
-    // Get the reflected light amount from L_rand
-    auto REFL = radiance(scene, Ray(P_vector, L_rand), n + 1);
+    // Get the light amount from Wi
+    auto Li = radiance(scene, Ray(P, Wi), weight, n + 1);
 
     // Return the final radiance
-    return e + BRDF / PDF * REFL;
+    return weight * Ke + Kd * BSDF / PDF * Li;
 }
 
 }

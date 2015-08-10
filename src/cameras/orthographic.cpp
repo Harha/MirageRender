@@ -76,9 +76,13 @@ void CameraOrtho::update(float dt, bool keys[256])
 
 void CameraOrtho::calcCamRay(const int x, const int y, Ray &ray) const
 {
+    // Tent filter for each ray's xy directions
+    float r1 = 2.0f * pseudorand(), dx = r1 < 1.0f ? std::sqrt(r1) - 1.0f : 1.0f - std::sqrt(2.0f - r1);
+    float r2 = 2.0f * pseudorand(), dy = r2 < 1.0f ? std::sqrt(r2) - 1.0f : 1.0f - std::sqrt(2.0f - r2);
+
     // Construct the ray's origin vector
     vec3 e = m_transform.getPosition();
-    vec3 s = e + vec3(x - m_film.getResolutionX() * 0.5f + 0.5f, m_film.getResolutionY() * 0.5f - y + 0.5f, 5.0f) * m_zoom;
+    vec3 s = e + vec3(x + dx - m_film.getResolutionX() * 0.5f + 0.5f, m_film.getResolutionY() * 0.5f - y + dy + 0.5f, 5.0f) * m_zoom;
 
     // Get the ray's direction vector
     vec3 p = m_transform.getOrientation().getForwardVector();

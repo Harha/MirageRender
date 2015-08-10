@@ -24,7 +24,7 @@ public:
         p_4 = m * vec4(m_p.x, m_p.y, m_p.z, 1.0f);
         n_4 = m * vec4(m_n.x, m_n.y, m_n.z, 0.0f);
         result.m_p = vec3(p_4.x, p_4.y, p_4.z);
-        result.m_n = vec3(n_4.x, n_4.y, n_4.z);
+        result.m_n = vec3(n_4.x, n_4.y, n_4.z).normalize();
         return result;
     }
 

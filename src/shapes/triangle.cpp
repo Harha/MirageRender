@@ -8,7 +8,7 @@
 namespace mirage
 {
 
-Triangle::Triangle(const Transform &o2w, const Transform &w2o, Material m, std::array<Vertex, 3> vertices) : Shape(o2w, w2o, m), m_verticesInit(vertices)
+Triangle::Triangle(const Transform &o2w, const Transform &w2o, Material *m, std::array<Vertex, 3> vertices) : Shape(o2w, w2o, m), m_verticesInit(vertices)
 {
     update();
 }

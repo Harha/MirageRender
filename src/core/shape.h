@@ -14,19 +14,19 @@ namespace mirage
 class Shape
 {
 public:
-    Shape(const Transform &o2w = Transform(), const Transform &w2o = Transform(), Material m = Material());
+    Shape(const Transform &o2w = Transform(), const Transform &w2o = Transform(), Material *m = nullptr);
     virtual void update() = 0;
     virtual AABB objectBound() const = 0;
     virtual AABB worldBound() const = 0;
     virtual bool intersect(const Ray &ray, Intersection &iSect) const = 0;
     virtual bool intersectP(const Ray &ray) const = 0;
     virtual float getSurfaceArea() const = 0;
-    virtual void setMaterial(const Material &m);
-    virtual Material getMaterial() const;
+    virtual void setMaterial(Material &m);
+    virtual Material *getMaterial() const;
 protected:
     const Transform &m_objToWorld;
     const Transform &m_worldToObj;
-    Material m_material;
+    Material *m_material;
 private:
 };
 
