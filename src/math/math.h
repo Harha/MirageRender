@@ -12,17 +12,24 @@ namespace mirage
 
 // Constant definitions
 #define PI 3.14159265359f
-#define PI_1 1.0f / 3.14159265359f
+#define PI_2 2.0f * PI
+#define PI_INV 1.0f / 3.14159265359f
 #define EPSILON 1e-5f
 
 // Static objects
 static std::mt19937 g_randomGen(time(NULL));
-static std::uniform_real_distribution<float>g_randomRealDis(0.0f, 1.0f);
+static std::uniform_real_distribution<float>g_randomRealDis01(0.0f, 1.0f);
+static std::uniform_real_distribution<float>g_randomRealDis02pi(0.0f, PI_2);
 
 // Static functions
 static float pseudorand()
 {
-    return g_randomRealDis(g_randomGen);
+    return g_randomRealDis01(g_randomGen);
+}
+
+static float pseudorand02pi()
+{
+    return g_randomRealDis02pi(g_randomGen);
 }
 
 static float clampf(float f, float min, float max)

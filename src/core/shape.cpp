@@ -9,7 +9,7 @@
 namespace mirage
 {
 
-Shape::Shape(const Transform &o2w, const Transform &w2o, Material *m) : m_objToWorld(o2w), m_worldToObj(w2o), m_material(m)
+Shape::Shape(const Transform o2w, Material *m) : m_objToWorld(o2w), m_worldToObj(o2w.inverse()), m_material(m)
 {
 
 }

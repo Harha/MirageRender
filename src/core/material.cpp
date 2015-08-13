@@ -11,6 +11,11 @@ Material::Material(vec3 kd, vec3 ks, vec3 ke) : m_kd(kd), m_ks(ks), m_ke(ke)
 
 }
 
+Material::~Material()
+{
+
+}
+
 void Material::setKd(const vec3 &v)
 {
     m_kd = v;

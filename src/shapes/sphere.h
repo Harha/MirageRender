@@ -10,7 +10,7 @@ namespace mirage
 class Sphere : public Shape
 {
 public:
-    Sphere(const Transform &o2w, const Transform &w2o, Material *m = nullptr, vec3 c = vec3(), float r = 1.0f);
+    Sphere(const Transform o2w, Material *m = nullptr, vec3 c = vec3(), float r = 1.0f);
     virtual void update() override;
     virtual AABB objectBound() const override;
     virtual AABB worldBound() const override;

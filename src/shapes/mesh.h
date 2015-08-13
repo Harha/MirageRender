@@ -26,7 +26,7 @@ struct face
 class Mesh : public Shape
 {
 public:
-    Mesh(const Transform &o2w, const Transform &w2o, Material *m = nullptr, MatFactory *matFactory = nullptr, std::string fileName = "null");
+    Mesh(const Transform o2w, Material *m = nullptr, MatFactory *matFactory = nullptr, std::string fileName = "null");
     virtual void update() override;
     virtual AABB objectBound() const override;
     virtual AABB worldBound() const override;

@@ -23,7 +23,7 @@ void Camera::update(float dt, bool keys[256])
 
 void Camera::calcCamRay(const int x, const int y, Ray &ray) const
 {
-    ERR("Illegal call to Camera::calcCameraRay!\nThis is an abstract base class method and should never be called!");
+    ERR("Purely virtual function Camera::calcCamRay called!");
 }
 
 void Camera::move(const vec3 &dir, float delta)

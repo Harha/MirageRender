@@ -14,7 +14,7 @@ namespace mirage
 class Shape
 {
 public:
-    Shape(const Transform &o2w = Transform(), const Transform &w2o = Transform(), Material *m = nullptr);
+    Shape(const Transform o2w = Transform(), Material *m = nullptr);
     virtual void update() = 0;
     virtual AABB objectBound() const = 0;
     virtual AABB worldBound() const = 0;
@@ -24,8 +24,8 @@ public:
     virtual void setMaterial(Material &m);
     virtual Material *getMaterial() const;
 protected:
-    const Transform &m_objToWorld;
-    const Transform &m_worldToObj;
+    const Transform m_objToWorld;
+    const Transform m_worldToObj;
     Material *m_material;
 private:
 };

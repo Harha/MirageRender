@@ -8,7 +8,7 @@
 namespace mirage
 {
 
-Triangle::Triangle(const Transform &o2w, const Transform &w2o, Material *m, std::array<Vertex, 3> vertices) : Shape(o2w, w2o, m), m_verticesInit(vertices)
+Triangle::Triangle(const Transform o2w, Material *m, std::array<Vertex, 3> vertices) : Shape(o2w, m), m_verticesInit(vertices)
 {
     update();
 }
@@ -69,7 +69,7 @@ bool Triangle::intersect(const Ray &ray, Intersection &iSect) const
         return false;
 
     vec3 hit = ray(t);
-    getBarycentric(hit, edge_b, edge_a, b0, b1, b2);
+    getBarycentric(hit, edge_a, edge_b, b0, b1, b2);
     vec3 N1 = vertices[0].getNormal();
     vec3 N2 = vertices[1].getNormal();
     vec3 N3 = vertices[2].getNormal();
@@ -130,9 +130,9 @@ void Triangle::getBarycentric(const vec3 &p, const vec3 &e1, const vec3 &e2, flo
     const vec3 w = p - m_verticesTransformed[0].getPosition();
 
     // Find the perpendicular vectors
-    const vec3 vCrossW = vec3::cross(e1, w);
-    const vec3 uCrossW = vec3::cross(e2, w);
-    const vec3 uCrossV = vec3::cross(e2, e1);
+    const vec3 vCrossW = vec3::cross(e2, w);
+    const vec3 uCrossW = vec3::cross(e1, w);
+    const vec3 uCrossV = vec3::cross(e1, e2);
 
     // Find the barycentric coordinates
     const float denom = uCrossV.length();

@@ -11,11 +11,11 @@
 namespace mirage
 {
 
-Mesh::Mesh(const Transform &o2w, const Transform &w2o, Material *m, MatFactory *matFactory, std::string fileName) : Shape(o2w, w2o, m), m_matFactory(matFactory), m_mdlFileName(fileName)
+Mesh::Mesh(const Transform o2w, Material *m, MatFactory *matFactory, std::string fileName) : Shape(o2w, m), m_matFactory(matFactory), m_mdlFileName(fileName)
 {
     if (!m_matFactory)
     {
-        ERR("Supplied instance MatFactory is not loaded! Exiting program...");
+        ERR("Supplied instance of MatFactory is not loaded! Exiting program...");
         std::exit(1);
     }
 
@@ -241,7 +241,7 @@ int Mesh::loadObj()
             verts[2].setNormal(normals[indices[i].nc]);
         }
 
-        m_triangles.push_back(Triangle(m_objToWorld, m_worldToObj, mtl, verts));
+        m_triangles.push_back(Triangle(m_objToWorld, mtl, verts));
     }
 
     return 0;
@@ -249,8 +249,9 @@ int Mesh::loadObj()
 
 int Mesh::loadMTL(std::map<std::string, Material *> &materials)
 {
-    std::string str_currentMaterial;
-    Material *mat_currentMaterial;
+    std::map<std::string, MaterialInfo> info_materials;
+    std::string str_currentMaterial = "";
+    MaterialInfo info_currentMaterial;
 
     std::ifstream file;
     std::string line;
@@ -268,9 +269,8 @@ int Mesh::loadMTL(std::map<std::string, Material *> &materials)
             if (line.substr(0, 7) == "newmtl ")
             {
                 str_currentMaterial = line.substr(7);
-                mat_currentMaterial = m_matFactory->initDiffuseMaterial();
-                //m_matFactory->initDiffuseMaterial(mat_currentMaterial);
-                materials.insert(std::pair<std::string, Material *>(str_currentMaterial, mat_currentMaterial));
+                info_currentMaterial = MaterialInfo();
+                info_materials.insert(std::pair<std::string, MaterialInfo>(str_currentMaterial, info_currentMaterial));
             }
             else if (line.substr(0, 3) == "Kd ") // Diffuse color
             {
@@ -279,46 +279,30 @@ int Mesh::loadMTL(std::map<std::string, Material *> &materials)
                 s >> kd.x;
                 s >> kd.y;
                 s >> kd.z;
-                materials.at(str_currentMaterial)->setKd(kd);
+                info_materials.at(str_currentMaterial).kd = kd;
             }
-            else if (line.substr(0, 3) == "Ke ") // Emissive color (Blender doesn't want to export it, so it has to be added manually to the .mtl file)
+            else if (line.substr(0, 3) == "Ke ") // Emissive color
             {
                 std::istringstream s(line.substr(3));
                 vec3 ke;
                 s >> ke.x;
                 s >> ke.y;
                 s >> ke.z;
-                materials.at(str_currentMaterial)->setKe(ke);
+                info_materials.at(str_currentMaterial).ke = ke;
             }
             else if (line.substr(0, 3) == "Ni ") // Index of refraction
             {
                 std::istringstream s(line.substr(3));
                 float ior;
                 s >> ior;
-                // materials.at(str_currentMaterial).setIOR(ior); <-- No refractions yet :D
+                info_materials.at(str_currentMaterial).ior = ior;
             }
             else if (line.substr(0, 6) == "illum ") // Illumination mode
             {
                 std::istringstream s(line.substr(6));
                 unsigned int illum;
                 s >> illum;
-
-                if (illum == 0 || illum == 1) // Diffuse surfaces
-                {
-                    //materials.at(str_currentMaterial).setReflT(DIFF);
-                }
-                if (illum == 4 || illum == 6 || illum == 7 || illum == 9) // Dielectric sufraces
-                {
-                    //materials.at(str_currentMaterial).setReflT(REFR);
-                }
-                else if (illum == 3) // Perfectly specular surfaces
-                {
-                    //materials.at(str_currentMaterial).setReflT(SPEC);
-                }
-                else if (illum == 5) // Glossy reflective surfaces
-                {
-                    //materials.at(str_currentMaterial).setReflT(GLOS);
-                }
+                info_materials.at(str_currentMaterial).illum = illum;
             }
             else
             {
@@ -329,6 +313,41 @@ int Mesh::loadMTL(std::map<std::string, Material *> &materials)
     else
     {
         return 1;
+    }
+
+    // Assign all loaded materials into the materials map
+    MaterialInfo matinfo;
+    Material *matcurr;
+    for (auto const &i : info_materials)
+    {
+        matinfo = info_materials.at(i.first.c_str());
+
+        switch (matinfo.illum)
+        {
+        case 0:
+        case 1:
+        case 2:
+            matcurr = m_matFactory->initDiffuseMaterial(matinfo.kd, matinfo.ke);
+            break;
+        case 4:
+        case 6:
+        case 7:
+        case 9:
+            matcurr = m_matFactory->initGlassMaterial(matinfo.kd, matinfo.ks, matinfo.ke, matinfo.ior);
+            break;
+        case 3:
+            matcurr = m_matFactory->initSpecularMaterial(matinfo.kd, matinfo.ks, matinfo.ke);
+            break;
+        case 5:
+            matcurr = m_matFactory->initGlossyMaterial(matinfo.kd, matinfo.ks, matinfo.ke, matinfo.r, matinfo.k, matinfo.d);
+            break;
+        default:
+            matcurr = m_matFactory->initDiffuseMaterial(vec3(1, 1, 1), vec3(0, 0, 0));
+            ERR("Error loading material " << i.first.c_str() << ", no illumination mode specified!");
+            break;
+        }
+
+        materials.insert(std::pair<std::string, Material *>(i.first.c_str(), matcurr));
     }
 
     return 0;

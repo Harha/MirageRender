@@ -193,7 +193,7 @@ struct vec3
 
     static vec3 sampleHemisphere(const vec3 &N)
     {
-        float r1 = 2.0f * PI * pseudorand(); // Spherical coordinates
+        float r1 = pseudorand02pi(); // Spherical coordinates
         float r2 = pseudorand();
         float r2s = std::sqrt(r2);
         vec3 w = N; // w = normal
@@ -206,7 +206,7 @@ struct vec3
     {
         std::uniform_real_distribution<float>brdf_dis(0.0f, scalar);
 
-        float r1 = 2.0f * PI * pseudorand(); // Spherical coordinates
+        float r1 = pseudorand02pi(); // Spherical coordinates
         float r2;
 
         if (pseudorand() < chance) // Importance sampling, should we bias the distribution or not?

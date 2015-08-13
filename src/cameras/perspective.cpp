@@ -13,7 +13,7 @@
 namespace mirage
 {
 
-CameraPersp::CameraPersp(Transform transform, Film film, float speed, float sensitivity, float fov) : Camera(transform, film, speed, sensitivity), m_fov(std::tan((fov * 180.0f / PI) / 2.0f))
+CameraPersp::CameraPersp(Transform transform, Film film, float speed, float sensitivity, float fov) : Camera(transform, film, speed, sensitivity), m_fov(std::tan((fov * (PI / 180.0f)) * 0.5f))
 {
     LOG("Created a new perspective camera.");
 }
@@ -99,7 +99,7 @@ void CameraPersp::calcCamRay(const int x, const int y, Ray &ray) const
 
 void CameraPersp::setFoV(float fov)
 {
-    m_fov = std::tan((fov * 180.0f / PI) / 2.0f);
+    m_fov = std::tan((fov * (PI / 180.0f)) * 0.5f);
 }
 
 float CameraPersp::getFoV() const

@@ -13,6 +13,11 @@ GlossyMaterial::GlossyMaterial(vec3 kd, vec3 ks, vec3 ke, float r, float k, floa
 
 }
 
+GlossyMaterial::~GlossyMaterial()
+{
+
+}
+
 void GlossyMaterial::evalBRDF(const vec3 &p, const vec3 &n, const vec3 &Wi, const vec3 &Wo, float &brdf) const
 {
     // Get the surface values
@@ -22,16 +27,16 @@ void GlossyMaterial::evalBRDF(const vec3 &p, const vec3 &n, const vec3 &Wi, cons
     float K = m_d;
 
     // Prepare all required information
-    auto V_vector = Wo;
-    auto N_vector = n;
-    auto L_vector = Wi;
-    auto H_vector = (V_vector + L_vector).normalize();
+    vec3 V_vector = Wo;
+    vec3 N_vector = n;
+    vec3 L_vector = Wi;
+    vec3 H_vector = (V_vector + L_vector).normalize();
 
     // Calculate all dot products
-    auto NdotL = std::abs(vec3::dot(N_vector, L_vector));
-    auto NdotV = std::abs(vec3::dot(N_vector, V_vector));
-    auto NdotH = std::abs(vec3::dot(N_vector, H_vector));
-    auto VdotH = std::abs(vec3::dot(V_vector, H_vector));
+    float NdotL = std::abs(vec3::dot(N_vector, L_vector));
+    float NdotV = std::abs(vec3::dot(N_vector, V_vector));
+    float NdotH = std::abs(vec3::dot(N_vector, H_vector));
+    float VdotH = std::abs(vec3::dot(V_vector, H_vector));
 
     // Evaluate the geometric term
     float geo_numer = 2.0f * NdotH;
@@ -61,7 +66,7 @@ void GlossyMaterial::evalBRDF(const vec3 &p, const vec3 &n, const vec3 &Wi, cons
 
 void GlossyMaterial::evalBTDF(const vec3 &p, const vec3 &n, const vec3 &Wi, const vec3 &Wo, float &btdf) const
 {
-
+    btdf = 0.0f;
 }
 
 void GlossyMaterial::evalPDF(float &pdf) const
@@ -69,19 +74,20 @@ void GlossyMaterial::evalPDF(float &pdf) const
     pdf = 1.0f / (2.0f * PI * m_r);
 }
 
-void GlossyMaterial::evalWi(const vec3 &Wo, const vec3 &N, vec3 &Wi)
+void GlossyMaterial::evalWi(const vec3 &Wo, const vec3 &N, vec3 &Wr, vec3 &Wt)
 {
     // Calculate mirror / random reflection vectors
-    vec3 Wi_mirr = vec3::reflect(Wo.negate(), N).normalize();
-    vec3 Wi_rand = vec3::sampleHemisphere(Wi_mirr, m_r, 0.33f);
+    vec3 Wr_mirr = vec3::reflect(Wo.negate(), N).normalize();
+    vec3 Wr_rand = vec3::sampleHemisphere(Wr_mirr, m_r, 1.0f - m_r);
 
     // Make sure the random ray doesn't go through surface
-    if (vec3::dot(N, Wi_rand) < 0.0f)
+    if (vec3::dot(N, Wr_rand) < 0.0f)
     {
-        Wi_rand = vec3::reflect(Wi_rand, N);
+        Wr_rand = vec3::reflect(Wr_rand, N);
     }
 
-    Wi = Wi_rand.normalize();
+    // Assign the reflected ray to Wr
+    Wr = Wr_rand.normalize();
 }
 
 }
