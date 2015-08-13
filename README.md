@@ -6,6 +6,6 @@ Mirage Render is a 3d renderer that aims for photorealistic results. Currently t
 Example images
 --------------
 
-![Cornellbox, path traced](img/mirage_bunny0.png "Cornellbox, path traced")
+![Cornell Box, path traced](img/mirage_cornellbox0.png "Cornell Box, path traced")
 
-_a Simple cornellbox scene rendered using monte carlo path tracing._
+_a Simple cornell box scene rendered using monte carlo path tracing._
