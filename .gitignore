@@ -29,6 +29,9 @@
 # Output
 mirage
 
+# Images
+*.ppm
+
 # Tags
 tags
 TAGS

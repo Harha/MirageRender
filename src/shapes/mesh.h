@@ -23,7 +23,7 @@ struct face
     std::string material;
 };
 
-class Mesh : public Shape
+class Mesh : public virtual Shape
 {
 public:
     Mesh(const Transform o2w, Material *m = nullptr, MatFactory *matFactory = nullptr, std::string fileName = "null");

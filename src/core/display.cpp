@@ -9,7 +9,7 @@
 namespace mirage
 {
 
-Display::Display(std::string title, int width, int height, int scale) : m_title(title), m_width(width), m_height(height), m_scale(scale)
+Display::Display(std::string title, int width, int height, int scale) : m_title(title), m_width(width), m_height(height), m_scale(scale), m_isSavingImage(false)
 {
     init();
 
@@ -98,6 +98,36 @@ void Display::setTitle(std::string title)
 {
     m_title = title;
     SDL_SetWindowTitle(m_window, m_title.c_str());
+}
+
+void Display::saveToPPM(std::string filename)
+{
+    if (m_isSavingImage)
+    {
+        ERR("Error! Can't open a new file handle because an image is currently being saved, please wait...");
+        return;
+    }
+
+    filename = filename + ".ppm";
+
+    m_isSavingImage = true;
+    FILE *f = fopen(filename.c_str(), "w");
+
+    if (f == NULL)
+    {
+        ERR("Error writing image to a file... fopen returned NULL.");
+        return;
+    }
+
+    fprintf(f, "P3\n%d %d\n%d\n", m_width, m_height, 255);
+    for (size_t i = 0; i < m_width * m_height; i++)
+    {
+        fprintf(f, "%d %d %d ", (m_pixels[i] >> 16) & 0xFF, (m_pixels[i] >> 8) & 0xFF, (m_pixels[i]) & 0xFF);
+    }
+    fclose(f);
+    m_isSavingImage = false;
+
+    LOG("Successfully saved the current displayed scene as an image, name: " << filename);
 }
 
 }

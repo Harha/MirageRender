@@ -67,16 +67,21 @@ vec3 Raytracer::radiance(const Scene *scene, const Ray &ray, float weight, int n
     vec3 P = iSect.getPosition();
     vec3 N = iSect.getNormal();
 
+    // Get the Wi vector
+    vec3 Wi = vec3(1, 1, -1).normalize();
+
     // Get the Wr & Wt vectors (reflected & transmitted)
-    vec3 Wr = vec3::reflect(Wo.negate(), N);
-    vec3 Wt = vec3::refract(Wo.negate(), N, 1.0f);
+    //vec3 Wr;
+    //vec3 Wt;
+    //M->evalWi(Wo, N, Wr, Wt);
 
     // Get the surface brdf
     float BRDF;
-    M->evalBRDF(P, N, Wr, Wo, BRDF);
+    float BTDF;
+    M->evalBSDF(P, N, Wi, vec3(), Wo, BRDF, BTDF);
 
-    // Get the surface btdf
     /*
+    // Get the surface btdf
     float BTDF;
     M->evalBTDF(P, N, Wt, Wo, BTDF);
 
@@ -92,7 +97,8 @@ vec3 Raytracer::radiance(const Scene *scene, const Ray &ray, float weight, int n
     if (Wt.length() > 0.0f)
     {
         Lt = radiance(scene, Ray(P, Wt), weight, n + 1);
-    }*/
+    }
+    */
 
     // Return the final radiance
     return weight * Kd * BRDF;

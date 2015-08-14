@@ -36,6 +36,14 @@ void CameraPersp::update(float dt, bool keys[256])
     {
         move(m_transform.getOrientation().getRightVector(), dt * m_speed);
     }
+    if (keys[SDL_SCANCODE_R])
+    {
+        move(m_transform.getOrientation().getUpVector(), dt * m_speed);
+    }
+    else if (keys[SDL_SCANCODE_F])
+    {
+        move(m_transform.getOrientation().getUpVector(), -dt * m_speed);
+    }
 
     if (keys[SDL_SCANCODE_UP])
     {

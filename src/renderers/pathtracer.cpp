@@ -44,7 +44,7 @@ void Pathtracer::render(const Scene *scene, Display *display, const int w, const
 vec3 Pathtracer::radiance(const Scene *scene, const Ray &ray, float weight, int n)
 {
     // Return if recursion limit was reached
-    if (n > m_maxRecursion || weight <= 0.0f)
+    if (n >= m_maxRecursion || weight <= 0.0f)
     {
         return COLOR_NULL;
     }
@@ -59,24 +59,17 @@ vec3 Pathtracer::radiance(const Scene *scene, const Ray &ray, float weight, int 
     // Get the Kd, Ks & Ke surface data
     Material *M = iSect.getMaterial();
     vec3 Kd = M->getKd();
-    vec3 Ks = iSect.getMaterial()->getKs();
-    vec3 Ke = iSect.getMaterial()->getKe();
+    vec3 Ks = M->getKs();
+    vec3 Ke = M->getKe();
 
     // Find the maximum reflectance amount
     float Kd_max = Kd.x > Kd.y && Kd.x > Kd.z ? Kd.x : Kd.y > Kd.z ? Kd.y : Kd.z;
 
-    // Find the average reflectance amount
-    float Kd_avg = (Kd.x + Kd.y + Kd.z) / 3.0f;
-
-    // Russian roulette, absorb or continue, change weight based on probability
-    float p = Kd_max;
-    if (n > 3 || !p)
+    // Russian roulette, absorb or continue
+    float p = pseudorand();
+    if (p > 0.0f)
     {
-        if (pseudorand() < p)
-        {
-            weight *= 1.0f / p;
-        }
-        else
+        if (weight < p)
         {
             return weight * Ke;
         }
@@ -92,17 +85,56 @@ vec3 Pathtracer::radiance(const Scene *scene, const Ray &ray, float weight, int 
     vec3 Wt;
     M->evalWi(Wo, N, Wr, Wt);
 
-    // Get the surface brdf
+    // Get the surface brdf & btdf function output values
     float BRDF;
-    M->evalBRDF(P, N, Wr, Wo, BRDF);
-
-    // Get the surface btdf
-    float BTDF;
-    M->evalBTDF(P, N, Wt, Wo, BTDF);
+    float BRDF_direct;
+    float BTDF = n;
+    float BTDF_direct;
+    M->evalBSDF(P, N, Wr, Wt, Wo, BRDF, BTDF);
 
     // Get the surface pdf
     float PDF;
     M->evalPDF(PDF);
+
+    // Direct light sampling
+    vec3 Le, Ler, Let;
+    std::vector<Light *> lights = scene->getLights();
+    for (size_t i = 0; i < lights.size(); i++)
+    {
+        // Get the current light in list with i
+        Light *currlight = lights[i];
+
+        // Calculate the We vector from P to L
+        vec3 We;
+        currlight->evalWe(P, N, Wo, We);
+
+        // Generate a shadow ray
+        Ray r_shadow(P, We, 0.0f, We.length() - EPSILON);
+
+        // Intersect the scene with it and add light contribution to Le if nothing was hit
+        if (!scene->intersectP(r_shadow))
+        {
+            // Get the surface brdf & btdf
+            M->evalBSDF_direct(P, N, We.normalize(), Wr, Wt, Wo, BRDF_direct, BTDF_direct);
+
+            // Create a temporary variable to hold the current Le
+            vec3 Ler_, Let_;
+
+            // Get the light amount from We
+            currlight->Le(P, N, We, Wo, Ler_); // Parameters are silly, gotta change this
+
+            // Scale the current Le_ by BRDF_direct
+            Ler_ *= BRDF_direct;
+            Let_ *= BTDF_direct;
+
+            // Add the Le_'s contribution to the total Le
+            Le += Ler_;
+            Le += Let_;
+        }
+    }
+
+    // Scale weight by reflectance
+    weight *= Kd_max;
 
     // Get the light amount from Wr
     vec3 Lr;
@@ -119,7 +151,7 @@ vec3 Pathtracer::radiance(const Scene *scene, const Ray &ray, float weight, int 
     }
 
     // Return the final radiance
-    return weight * Ke + Kd * ((BRDF / PDF) * Lr + (BTDF / PDF) * Lt);
+    return Ke + Kd * (weight * Le + (BRDF / PDF) * Lr + (BTDF / PDF) * Lt);
 }
 
 }

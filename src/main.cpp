@@ -29,6 +29,9 @@
 #include "materials/glassmat.h"
 #include "materials/glossymat.h"
 #include "core/matfactory.h"
+#include "core/light.h"
+#include "lights/pointlight.h"
+#include "lights/dirlight.h"
 
 using namespace mirage;
 
@@ -76,8 +79,8 @@ int main(int argc, char **argv)
 
     // Initialize test scene data / seed scene, build acc, etc...
     Film film(WIDTH, HEIGHT);
-    CameraOrtho cam_ortho(Transform(vec3(0, -4, -128), quaternion(0.88f, 0.31f, -0.35f, 0.06f)), film, 8, 64, 0.075f);
-    CameraPersp cam_persp(Transform(vec3(0, 0, -22.0f)), film, 8, 64, 70.0f);
+    CameraOrtho cam_ortho(Transform(vec3(-0.31f, -3.37f, -128), quaternion(-0.18f, -0.07f, -0.93f, 0.31f)), film, 8, 64, 0.1f);
+    CameraPersp cam_persp(Transform(vec3(0, 0, -22.5f), quaternion()), film, 8, 64, 70.0f);
     Camera *camera = &cam_persp;
 
     MatFactory matfactory;
@@ -89,22 +92,34 @@ int main(int argc, char **argv)
     DiffuseMaterial matdwhite(vec3(0.9f, 0.9f, 0.9f), vec3());
     DiffuseMaterial matdgreen(vec3(0.25f, 0.75f, 0.25f), vec3());
     DiffuseMaterial matdblue(vec3(0.1f, 0.1f, 0.9f), vec3());
+    DiffuseMaterial matdyellow(vec3(0.75f, 0.75f, 0.25f), vec3());
     SpecularMaterial matmirror(vec3(1, 1, 1), vec3(), vec3());
     GlassMaterial matglass(vec3(1, 1, 1), vec3(), vec3(), 1.52f);
-    GlossyMaterial matsilver(vec3(0.87843137254f, 0.87450980392f, 0.85882352941f), vec3(), vec3(),  0.1f, 0.95f, 0.25f);
-    GlossyMaterial matbronze(vec3(0.80392156862f, 0.49803921568f, 0.19607843137f), vec3(), vec3(),  0.1f, 0.95f, 0.25f);
+    GlassMaterial matglassg(vec3(0.25f, 0.75f, 0.25f), vec3(), vec3(), 1.52f);
+    GlassMaterial matglassy(vec3(0.75f, 0.75f, 0.25f), vec3(), vec3(), 1.52f);
+    GlassMaterial matglassb(vec3(0.25f, 0.75f, 0.9f), vec3(), vec3(), 1.52f);
+    GlossyMaterial matsilver(vec3(0.87843137254f, 0.87450980392f, 0.85882352941f), vec3(), vec3(),  0.05f, 0.95f, 0.25f);
+    GlossyMaterial matbronze(vec3(0.80392156862f, 0.49803921568f, 0.19607843137f), vec3(), vec3(),  0.05f, 0.95f, 0.1f);
 
     // Lightsources
-    Sphere light(Transform(vec3(0, 10, 5)), &matl1, vec3(0, 0, 0), 2.0f);
+    Sphere light(Transform(vec3(-2.5f, 5, -5)), &matl1, vec3(0, 0, 0), 1.0f);
+    PointLight plight(Transform(vec3(0, 5.5f, 0)), vec3(1, 1, 1) * 16.0f, 0, 0, 0.2f);
+    PointLight plight2(Transform(vec3(-2, -2.0f, 0)), vec3(16, 12, 7) * 1.0f, 0, 0, 0.5f);
+    PointLight plight3(Transform(vec3(-3, 4, -5)), vec3(16, 12, 7) * 1.0f, 0, 0, 0.5f);
+    DirectionalLight dirlight(Transform(vec3(), quaternion().euler(0.5f, 0.5f, 0, 66)), vec3(1, 1, 1) * 16.0f);
 
     // Meshes
-    Mesh box(Transform(vec3(0, 0, 0), quaternion().euler(0, 1, 0, 0), vec3(5, 5, 5)), &matdwhite, &matfactory, "cornellbox_empty.obj");
-    Mesh dragon(Transform(vec3(2.0f, -5, -2.5f), quaternion().euler(0, 1, 0, 20), vec3(0.5f, 0.5f, 0.5f)), &matdgreen, &matfactory, "dragon.obj");
-    Mesh bunny(Transform(vec3(-2.5f, -4.75f, 1.5f), quaternion().euler(0, 1, 0, 170), vec3(2, 2, 2)), &matsilver, &matfactory, "bunny.obj");
+    Mesh box(Transform(vec3(0, 0, 0), quaternion().euler(0, 1, 0, 0), vec3(5, 5, 5)), &matdwhite, &matfactory, "cornellbox_empty3.obj");
+    //Mesh floor(Transform(vec3(0, -5, 0), quaternion().euler(0, 1, 0, 0), vec3(5, 5, 5)), &matdwhite, &matfactory, "plane.obj");
+    //Mesh wall(Transform(vec3(0, 2.5f, 4.5f), quaternion().euler(1, 0, 0, 90), vec3(5, 2.5f, 2.5f)), &matdwhite, &matfactory, "plane.obj");
+    Mesh dragon(Transform(vec3(2, -5, -4.0f), quaternion().euler(0, 1, 0, 33), vec3(0.5f, 0.5f, 0.5f)), &matglass, &matfactory, "dragon.obj");
+    Mesh bunny(Transform(vec3(-2.75f, -4.75f, -4.0f), quaternion().euler(0, 1, 0, 200), vec3(2, 2, 2)), &matglassb, &matfactory, "bunny.obj");
+    //Mesh bunny2(Transform(vec3(2.5f, -4.75f, 2.5f), quaternion().euler(0, 1, 0, 170), vec3(2, 2, 2)), &matdgreen, &matfactory, "bunny.obj");
 
     std::vector<Shape *> shapes = box.getShapes();
     std::vector<Shape *> shapes_dragon = dragon.getShapes();
     std::vector<Shape *> shapes_bunny = bunny.getShapes();
+    //std::vector<Shape *> shapes_bunny2 = bunny2.getShapes();
 
     for (size_t i = 0; i < shapes_dragon.size(); i++)
     {
@@ -116,12 +131,23 @@ int main(int argc, char **argv)
         shapes.push_back(shapes_bunny[i]);
     }
 
+    /*
+    for (size_t i = 0; i < shapes_bunny2.size(); i++)
+    {
+        shapes.push_back(shapes_bunny2[i]);
+    }
+    */
+
     //shapes.push_back(&light);
 
     KDTreeAccel accelerator(shapes);
     accelerator.init();
     Scene scene(&accelerator, camera);
-    Pathtracer ptracer(vec3(0.75f, 0.87f, 0.98f) * 0.0f, 10.0f, 5);
+    scene.addLight(&plight);
+    //scene.addLight(&plight2);
+    //scene.addLight(&plight3);
+    //scene.addLight(&dirlight);
+    Pathtracer ptracer(vec3(0.75f, 0.87f, 0.98f) * 0.0f, 10.0f, 10);
 
     while (running)
     {
@@ -143,9 +169,14 @@ int main(int argc, char **argv)
         // Update everything
         camera->update(deltaTime, g_keys);
 
-        if (g_keys[SDL_SCANCODE_SPACE])
+        if (g_keys[SDL_SCANCODE_F1]) // Print info
         {
-            LOG("cam pos: " << camera->getTransform().getPosition().toString() << " rot: " << camera->getTransform().getOrientation().toString());
+            LOG("cam " << camera->getTransform().getPosition().toString() << ", " << camera->getTransform().getOrientation().toString());
+            LOG("spp: " << camera->getFilm().getSample(0, 0).getNumSamples());
+        }
+        if (g_keys[SDL_SCANCODE_F2]) // Image file saving
+        {
+            display.saveToPPM("render");
         }
 
         // Render a portion of the screen per thread

@@ -11,7 +11,7 @@
 namespace mirage
 {
 
-class Triangle : public Shape
+class Triangle : public virtual Shape
 {
 public:
     Triangle(const Transform o2w, Material *m = nullptr, std::array<Vertex, 3> vertices = { });

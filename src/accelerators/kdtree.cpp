@@ -62,8 +62,8 @@ bool KDTreeAccel::intersect(const Ray &ray, Intersection &iSect)
 bool KDTreeAccel::intersectP(const Ray &ray)
 {
     bool result = false;
-    float tHit = INFINITY;
-    float tHit0 = 0.0f;
+    float tHit = ray.maxt;
+    float tHit0 = ray.mint;
     float tHit1 = INFINITY;
     traverseP(m_root, ray, result, tHit, tHit0, tHit1);
     return result;
@@ -132,10 +132,10 @@ void KDTreeAccel::traverse(KDNode *node, const Ray &ray, bool &bHit, float &tHit
     if (node->isLeaf())
     {
         float tInit = tHit1;
+        Intersection iSectInit;
         for (auto *s : node->data)
         {
-            Intersection iSectInit;
-            if (s->intersect(ray, iSectInit) && tInit < tHit)
+            if (s->intersect(ray, iSectInit) && tInit < tHit && tInit < ray.maxt)
             {
                 bHit = true;
                 tHit = tInit;
@@ -162,12 +162,14 @@ void KDTreeAccel::traverseP(KDNode *node, const Ray &ray, bool &bHit, float &tHi
     // Find first intersection in the leaf, don't care about z-sorting
     if (node->isLeaf())
     {
+        float tInit = tHit1;
+        Intersection iSectInit;
         for (auto *s : node->data)
         {
-            if (s->intersectP(ray))
+            if (s->intersect(ray, iSectInit) && tInit < tHit && tInit < ray.maxt)
             {
                 bHit = true;
-                return;
+                tHit = tInit;
             }
         }
     }

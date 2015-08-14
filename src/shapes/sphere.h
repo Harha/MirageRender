@@ -7,7 +7,7 @@
 namespace mirage
 {
 
-class Sphere : public Shape
+class Sphere : public virtual Shape
 {
 public:
     Sphere(const Transform o2w, Material *m = nullptr, vec3 c = vec3(), float r = 1.0f);

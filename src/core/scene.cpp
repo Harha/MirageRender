@@ -23,6 +23,11 @@ bool Scene::intersectP(const Ray &ray) const
     return m_accelerator->intersectP(ray);
 }
 
+void Scene::addLight(Light *l)
+{
+    m_lights.push_back(l);
+}
+
 Accelerator *Scene::getAccelerator() const
 {
     return m_accelerator;
@@ -31,6 +36,11 @@ Accelerator *Scene::getAccelerator() const
 Camera *Scene::getCamera() const
 {
     return m_camera;
+}
+
+std::vector<Light *> Scene::getLights() const
+{
+    return m_lights;
 }
 
 }
