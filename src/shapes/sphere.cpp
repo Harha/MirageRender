@@ -66,6 +66,7 @@ bool Sphere::intersect(const Ray &ray, Intersection &iSect) const
     }
 
     // Set final surface intersection info
+    iSect.setT(t);
     iSect.setPosition(ray(t));
     iSect.setNormal((iSect.getPosition() - C) / r);
     iSect.setMaterial(m_material);

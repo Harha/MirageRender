@@ -47,8 +47,16 @@ bool Triangle::intersect(const Ray &ray, Intersection &iSect) const
     P = vec3::cross(ray.getDirection(), edge_b);
     d = vec3::dot(edge_a, P);
 
-    if (d < EPSILON)
-        return false;
+    if (!m_material->isRefractive())
+    {
+        if (d < EPSILON)
+            return false;
+    }
+    else
+    {
+        if (d > -EPSILON && d < EPSILON)
+            return false;
+    }
 
     inv_d = 1.0f / d;
     T = ray.getOrigin() - vertices[0].getPosition();
@@ -75,6 +83,12 @@ bool Triangle::intersect(const Ray &ray, Intersection &iSect) const
     vec3 N3 = vertices[2].getNormal();
     vec3 N = N1 + b1 * (N2 - N1) + b2 * (N3 - N1);
 
+    if (d < 0.0f)
+    {
+        N = N.negate();
+    }
+
+    iSect.setT(t);
     iSect.setPosition(hit);
     iSect.setNormal(N.normalize());
     iSect.setMaterial(m_material);

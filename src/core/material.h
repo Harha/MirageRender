@@ -27,7 +27,7 @@ struct MaterialInfo
 class Material
 {
 public:
-    Material(vec3 kd = vec3(), vec3 ks = vec3(), vec3 ke = vec3());
+    Material(vec3 kd = vec3(), vec3 ks = vec3(), vec3 ke = vec3(), bool refr = false);
     virtual ~Material();
     virtual void evalBSDF(const vec3 &P, const vec3 &N, const vec3 &Wr, const vec3 &Wt, const vec3 &Wo, float &brdf, float &btdf) const = 0;
     virtual void evalBSDF_direct(const vec3 &P, const vec3 &N, const vec3 &We, const vec3 &Wr, const vec3 &Wt, const vec3 &Wo, float &brdf, float &btdf) const = 0;
@@ -39,10 +39,12 @@ public:
     vec3 getKd() const;
     vec3 getKs() const;
     vec3 getKe() const;
+    bool isRefractive() const;
 protected:
     vec3 m_kd; // diffuse
     vec3 m_ks; // specular
     vec3 m_ke; // emittance
+    bool m_refr;
 };
 
 }

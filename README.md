@@ -6,9 +6,9 @@ Mirage Render is a 3d renderer that aims for photorealistic results. Currently t
 Example images
 --------------
 
-![Cornell Box, gi test 1](img/mirage_gi2.png "Cornell Box, gi test 1")
+![Cornell Box, caustics test](img/mirage_water2.png "Cornell Box, caustics test")
 
-_a Simple cornell box scene rendered using monte carlo path tracing & direct point light illumination._
+_a Cornell box scene rendered using monte carlo path tracing, caustics caused by water, indirect illumination._
 
 ![Cornell Box, gi test 2](img/mirage-gitest.png "Cornell Box, gi test 2")
 

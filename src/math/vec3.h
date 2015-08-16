@@ -35,7 +35,7 @@ struct vec3
         return !(*this == other);
     }
 
-    vec3 operator+=(const vec3 &other)
+    vec3 &operator+=(const vec3 &other)
     {
         x += other.x;
         y += other.y;
@@ -43,7 +43,7 @@ struct vec3
         return *this;
     }
 
-    vec3 operator+=(const float f)
+    vec3 &operator+=(const float f)
     {
         x += f;
         y += f;
@@ -51,7 +51,7 @@ struct vec3
         return *this;
     }
 
-    vec3 operator-=(const vec3 &other)
+    vec3 &operator-=(const vec3 &other)
     {
         x -= other.x;
         y -= other.y;
@@ -59,7 +59,7 @@ struct vec3
         return *this;
     }
 
-    vec3 operator-=(const float f)
+    vec3 &operator-=(const float f)
     {
         x -= f;
         y -= f;
@@ -67,7 +67,7 @@ struct vec3
         return *this;
     }
 
-    vec3 operator*=(const vec3 &other)
+    vec3 &operator*=(const vec3 &other)
     {
         x *= other.x;
         y *= other.y;
@@ -75,7 +75,7 @@ struct vec3
         return *this;
     }
 
-    vec3 operator*=(const float f)
+    vec3 &operator*=(const float f)
     {
         x *= f;
         y *= f;
@@ -83,7 +83,7 @@ struct vec3
         return *this;
     }
 
-    vec3 operator/=(const vec3 &other)
+    vec3 &operator/=(const vec3 &other)
     {
         x /= other.x;
         y /= other.y;
@@ -91,7 +91,7 @@ struct vec3
         return *this;
     }
 
-    vec3 operator/=(const float f)
+    vec3 &operator/=(const float f)
     {
         x /= f;
         y /= f;

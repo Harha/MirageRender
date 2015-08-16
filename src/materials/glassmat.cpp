@@ -8,7 +8,7 @@
 namespace mirage
 {
 
-GlassMaterial::GlassMaterial(vec3 kd, vec3 ks, vec3 ke, float ior) : Material(kd, ks, ke), m_ior(ior)
+GlassMaterial::GlassMaterial(vec3 kd, vec3 ks, vec3 ke, float ior) : Material(kd, ks, ke, true), m_ior(ior)
 {
 
 }
@@ -64,16 +64,29 @@ void GlassMaterial::evalBSDF(const vec3 &P, const vec3 &N, const vec3 &Wr, const
 
 void GlassMaterial::evalBSDF_direct(const vec3 &P, const vec3 &N, const vec3 &We, const vec3 &Wr, const vec3 &Wt, const vec3 &Wo, float &brdf, float &btdf) const
 {
-    evalBSDF(P, N, We, Wt, Wo, brdf, btdf);
+    evalBSDF(P, N, Wr, Wt, Wo, brdf, btdf);
 
     // Check if the supplied Wr really is the same
     if (We == Wr)
     {
-        brdf = 1.0f;
+        brdf *= 1.0f;
+        btdf = 0.0f;
     }
     else
     {
         brdf = 0.0f;
+        btdf = 0.0f;
+    }
+
+    // Check if the supplied Wt really is the same
+    if (We == Wt)
+    {
+        btdf *= 1.0f;
+        brdf = 0.0f;
+    }
+    else
+    {
+        btdf = 0.0f;
     }
 }
 

@@ -30,11 +30,11 @@ void CameraOrtho::update(float dt, bool keys[256])
     }
     if (keys[SDL_SCANCODE_A])
     {
-        move(m_transform.getOrientation().getRightVector(), -dt * m_speed);
+        move(m_transform.getOrientation().getRightVector(), dt * m_speed);
     }
     else if (keys[SDL_SCANCODE_D])
     {
-        move(m_transform.getOrientation().getRightVector(), dt * m_speed);
+        move(m_transform.getOrientation().getRightVector(), -dt * m_speed);
     }
 
     if (keys[SDL_SCANCODE_UP])
@@ -47,11 +47,11 @@ void CameraOrtho::update(float dt, bool keys[256])
     }
     if (keys[SDL_SCANCODE_LEFT])
     {
-        rotate(m_transform.getOrientation().getUpVector(), -dt * m_sensitivity);
+        rotate(m_transform.getOrientation().getUpVector(), dt * m_sensitivity);
     }
     else if (keys[SDL_SCANCODE_RIGHT])
     {
-        rotate(m_transform.getOrientation().getUpVector(), dt * m_sensitivity);
+        rotate(m_transform.getOrientation().getUpVector(), -dt * m_sensitivity);
     }
     if (keys[SDL_SCANCODE_Q])
     {
@@ -82,7 +82,7 @@ void CameraOrtho::calcCamRay(const int x, const int y, Ray &ray) const
 
     // Construct the ray's origin vector
     vec3 e = m_transform.getPosition();
-    vec3 s = e + vec3(x + dx - m_film.getResolutionX() * 0.5f + 0.5f, m_film.getResolutionY() * 0.5f - y + dy + 0.5f, 5.0f) * m_zoom;
+    vec3 s = e + vec3(m_film.getResolutionX() * 0.5f - x + dx + 0.5f, m_film.getResolutionY() * 0.5f - y + dy + 0.5f, 5.0f) * m_zoom;
 
     // Get the ray's direction vector
     vec3 p = m_transform.getOrientation().getForwardVector();

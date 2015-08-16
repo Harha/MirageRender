@@ -65,14 +65,16 @@ vec3 Pathtracer::radiance(const Scene *scene, const Ray &ray, float weight, int 
     // Find the maximum reflectance amount
     float Kd_max = Kd.x > Kd.y && Kd.x > Kd.z ? Kd.x : Kd.y > Kd.z ? Kd.y : Kd.z;
 
+    // Find the XYZ color space luminance of the surface
+    //float Y = 0.2126 * Kd.x + 0.7152 * Kd.y + 0.0722 * Kd.z;
+
     // Russian roulette, absorb or continue
     float p = pseudorand();
-    if (p > 0.0f)
+    p = (p != 0.0f) ? p : 0.01f;
+    p = (p != 1.0f) ? p : 0.99f;
+    if (weight < p)
     {
-        if (weight < p)
-        {
-            return weight * Ke;
-        }
+        return (1.0f / p) * Ke;
     }
 
     // Assign intersection data into aliases
@@ -89,7 +91,7 @@ vec3 Pathtracer::radiance(const Scene *scene, const Ray &ray, float weight, int 
     float BRDF;
     float BRDF_direct;
     float BTDF = n;
-    float BTDF_direct;
+    float BTDF_direct = n;
     M->evalBSDF(P, N, Wr, Wt, Wo, BRDF, BTDF);
 
     // Get the surface pdf
@@ -128,19 +130,15 @@ vec3 Pathtracer::radiance(const Scene *scene, const Ray &ray, float weight, int 
             Let_ *= BTDF_direct;
 
             // Add the Le_'s contribution to the total Le
-            Le += Ler_;
-            Le += Let_;
+            Le += Ler_ + Let_;
         }
     }
-
-    // Scale weight by reflectance
-    weight *= Kd_max;
 
     // Get the light amount from Wr
     vec3 Lr;
     if (Wr.length() > 0.0f)
     {
-        Lr = radiance(scene, Ray(P, Wr), weight, n + 1);
+        Lr = radiance(scene, Ray(P, Wr), weight * Kd_max, n + 1);
     }
 
     // Get the light amount from Wt
@@ -151,7 +149,7 @@ vec3 Pathtracer::radiance(const Scene *scene, const Ray &ray, float weight, int 
     }
 
     // Return the final radiance
-    return Ke + Kd * (weight * Le + (BRDF / PDF) * Lr + (BTDF / PDF) * Lt);
+    return (1.0f / (1.0f - p)) * Ke + Kd * (weight * Le + (BRDF / PDF) * Lr + (BTDF / PDF) * Lt);
 }
 
 }

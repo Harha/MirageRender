@@ -3,10 +3,12 @@
 #include <fstream>
 #include <sstream>
 #include <algorithm>
+#include <regex>
 
 // mirage includes
 #include "mesh.h"
 #include "../macros.h"
+#include "../utils/strutils.h"
 
 namespace mirage
 {
@@ -100,6 +102,16 @@ int Mesh::loadObj()
         {
             std::getline(file, line);
 
+            // Trim any leading, trailing and extra spaces
+            line.erase(line.begin(), std::find_if(line.begin(), line.end(), std::bind1st(std::not_equal_to<char>(), ' ')));
+            line = std::regex_replace(line, std::regex("^ +| +$|( ) +"), "");
+
+            // Check for empty line, continue if true
+            if (line.empty())
+            {
+                continue;
+            }
+
             if (line.substr(0, 7) == "mtllib ")
             {
                 m_mtlFileName = line.substr(7);
@@ -132,6 +144,10 @@ int Mesh::loadObj()
                 s >> n.z;
                 normals.push_back(n);
             }
+            else if (line.substr(0, 3) == "vt ")
+            {
+                // Not yet implemented
+            }
             else if (line.substr(0, 2) == "f ")
             {
                 if (line.find("//") == std::string::npos)
@@ -147,9 +163,6 @@ int Mesh::loadObj()
                         f.va = vertices.size() + f.va;
                         f.vb = vertices.size() + f.vb;
                         f.vc = vertices.size() + f.vc;
-                        f.va++;
-                        f.vb++;
-                        f.vc++;
                     }
                     else
                     {
@@ -178,9 +191,6 @@ int Mesh::loadObj()
                         f.va = vertices.size() + f.va;
                         f.vb = vertices.size() + f.vb;
                         f.vc = vertices.size() + f.vc;
-                        f.va++;
-                        f.vb++;
-                        f.vc++;
                     }
                     else
                     {
@@ -211,6 +221,7 @@ int Mesh::loadObj()
             }
             else
             {
+                LOG(".obj: " << line);
                 continue;
             }
         }
@@ -223,6 +234,7 @@ int Mesh::loadObj()
     for (size_t i = 0; i < indices.size(); i++)
     {
         std::array<Vertex, 3> verts;
+
         verts[0].setPosition(vertices[indices[i].va]);
         verts[1].setPosition(vertices[indices[i].vb]);
         verts[2].setPosition(vertices[indices[i].vc]);
@@ -266,11 +278,33 @@ int Mesh::loadMTL(std::map<std::string, Material *> &materials)
         {
             std::getline(file, line);
 
+            // Trim any leading, trailing and extra spaces
+            line.erase(line.begin(), std::find_if(line.begin(), line.end(), std::bind1st(std::not_equal_to<char>(), ' ')));
+            line = std::regex_replace(line, std::regex("^ +| +$|( ) +"), "");
+
+            // Check for empty line, continue if true
+            if (line.empty())
+            {
+                continue;
+            }
+
             if (line.substr(0, 7) == "newmtl ")
             {
                 str_currentMaterial = line.substr(7);
                 info_currentMaterial = MaterialInfo();
                 info_materials.insert(std::pair<std::string, MaterialInfo>(str_currentMaterial, info_currentMaterial));
+            }
+            else if (line.substr(0, 3) == "Ns ") // Specular power
+            {
+                // Not yet implemented
+            }
+            else if (line.substr(0, 3) == "Ka ") // Ambient color
+            {
+                // Not yet implemented
+            }
+            else if (line.substr(0, 3) == "Ks ") // Specular color
+            {
+                // Not yet implemented
             }
             else if (line.substr(0, 3) == "Kd ") // Diffuse color
             {
@@ -306,6 +340,7 @@ int Mesh::loadMTL(std::map<std::string, Material *> &materials)
             }
             else
             {
+                LOG(".mtl: " << line);
                 continue;
             }
         }

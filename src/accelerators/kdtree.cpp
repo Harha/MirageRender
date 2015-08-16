@@ -131,14 +131,20 @@ void KDTreeAccel::traverse(KDNode *node, const Ray &ray, bool &bHit, float &tHit
     // Intersect against each shape in the node if it's a leaf node
     if (node->isLeaf())
     {
-        float tInit = tHit1;
+        if (tHit0 > tHit)
+        {
+            return;
+        }
+
+        bool bInit = false;
         Intersection iSectInit;
         for (auto *s : node->data)
         {
-            if (s->intersect(ray, iSectInit) && tInit < tHit && tInit < ray.maxt)
+            bInit = s->intersect(ray, iSectInit);
+            if (bInit && iSectInit.getT() < tHit && iSectInit.getT() < ray.maxt)
             {
                 bHit = true;
-                tHit = tInit;
+                tHit = iSectInit.getT();
                 iSect = iSectInit;
             }
         }
@@ -166,7 +172,7 @@ void KDTreeAccel::traverseP(KDNode *node, const Ray &ray, bool &bHit, float &tHi
         Intersection iSectInit;
         for (auto *s : node->data)
         {
-            if (s->intersect(ray, iSectInit) && tInit < tHit && tInit < ray.maxt)
+            if (s->intersectP(ray) && tInit < tHit && tInit < ray.maxt)
             {
                 bHit = true;
                 tHit = tInit;

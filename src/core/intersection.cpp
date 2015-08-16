@@ -4,9 +4,14 @@
 namespace mirage
 {
 
-Intersection::Intersection(vec3 position, vec3 normal, Material *material) : m_position(position), m_normal(normal), m_material(material)
+Intersection::Intersection(float t, vec3 position, vec3 normal, Material *material) : m_t(t), m_position(position), m_normal(normal), m_material(material)
 {
 
+}
+
+void Intersection::setT(const float t)
+{
+    m_t = t;
 }
 
 void Intersection::setPosition(const vec3 &v)
@@ -22,6 +27,11 @@ void Intersection::setNormal(const vec3 &v)
 void Intersection::setMaterial(Material *m)
 {
     m_material = m;
+}
+
+float Intersection::getT() const
+{
+    return m_t;
 }
 
 vec3 Intersection::getPosition() const

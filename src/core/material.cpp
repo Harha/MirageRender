@@ -6,7 +6,7 @@
 namespace mirage
 {
 
-Material::Material(vec3 kd, vec3 ks, vec3 ke) : m_kd(kd), m_ks(ks), m_ke(ke)
+Material::Material(vec3 kd, vec3 ks, vec3 ke, bool refr) : m_kd(kd), m_ks(ks), m_ke(ke), m_refr(refr)
 {
 
 }
@@ -44,6 +44,11 @@ vec3 Material::getKs() const
 vec3 Material::getKe() const
 {
     return m_ke;
+}
+
+bool Material::isRefractive() const
+{
+    return m_refr;
 }
 
 }
