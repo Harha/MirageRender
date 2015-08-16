@@ -53,7 +53,7 @@ vec3 Pathtracer::radiance(const Scene *scene, const Ray &ray, float weight, int 
     Intersection iSect;
     if (!scene->getAccelerator()->intersect(ray, iSect))
     {
-        return weight * m_ka;
+        return (m_ka.x == 0.0f && m_ka.y == 0.0f && m_ka.z == 0.0f) ? COLOR_NULL : weight * m_ka;
     }
 
     // Get the Kd, Ks & Ke surface data

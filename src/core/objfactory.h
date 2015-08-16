@@ -1,5 +1,5 @@
-#ifndef MATFACTORY_H
-#define MATFACTORY_H
+#ifndef OBJFACTORY_H
+#define OBJFACTORY_H
 
 // std includes
 #include <vector>
@@ -14,11 +14,11 @@
 namespace mirage
 {
 
-class MatFactory
+class ObjFactory
 {
 public:
-    MatFactory(std::vector<Material *> materials = std::vector<Material *>());
-    ~MatFactory();
+    ObjFactory(std::vector<Material *> materials = std::vector<Material *>());
+    ~ObjFactory();
     Material *initDiffuseMaterial(const vec3 &kd, const vec3 &ke);
     Material *initGlassMaterial(const vec3 &kd, const vec3 &ks, const vec3 &ke, const float ior);
     Material *initGlossyMaterial(const vec3 &kd, const vec3 &ks, const vec3 &ke, const float r, const float k, const float d);
@@ -29,4 +29,4 @@ private:
 
 }
 
-#endif // MATFACTORY_H
+#endif // OBJFACTORY_H

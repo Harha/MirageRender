@@ -9,7 +9,7 @@
 #include "../core/shape.h"
 #include "../core/vertex.h"
 #include "../core/material.h"
-#include "../core/matfactory.h"
+#include "../core/objfactory.h"
 #include "../materials/diffusemat.h"
 #include "triangle.h"
 
@@ -26,7 +26,7 @@ struct face
 class Mesh : public virtual Shape
 {
 public:
-    Mesh(const Transform o2w, Material *m = nullptr, MatFactory *matFactory = nullptr, std::string fileName = "null");
+    Mesh(const Transform o2w, Material *m = nullptr, ObjFactory *objFactory = nullptr, std::string fileName = "null");
     virtual void update() override;
     virtual AABB objectBound() const override;
     virtual AABB worldBound() const override;
@@ -38,7 +38,7 @@ private:
     int loadObj();
     int loadMTL(std::map<std::string, Material *> &materials);
 
-    MatFactory *m_matFactory;
+    ObjFactory *m_objFactory;
     std::string m_mdlFileName;
     std::string m_mtlFileName;
     std::vector<Triangle> m_triangles;

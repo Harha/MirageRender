@@ -13,7 +13,8 @@ Display::Display(std::string title, int width, int height, int scale) : m_title(
 {
     init();
 
-    LOG("a New display object has been initialized succesfully.");
+    LOG("Display: a New Display object has been created.");
+    LOG("Display: Width: " << m_width << " Height: " << m_height << " Scale: " << m_scale);
 }
 
 Display::~Display()
@@ -23,8 +24,6 @@ Display::~Display()
     SDL_DestroyTexture(m_texture);
     SDL_DestroyRenderer(m_renderer);
     SDL_DestroyWindow(m_window);
-
-    LOG("a Display object has been destroyed succesfully.");
 }
 
 void Display::init()
@@ -104,7 +103,7 @@ void Display::saveToPPM(std::string filename)
 {
     if (m_isSavingImage)
     {
-        ERR("Error! Can't open a new file handle because an image is currently being saved, please wait...");
+        ERR("Display: Can't open a new file handle because an image is currently being saved, please wait...");
         return;
     }
 
@@ -115,7 +114,7 @@ void Display::saveToPPM(std::string filename)
 
     if (f == NULL)
     {
-        ERR("Error writing image to a file... fopen returned NULL.");
+        ERR("Display: Writing image to a .ppm file failed... fopen returned NULL.");
         return;
     }
 
@@ -127,7 +126,7 @@ void Display::saveToPPM(std::string filename)
     fclose(f);
     m_isSavingImage = false;
 
-    LOG("Successfully saved the current displayed scene as an image, name: " << filename);
+    LOG("Display: Successfully saved the current displayed scene as an image, name: " << filename);
 }
 
 }

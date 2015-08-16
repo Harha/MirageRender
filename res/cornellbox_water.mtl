@@ -1,34 +1,8 @@
-# The water Cornell Box as seen in Henrik Jensen's 
-# "Realistic Image Synthesis Using Photon Mapping" (Page 109 Fig. 9.14) in OBJ format.
-# Note that the real box is not a perfect cube, so
-# the faces are imperfect in this data set.
-#
-# Created by Guedis Cardenas and Morgan McGuire at Williams College, 2011
-# Released into the Public Domain.
-#
-# http://graphics.cs.williams.edu/data
-# http://www.graphics.cornell.edu/online/box/data.html
-#
-newmtl leftSphere
-Ns 3.921569
-Ka 0.000000 0.000000 0.000000
-Kd 0.750000 0.750000 0.750000
-Ks 0.000000 0.000000 0.000000
-Ni 1.000000
-d 1.000000
-illum 2
-    
-newmtl rightSphere
-Ns 3.921569
-Ka 0.000000 0.000000 0.000000
-Kd 0.750000 0.750000 0.750000
-Ks 0.000000 0.000000 0.000000
-Ni 1.000000
-d 1.000000
-illum 2
-   
-newmtl floor
-Ns 3.921569
+# Blender MTL File: 'cornellbox_water.blend'
+# Material Count: 7
+
+newmtl backWall.001
+Ns 0.000000
 Ka 0.000000 0.000000 0.000000
 Kd 0.750000 0.750000 0.750000
 Ks 0.000000 0.000000 0.000000
@@ -36,8 +10,8 @@ Ni 1.000000
 d 1.000000
 illum 2
 
-newmtl ceiling
-Ns 3.921569
+newmtl ceiling.001
+Ns 0.000000
 Ka 0.000000 0.000000 0.000000
 Kd 0.750000 0.750000 0.750000
 Ks 0.000000 0.000000 0.000000
@@ -45,8 +19,8 @@ Ni 1.000000
 d 1.000000
 illum 2
 
-newmtl backWall
-Ns 3.921569
+newmtl floor.001
+Ns 0.000000
 Ka 0.000000 0.000000 0.000000
 Kd 0.750000 0.750000 0.750000
 Ks 0.000000 0.000000 0.000000
@@ -54,17 +28,27 @@ Ni 1.000000
 d 1.000000
 illum 2
 
-newmtl rightWall
-Ns 3.921569
+newmtl leftWall.001
+Ns 0.000000
 Ka 0.000000 0.000000 0.000000
 Kd 0.750000 0.250000 0.250000
 Ks 0.000000 0.000000 0.000000
 Ni 1.500000
 d 1.000000
 illum 2
-    
-newmtl leftWall
-Ns 3.921569
+
+newmtl light.001
+Ns 0.000000
+Ka 0.000000 0.000000 0.000000
+Kd 0.780000 0.780000 0.780000
+Ks 0.000000 0.000000 0.000000
+Ke 15 15 15
+Ni 1.000000
+d 1.000000
+illum 2
+
+newmtl rightWall.001
+Ns 0.000000
 Ka 0.000000 0.000000 0.000000
 Kd 0.250000 0.250000 0.750000
 Ks 0.000000 0.000000 0.000000
@@ -73,23 +57,10 @@ d 1.000000
 illum 2
 
 newmtl water
-	Ka 0.01 0.01 0.01
-    Kd 0.8 0.9 1
-    Ks 0.30 0.30 0.30
-    Tf 0.10 0.10 0.10
-    Ns 200
-    Ni 1.33
-    illum 7
-
-	
-newmtl light
-Ns 10.0000
-Ni 1.5000
-d 1.0000
-Tr 0.0000
-Tf 1.0000 1.0000 1.0000 
-illum 2
-Ka 0.7800 0.7800 0.7800
-Kd 0.7800 0.7800 0.7800
-Ke 15 15 15
-Ks 0 0 0
+Ns 196.078431
+Ka 0.000000 0.000000 0.000000
+Kd 0.850000 0.900000 1.000000
+Ks 0.075000 0.075000 0.075000
+Ni 1.333000
+d 0.000000
+illum 7

@@ -34,8 +34,8 @@ KDTreeAccel::KDTreeAccel(std::vector<Shape *> shapes, const float iCost, const f
     : Accelerator(shapes), m_iSectCost(iCost), m_travCost(tCost),
       m_maxPrims(maxP), m_maxDepth(maxD), m_leafThreshold(lThreshold)
 {
-    LOG("a New k-d tree accelerator object was created!");
-    LOG("Number of shapes: " << m_shapes.size());
+    LOG("K-D Tree: a New K-D Tree accelerator object was created.");
+    LOG("K-D Tree: Number of loaded shapes: " << m_shapes.size());
 }
 
 KDTreeAccel::~KDTreeAccel()
@@ -71,7 +71,7 @@ bool KDTreeAccel::intersectP(const Ray &ray)
 
 void KDTreeAccel::init()
 {
-    LOG("Started building the k-d tree...");
+    LOG("K-D Tree: Started building the tree...");
     std::clock_t startTime = std::clock();
 
     m_root = new KDNode;
@@ -82,7 +82,7 @@ void KDTreeAccel::init()
     float duration = time / (double) CLOCKS_PER_SEC;
 
     m_initialized = true;
-    LOG("K-d tree build finished! Time taken: " << duration << "s");
+    LOG("K-D Tree: Build finished! Time taken: " << duration << "s.");
 }
 
 void KDTreeAccel::buildRecursive(KDNode *node, int depth, std::vector<Shape *> &shapes)

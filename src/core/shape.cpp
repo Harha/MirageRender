@@ -16,7 +16,7 @@ Shape::Shape(const Transform o2w, Material *m) : m_objToWorld(o2w), m_worldToObj
 
 void Shape::update()
 {
-    ERR("Unimplemented Shape::update function called!");
+    ERR("Purely virtual function Shape::update called!");
 }
 
 AABB Shape::objectBound() const
@@ -32,19 +32,19 @@ AABB Shape::worldBound() const
 
 bool Shape::intersect(const Ray &ray, Intersection &iSect) const
 {
-    ERR("Unimplemented Shape::intersect function called!");
+    ERR("Purely virtual function Shape::intersect called!");
     return false;
 }
 
 bool Shape::intersectP(const Ray &ray) const
 {
-    ERR("Unimplemented Shape::intersectP function called!");
+    ERR("Purely virtual function Shape::intersectP called!");
     return false;
 }
 
 float Shape::getSurfaceArea() const
 {
-    ERR("Unimplemented Shape::getSurfaceArea function called!");
+    ERR("Purely virtual function Shape::getSurfaceArea called!");
     return 0.0f;
 }
 

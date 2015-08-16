@@ -11,7 +11,7 @@
 namespace mirage
 {
 
-class Pathtracer : public Renderer
+class Pathtracer : public virtual Renderer
 {
 public:
     Pathtracer(vec3 ka = vec3(), float maxRadiance = 10.0f, int maxRecursion = 1);

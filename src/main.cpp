@@ -12,23 +12,18 @@
 #include "macros.h"
 #include "core/input.h"
 #include "core/display.h"
-#include "core/ray.h"
-#include "core/accelerator.h"
-#include "core/shape.h"
+#include "core/scene.h"
+#include "core/objfactory.h"
 #include "shapes/sphere.h"
+#include "shapes/mesh.h"
 #include "cameras/orthographic.h"
 #include "cameras/perspective.h"
 #include "accelerators/kdtree.h"
-#include "core/vertex.h"
-#include "shapes/mesh.h"
-#include "core/scene.h"
 #include "renderers/pathtracer.h"
 #include "materials/diffusemat.h"
 #include "materials/specmat.h"
 #include "materials/glassmat.h"
 #include "materials/glossymat.h"
-#include "core/matfactory.h"
-#include "core/light.h"
 #include "lights/pointlight.h"
 #include "lights/dirlight.h"
 
@@ -38,18 +33,18 @@ void dispose()
 {
     SDL_Quit();
 
-    LOG("atexit(dispose) Hook called.");
+    LOG("Main: atexit(dispose) Hook called.");
 }
 
 int main(int argc, char **argv)
 {
     // Print program name and version
-    LOG("MirageRender, version " << VERSION_R << "." << VERSION_B << "." << VERSION_A);
+    LOG("Main: MirageRender, version " << VERSION_R << "." << VERSION_B << "." << VERSION_A);
 
     // Initialize SDL2
     if (SDL_Init(SDL_INIT_VIDEO) != 0)
     {
-        ERR("SDL_Init Error: " << SDL_GetError());
+        ERR("Main: SDL_Init Error: " << SDL_GetError());
         return 1;
     }
     SDL_Event event;
@@ -79,18 +74,18 @@ int main(int argc, char **argv)
     // Initialize test scene data / seed scene, build acc, etc...
     Film film(WIDTH, HEIGHT);
     CameraOrtho cam_ortho(Transform(vec3(0, 0, -128), quaternion()), film, 8, 64, 0.1f);
-    CameraPersp cam_persp(Transform(vec3(0, 0.8f, 4), quaternion().euler(0, 1, 0, 180)), film, 8, 64, 70.0f);
+    CameraPersp cam_persp(Transform(vec3(0, 1, 4), quaternion().euler(0, 1, 0, 180)), film, 8, 64, 70.0f);
     Camera *camera = &cam_persp;
 
-    MatFactory matfactory;
+    ObjFactory objFactory;
 
     // Materials
     DiffuseMaterial matl1(vec3(), vec3(1, 1, 1) * 16);
     DiffuseMaterial matl2(vec3(), vec3(1.0f, 0.5f, 0.1f) * 16);
 
-    DiffuseMaterial matdwhite(vec3(0.9f, 0.9f, 0.9f), vec3());
-    DiffuseMaterial matdgreen(vec3(0.25f, 0.75f, 0.25f), vec3());
-    DiffuseMaterial matdblue(vec3(0.1f, 0.1f, 0.9f), vec3());
+    DiffuseMaterial matdwhite(vec3(0.75f, 0.75f, 0.75f), vec3());
+    DiffuseMaterial matdgreen(vec3(0.25f, 0.9f, 0.25f), vec3());
+    DiffuseMaterial matdblue(vec3(0.25f, 0.25f, 0.9f), vec3());
     DiffuseMaterial matdyellow(vec3(0.75f, 0.75f, 0.25f), vec3());
     SpecularMaterial matmirror(vec3(1, 1, 1), vec3(), vec3());
     GlassMaterial matglass(vec3(1, 1, 1), vec3(), vec3(), 1.52f);
@@ -103,22 +98,26 @@ int main(int argc, char **argv)
 
     // Lightsources
     Sphere light(Transform(vec3(-2.5f, 5, -5)), &matl1, vec3(0, 0, 0), 1.0f);
-    PointLight plight(Transform(vec3(0, 1.75f, 0)), vec3(1, 1, 1) * 15.0f, 0, 0, 5);
-    PointLight plight2(Transform(vec3(0, 1.5f, 0)), vec3(18.4f, 12, 4) * 1.0f, 0, 0, 10);
-    PointLight plight3(Transform(vec3(-3, 4, -5)), vec3(16, 12, 7) * 1.0f, 0, 0, 0.5f);
-    DirectionalLight dirlight(Transform(vec3(), quaternion().euler(0.5f, 0.5f, 0, 150)), vec3(1, 1, 1) * 16.0f);
+    PointLight plight(Transform(vec3(1, 5.0f, 1)), vec3(1, 1, 1) * 15.0f, 0, 0, 1);
+    PointLight plight2(Transform(vec3(0, 1.75f, 0)), vec3(17, 12, 4) * 1.0f, 0, 0, 10);
+    PointLight plight3(Transform(vec3(0, 500, 0)), vec3(1, 1, 1) * 15.0f, 0, 0, 0.00005f);
+    DirectionalLight dirlight(Transform(vec3(), quaternion().euler(0.8f, 0.2f, 0, 90)), vec3(1, 1, 1) * 15.0f);
 
     // Meshes
-    Mesh box(Transform(vec3(0, 0, 0), quaternion().euler(0, 1, 0, 0), vec3(1, 1, 1)), &matdwhite, &matfactory, "cornellbox_water.obj");
-    //Mesh dragon(Transform(vec3(0.0f, 0.0f, 0.0f), quaternion().euler(0, 1, 0, -33), vec3(0.1f, 0.1f, 0.1f)), &matglass, &matfactory, "dragon.obj");
+    Mesh box(Transform(vec3(0, 0, 0), quaternion().euler(0, 1, 0, 0), vec3(1, 1, 1)), &matdwhite, &objFactory, "cornellbox_custom.obj");
+    //Mesh dragon(Transform(vec3(0.0f, 0.0f, 0.0f), quaternion().euler(0, 1, 0, -33), vec3(0.1f, 0.1f, 0.1f)), &matdwhite, &objFactory, "dragon.obj");
+
+    //Sphere sphere(Transform(vec3(-0.5f, 0.25f, 0.5f)), &matglassg, vec3(0, 0, 0), 0.25f);
 
     std::vector<Shape *> shapes = box.getShapes();
     //std::vector<Shape *> shapes_dragon = dragon.getShapes();
 
     //for (size_t i = 0; i < shapes_dragon.size(); i++)
-    //{
-    //shapes.push_back(shapes_dragon[i]);
+    // {
+    //     shapes.push_back(shapes_dragon[i]);
     //}
+
+    //shapes.push_back(&sphere);
 
     KDTreeAccel accelerator(shapes);
     accelerator.init();

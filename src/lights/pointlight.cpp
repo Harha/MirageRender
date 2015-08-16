@@ -1,14 +1,16 @@
 // std includes
+#include <iostream>
 
 // mirage includes
 #include "pointlight.h"
+#include "../macros.h"
 
 namespace mirage
 {
 
 PointLight::PointLight(Transform l2w, vec3 emission, float aC, float aL, float aQ) : Light(l2w, emission), m_attenuationC(aC), m_attenuationL(aL), m_attenuationQ(aQ)
 {
-
+    LOG("PointLight: Created a new point light source.");
 }
 
 void PointLight::Le(const vec3 &P, const vec3 &N, const vec3 &Wi, const vec3 &Wo, vec3 &Le) const

@@ -36,7 +36,7 @@ struct KDNode
     KDNode *rChild;
 };
 
-class KDTreeAccel : public Accelerator
+class KDTreeAccel : public virtual Accelerator
 {
 public:
     KDTreeAccel(const std::vector<Shape *> shapes = std::vector<Shape *>(), const float iCost = 1, const float tCost = 1,

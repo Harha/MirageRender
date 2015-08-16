@@ -36,6 +36,7 @@ void SpecularMaterial::evalBSDF_direct(const vec3 &P, const vec3 &N, const vec3 
         brdf = 0.0f;
     }
 
+    // There's no transmission, so btdf stays 0.0f
     btdf = 0.0f;
 }
 

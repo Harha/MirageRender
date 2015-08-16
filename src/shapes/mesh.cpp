@@ -13,21 +13,21 @@
 namespace mirage
 {
 
-Mesh::Mesh(const Transform o2w, Material *m, MatFactory *matFactory, std::string fileName) : Shape(o2w, m), m_matFactory(matFactory), m_mdlFileName(fileName)
+Mesh::Mesh(const Transform o2w, Material *m, ObjFactory *objFactory, std::string fileName) : Shape(o2w, m), m_objFactory(objFactory), m_mdlFileName(fileName)
 {
-    if (!m_matFactory)
+    if (!m_objFactory)
     {
-        ERR("Supplied instance of MatFactory is not loaded! Exiting program...");
+        ERR("Mesh: Supplied instance of ObjFactory is not loaded! Exiting program...");
         std::exit(1);
     }
 
     if (loadObj() != 0)
     {
-        ERR("Error loading: " << m_mdlFileName);
+        ERR("Mesh: Error loading: " << m_mdlFileName);
         std::exit(1);
     }
 
-    LOG("Mesh (" << m_mdlFileName << ") has been loaded succesfully. Triangles: " << m_triangles.size());
+    LOG("Mesh: " << m_mdlFileName << " has been loaded succesfully. Triangles: " << m_triangles.size());
 }
 
 void Mesh::update()
@@ -55,13 +55,13 @@ AABB Mesh::worldBound() const
 
 bool Mesh::intersect(const Ray &ray, Intersection &iSect) const
 {
-    ERR("Unimplemented function Mesh::intersect was called!");
+    ERR("Called unimplemented method Mesh::intersect!");
     return false;
 }
 
 bool Mesh::intersectP(const Ray &ray) const
 {
-    ERR("Unimplemented function Mesh::intersectP was called!");
+    ERR("Called unimplemented method Mesh::intersectP!");
     return false;
 }
 
@@ -92,7 +92,7 @@ int Mesh::loadObj()
     std::ifstream file;
     std::string line;
 
-    LOG("Attempting to load: " << m_mdlFileName);
+    LOG("Mesh: Attempting to load: " << m_mdlFileName);
 
     file.open("res/" + m_mdlFileName);
 
@@ -118,7 +118,7 @@ int Mesh::loadObj()
 
                 if (loadMTL(materials) != 0)
                 {
-                    ERR("Error loading: " << m_mtlFileName);
+                    ERR("Mesh: Error loading: " << m_mtlFileName);
                     std::exit(1);
                 }
             }
@@ -219,9 +219,12 @@ int Mesh::loadObj()
                     indices.push_back(f);
                 }
             }
-            else
+            else if (line.substr(0, 1) == "#")
             {
                 LOG(".obj: " << line);
+            }
+            else
+            {
                 continue;
             }
         }
@@ -268,7 +271,7 @@ int Mesh::loadMTL(std::map<std::string, Material *> &materials)
     std::ifstream file;
     std::string line;
 
-    LOG("Attempting to load: " << m_mtlFileName);
+    LOG("Mesh: Attempting to load: " << m_mtlFileName);
 
     file.open("res/" + m_mtlFileName);
 
@@ -294,17 +297,18 @@ int Mesh::loadMTL(std::map<std::string, Material *> &materials)
                 info_currentMaterial = MaterialInfo();
                 info_materials.insert(std::pair<std::string, MaterialInfo>(str_currentMaterial, info_currentMaterial));
             }
-            else if (line.substr(0, 3) == "Ns ") // Specular power
-            {
-                // Not yet implemented
-            }
             else if (line.substr(0, 3) == "Ka ") // Ambient color
             {
                 // Not yet implemented
             }
             else if (line.substr(0, 3) == "Ks ") // Specular color
             {
-                // Not yet implemented
+                std::istringstream s(line.substr(3));
+                vec3 ks;
+                s >> ks.x;
+                s >> ks.y;
+                s >> ks.z;
+                info_materials.at(str_currentMaterial).ks = ks;
             }
             else if (line.substr(0, 3) == "Kd ") // Diffuse color
             {
@@ -324,6 +328,15 @@ int Mesh::loadMTL(std::map<std::string, Material *> &materials)
                 s >> ke.z;
                 info_materials.at(str_currentMaterial).ke = ke;
             }
+            else if (line.substr(0, 3) == "Ns ") // Specular power
+            {
+                std::istringstream s(line.substr(3));
+                float ns;
+                s >> ns;
+                info_materials.at(str_currentMaterial).r = ns / 1000.0f;
+                info_materials.at(str_currentMaterial).k = 0.95f;
+                info_materials.at(str_currentMaterial).d = 0.5f;
+            }
             else if (line.substr(0, 3) == "Ni ") // Index of refraction
             {
                 std::istringstream s(line.substr(3));
@@ -338,9 +351,12 @@ int Mesh::loadMTL(std::map<std::string, Material *> &materials)
                 s >> illum;
                 info_materials.at(str_currentMaterial).illum = illum;
             }
-            else
+            else if (line.substr(0, 1) == "#")
             {
                 LOG(".mtl: " << line);
+            }
+            else
+            {
                 continue;
             }
         }
@@ -362,23 +378,24 @@ int Mesh::loadMTL(std::map<std::string, Material *> &materials)
         case 0:
         case 1:
         case 2:
-            matcurr = m_matFactory->initDiffuseMaterial(matinfo.kd, matinfo.ke);
+            matcurr = m_objFactory->initDiffuseMaterial(matinfo.kd, matinfo.ke);
             break;
         case 4:
         case 6:
         case 7:
         case 9:
-            matcurr = m_matFactory->initGlassMaterial(matinfo.kd, matinfo.ks, matinfo.ke, matinfo.ior);
+            matcurr = m_objFactory->initGlassMaterial(matinfo.kd, matinfo.ks, matinfo.ke, matinfo.ior);
             break;
         case 3:
-            matcurr = m_matFactory->initSpecularMaterial(matinfo.kd, matinfo.ks, matinfo.ke);
+        case 8:
+            matcurr = m_objFactory->initSpecularMaterial(matinfo.kd, matinfo.ks, matinfo.ke);
             break;
         case 5:
-            matcurr = m_matFactory->initGlossyMaterial(matinfo.kd, matinfo.ks, matinfo.ke, matinfo.r, matinfo.k, matinfo.d);
+            matcurr = m_objFactory->initGlossyMaterial(matinfo.kd, matinfo.ks, matinfo.ke, matinfo.r, matinfo.k, matinfo.d);
             break;
         default:
-            matcurr = m_matFactory->initDiffuseMaterial(vec3(1, 1, 1), vec3(0, 0, 0));
-            ERR("Error loading material " << i.first.c_str() << ", no illumination mode specified!");
+            matcurr = m_objFactory->initDiffuseMaterial(vec3(1, 1, 1), vec3(0, 0, 0));
+            ERR("Mesh: Loading of material " << i.first.c_str() << " failed, no illumination mode specified!");
             break;
         }
 

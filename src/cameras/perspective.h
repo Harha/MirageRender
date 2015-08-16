@@ -7,7 +7,7 @@
 namespace mirage
 {
 
-class CameraPersp : public Camera
+class CameraPersp : public virtual Camera
 {
 public:
     CameraPersp(Transform transform = Transform(), Film film = Film(), float speed = 16, float sensitivity = 32, float fov = 70.0f);

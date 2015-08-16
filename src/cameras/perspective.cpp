@@ -15,7 +15,7 @@ namespace mirage
 
 CameraPersp::CameraPersp(Transform transform, Film film, float speed, float sensitivity, float fov) : Camera(transform, film, speed, sensitivity), m_fov(std::tan((fov * (PI / 180.0f)) * 0.5f))
 {
-    LOG("Created a new perspective camera.");
+    LOG("Camera: Created a new perspective camera.");
 }
 
 void CameraPersp::update(float dt, bool keys[256])
@@ -63,11 +63,11 @@ void CameraPersp::update(float dt, bool keys[256])
     }
     if (keys[SDL_SCANCODE_Q])
     {
-        rotate(m_transform.getOrientation().getForwardVector(), -dt * m_sensitivity);
+        rotate(m_transform.getOrientation().getForwardVector(), dt * m_sensitivity);
     }
     else if (keys[SDL_SCANCODE_E])
     {
-        rotate(m_transform.getOrientation().getForwardVector(), dt * m_sensitivity);
+        rotate(m_transform.getOrientation().getForwardVector(), -dt * m_sensitivity);
     }
 
     if (keys[SDL_SCANCODE_KP_PLUS])

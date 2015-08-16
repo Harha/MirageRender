@@ -131,6 +131,4 @@ int AABB::getMaximumExtent() const
     }
 }
 
-
-
 }

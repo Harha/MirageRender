@@ -15,7 +15,7 @@ namespace mirage
 
 CameraOrtho::CameraOrtho(Transform transform, Film film, float speed, float sensitivity, float zoom) : Camera(transform, film, speed, sensitivity), m_zoom(zoom)
 {
-    LOG("Created a new orthographic camera.");
+    LOG("Camera: Created a new orthographic camera.");
 }
 
 void CameraOrtho::update(float dt, bool keys[256])
@@ -55,11 +55,11 @@ void CameraOrtho::update(float dt, bool keys[256])
     }
     if (keys[SDL_SCANCODE_Q])
     {
-        rotate(m_transform.getOrientation().getForwardVector(), -dt * m_sensitivity);
+        rotate(m_transform.getOrientation().getForwardVector(), dt * m_sensitivity);
     }
     else if (keys[SDL_SCANCODE_E])
     {
-        rotate(m_transform.getOrientation().getForwardVector(), dt * m_sensitivity);
+        rotate(m_transform.getOrientation().getForwardVector(), -dt * m_sensitivity);
     }
 
     if (keys[SDL_SCANCODE_KP_PLUS])

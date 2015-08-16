@@ -41,8 +41,7 @@ void GlassMaterial::evalBSDF(const vec3 &P, const vec3 &N, const vec3 &Wr, const
     }
 
     // Choose reflection or refraction based on fresnel equations
-    vec3 tdir = (Wo.negate() * eta - N * ((into ? 1 : -1) * (NdotWo * eta + std::sqrt(cos2t)))).normalize();
-    float a = m_ior - nc, b = m_ior + nc, R0 = a * a / (b * b), c = 1.0f - (into ? -NdotWo : vec3::dot(tdir, N));
+    float a = m_ior - nc, b = m_ior + nc, R0 = a * a / (b * b), c = 1.0f - (into ? -NdotWo : vec3::dot(Wt, N));
     float Re = R0 + (1.0f - R0) * c * c * c * c * c, Tr = 1.0f - Re, P_ = 0.25f + 0.5f * Re, RP = Re / P_, TP = Tr / (1.0f - P_);
 
     // Assign brdf / btdf correct values
@@ -57,37 +56,13 @@ void GlassMaterial::evalBSDF(const vec3 &P, const vec3 &N, const vec3 &Wr, const
         brdf = Re;
         btdf = Tr;
     }
-
-    //brdf = std::max(brdf, 0.0f);
-    //btdf = std::max(btdf, 0.0f);
 }
 
 void GlassMaterial::evalBSDF_direct(const vec3 &P, const vec3 &N, const vec3 &We, const vec3 &Wr, const vec3 &Wt, const vec3 &Wo, float &brdf, float &btdf) const
 {
-    evalBSDF(P, N, Wr, Wt, Wo, brdf, btdf);
+    evalBSDF(P, N, We, Wt, Wo, brdf, btdf);
 
-    // Check if the supplied Wr really is the same
-    if (We == Wr)
-    {
-        brdf *= 1.0f;
-        btdf = 0.0f;
-    }
-    else
-    {
-        brdf = 0.0f;
-        btdf = 0.0f;
-    }
-
-    // Check if the supplied Wt really is the same
-    if (We == Wt)
-    {
-        btdf *= 1.0f;
-        brdf = 0.0f;
-    }
-    else
-    {
-        btdf = 0.0f;
-    }
+    btdf = 0.0f;
 }
 
 void GlassMaterial::evalPDF(float &pdf) const
@@ -108,7 +83,7 @@ void GlassMaterial::evalWi(const vec3 &Wo, const vec3 &N, vec3 &Wr, vec3 &Wt)
     float eta = into ? 1.0f / m_ior : m_ior;
 
     // Refract the ray through the surface, Wt becomes |0.0f| if total internal reflection
-    Wt = vec3::refract(Wo.negate(), N, eta).normalize();
+    Wt = vec3::refract(Wo.negate(), n, eta).normalize();
 }
 
 }

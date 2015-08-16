@@ -7,7 +7,7 @@
 namespace mirage
 {
 
-class CameraOrtho : public Camera
+class CameraOrtho : public virtual Camera
 {
 public:
     CameraOrtho(Transform transform = Transform(), Film film = Film(), float speed = 16, float sensitivity = 32, float zoom = 0.1f);
