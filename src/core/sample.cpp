@@ -43,7 +43,9 @@ void Sample::decNumSamples()
 
 void Sample::clearSample()
 {
-    m_color = vec3(0, 0, 0);
+    m_color.x = 0.0f;
+    m_color.y = 0.0f;
+    m_color.z = 0.0f;
     m_numSamples = 0;
 }
 

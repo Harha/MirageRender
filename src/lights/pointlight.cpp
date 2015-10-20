@@ -27,7 +27,6 @@ void PointLight::Le(const vec3 &P, const vec3 &N, const vec3 &Wi, const vec3 &Wo
 
 void PointLight::evalWe(const vec3 &P, const vec3 &N, const vec3 &Wo, vec3 &We) const
 {
-    // Calculate the P -> L vector
     We = m_lightToWorld.getPosition() - P;
 }
 

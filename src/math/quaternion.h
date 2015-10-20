@@ -68,7 +68,7 @@ struct quaternion
 
     quaternion euler(const float x, const float y, const float z, float theta)
     {
-        theta = 0.5f * (theta * PI / 180.0f);
+        theta = 0.5f * theta * PI / 180.0f;
 
         this->w = std::cos(theta);
         this->x = x * std::sin(theta);

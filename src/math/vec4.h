@@ -100,10 +100,11 @@ struct vec4
 
     vec4 operator/=(const float f)
     {
-        x /= f;
-        y /= f;
-        z /= f;
-        w /= f;
+        float f_inv = 1.0f / f;
+        x *= f_inv;
+        y *= f_inv;
+        z *= f_inv;
+        w *= f_inv;
         return *this;
     }
 
@@ -144,7 +145,8 @@ struct vec4
 
     vec4 operator/(const float f) const
     {
-        return vec4(x / f, y / f, z / f, w / f);
+        float f_inv = 1.0f / f;
+        return vec4(x * f_inv, y * f_inv, z * f_inv, w * f_inv);
     }
 
     float operator[](int i) const

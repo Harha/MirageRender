@@ -120,17 +120,17 @@ vec3 Pathtracer::radiance(const Scene *scene, const Ray &ray, float weight, int 
             M->evalBSDF_direct(P, N, We.normalize(), Wr, Wt, Wo, BRDF_direct, BTDF_direct);
 
             // Create a temporary variable to hold the current Le
-            vec3 Ler_, Let_;
+            vec3 Ler_;
 
             // Get the light amount from We
             currlight->Le(P, N, We, Wo, Ler_); // Parameters are silly, gotta change this
 
             // Scale the current Le_ by BRDF_direct
             Ler_ *= BRDF_direct;
-            Let_ *= BTDF_direct;
+            //Let_ *= BTDF_direct;
 
             // Add the Le_'s contribution to the total Le
-            Le += Ler_ + Let_;
+            Le += Ler_;
         }
     }
 

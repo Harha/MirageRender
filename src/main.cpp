@@ -73,10 +73,9 @@ int main(int argc, char **argv)
 
     // Initialize test scene data / seed scene, build acc, etc...
     Film film(WIDTH, HEIGHT);
-    CameraOrtho cam_ortho(Transform(vec3(0, 0, -128), quaternion()), film, 8, 64, 0.1f);
-    CameraPersp cam_persp(Transform(vec3(0, 1, 4), quaternion().euler(0, 1, 0, 180)), film, 8, 64, 70.0f);
+    CameraOrtho cam_ortho(Transform(vec3(0, 0.5f, -128), quaternion().identity()), film, 8, 64, 0.01f);
+    CameraPersp cam_persp(Transform(vec3(0, 1, 4.0f), quaternion().euler(0, 1, 0, 180)), film, 8, 64, 70.0f);
     Camera *camera = &cam_persp;
-
     ObjFactory objFactory;
 
     // Materials
@@ -93,31 +92,32 @@ int main(int argc, char **argv)
     GlassMaterial matglassg(vec3(0.25f, 0.9f, 0.25f), vec3(), vec3(), 1.52f);
     GlassMaterial matglassy(vec3(0.9f, 0.9f, 0.25f), vec3(), vec3(), 1.52f);
     GlassMaterial matglassb(vec3(0.25f, 0.9f, 0.9f), vec3(), vec3(), 1.52f);
-    GlossyMaterial matsilver(vec3(0.87843137254f, 0.87450980392f, 0.85882352941f), vec3(), vec3(),  0.05f, 0.95f, 0.25f);
+    GlossyMaterial matsilver(vec3(0.73f, 0.77f, 0.8f), vec3(), vec3(),  0.2f, 0.95f, 0.25f);
     GlossyMaterial matbronze(vec3(0.80392156862f, 0.49803921568f, 0.19607843137f), vec3(), vec3(),  0.05f, 0.95f, 0.1f);
 
     // Lightsources
     Sphere light(Transform(vec3(-2.5f, 5, -5)), &matl1, vec3(0, 0, 0), 1.0f);
-    PointLight plight(Transform(vec3(1, 5.0f, 1)), vec3(1, 1, 1) * 15.0f, 0, 0, 1);
-    PointLight plight2(Transform(vec3(0, 1.75f, 0)), vec3(17, 12, 4) * 1.0f, 0, 0, 10);
-    PointLight plight3(Transform(vec3(0, 500, 0)), vec3(1, 1, 1) * 15.0f, 0, 0, 0.00005f);
-    DirectionalLight dirlight(Transform(vec3(), quaternion().euler(0.8f, 0.2f, 0, 90)), vec3(1, 1, 1) * 15.0f);
+    PointLight plight(Transform(vec3(0, 1.96f, 0)), vec3(0.9f, 1, 1) * 10.0f, 0, 0, 5);
+    PointLight plight2(Transform(vec3(0, 1.96f, 0)), vec3(17, 12, 4) * 2.0f, 0, 0, 15);
+    PointLight plight3(Transform(vec3(0, 4, 0)), vec3(1, 1, 1) * 20.0f, 0, 0, 0.05f);
+    DirectionalLight dirlight(Transform(vec3(), quaternion(0.1f, -0.11f, -0.9f, -0.25f).normalize()), vec3(1, 1, 1) * 5.0f);
 
     // Meshes
-    Mesh box(Transform(vec3(0, 0, 0), quaternion().euler(0, 1, 0, 0), vec3(1, 1, 1)), &matdwhite, &objFactory, "cornellbox_custom.obj");
-    //Mesh dragon(Transform(vec3(0.0f, 0.0f, 0.0f), quaternion().euler(0, 1, 0, -33), vec3(0.1f, 0.1f, 0.1f)), &matdwhite, &objFactory, "dragon.obj");
+    Mesh box(Transform(vec3(0, 0, 0), quaternion().euler(0, 1, 0, 0), vec3(1, 1, 1)), &matdwhite, &objFactory, "cornellbox_water.obj");
+    //Mesh pla(Transform(vec3(0, 0, 0), quaternion().euler(0, 1, 0, 0), vec3(20, 1, 20)), &matdwhite, &objFactory, "plane.obj");
+    //Mesh dragon(Transform(vec3(-0.3f, 1.19f, -0.1f), quaternion().euler(0, 1, 0, -33), vec3(0.05f, 0.05f, 0.05f)), &matsilver, &objFactory, "dragon.obj");
 
-    //Sphere sphere(Transform(vec3(-0.5f, 0.25f, 0.5f)), &matglassg, vec3(0, 0, 0), 0.25f);
+    Sphere sphere(Transform(vec3(-0.25f, 0.25f, 0.5f)), &matglassr, vec3(0, 0, 0), 0.25f);
 
     std::vector<Shape *> shapes = box.getShapes();
-    //std::vector<Shape *> shapes_dragon = dragon.getShapes();
+    /*std::vector<Shape *> shapes_pla = pla.getShapes();
 
-    //for (size_t i = 0; i < shapes_dragon.size(); i++)
-    // {
-    //     shapes.push_back(shapes_dragon[i]);
-    //}
+    for (size_t i = 0; i < shapes_pla.size(); i++)
+    {
+        shapes.push_back(shapes_pla[i]);
+    }*/
 
-    //shapes.push_back(&sphere);
+    shapes.push_back(&sphere);
 
     KDTreeAccel accelerator(shapes);
     accelerator.init();
@@ -153,6 +153,7 @@ int main(int argc, char **argv)
             LOG("cam " << camera->getTransform().getPosition().toString() << ", " << camera->getTransform().getOrientation().toString());
             LOG("spp: " << camera->getFilm().getSample(0, 0).getNumSamples());
         }
+
         if (g_keys[SDL_SCANCODE_F2]) // Image file saving
         {
             display.saveToPPM("render");

@@ -93,9 +93,10 @@ struct vec3
 
     vec3 &operator/=(const float f)
     {
-        x /= f;
-        y /= f;
-        z /= f;
+        float f_inv = 1.0f / f;
+        x *= f_inv;
+        y *= f_inv;
+        z *= f_inv;
         return *this;
     }
 
@@ -136,7 +137,8 @@ struct vec3
 
     vec3 operator/(const float f) const
     {
-        return vec3(x / f, y / f, z / f);
+        float f_inv = 1.0f / f;
+        return vec3(x * f_inv, y * f_inv, z * f_inv);
     }
 
     float operator[](int i) const

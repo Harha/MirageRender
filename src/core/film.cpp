@@ -32,8 +32,10 @@ void Film::decSample(int x, int y, const vec3 &sample)
 
 void Film::clearSamples()
 {
-    m_samples.clear();
-    m_samples.resize(m_resolutionX * m_resolutionY);
+    for (size_t i = 0; i < m_samples.size(); i++)
+    {
+        m_samples[i].clearSample();
+    }
 }
 
 int Film::getResolutionX() const

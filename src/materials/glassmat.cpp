@@ -61,8 +61,6 @@ void GlassMaterial::evalBSDF(const vec3 &P, const vec3 &N, const vec3 &Wr, const
 void GlassMaterial::evalBSDF_direct(const vec3 &P, const vec3 &N, const vec3 &We, const vec3 &Wr, const vec3 &Wt, const vec3 &Wo, float &brdf, float &btdf) const
 {
     evalBSDF(P, N, We, Wt, Wo, brdf, btdf);
-
-    btdf = 0.0f;
 }
 
 void GlassMaterial::evalPDF(float &pdf) const
