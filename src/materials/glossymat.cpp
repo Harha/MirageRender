@@ -66,7 +66,48 @@ void GlossyMaterial::evalBSDF(const vec3 &P, const vec3 &N, const vec3 &Wr, cons
 
 void GlossyMaterial::evalBSDF_direct(const vec3 &P, const vec3 &N, const vec3 &We, const vec3 &Wr, const vec3 &Wt, const vec3 &Wo, float &brdf, float &btdf) const
 {
-    evalBSDF(P, N, We, Wt, Wo, brdf, btdf);
+    // Get the surface values
+    float R = m_r + EPSILON;
+    float RR = R * R;
+    float F = m_k;
+    float K = m_d;
+
+    // Prepare all required information
+    vec3 V_vector = Wo;
+    vec3 N_vector = N;
+    vec3 L_vector = We;
+    vec3 H_vector = (V_vector + L_vector).normalize();
+
+    // Calculate all dot products
+    float NdotL = std::max(vec3::dot(N_vector, L_vector), 0.0f);
+    float NdotV = vec3::dot(N_vector, V_vector);
+    float NdotH = vec3::dot(N_vector, H_vector);
+    float VdotH = vec3::dot(V_vector, H_vector);
+
+    // Evaluate the geometric term
+    float geo_numer = 2.0f * NdotH;
+    float geo_denom = VdotH;
+    float geo = std::min(1.0f, std::min((geo_numer * NdotV) / geo_denom, (geo_numer * NdotL) / geo_denom));
+
+    // Evaluate the roughness term
+    float rough_a = 1.0f / (4.0f * RR * std::pow(NdotH, 4.0f));
+    float rough_b = NdotH * NdotH - 1.0f;
+    float rough_c = RR * NdotH * NdotH;
+    float rough = rough_a * std::exp(rough_b / rough_c);
+
+    // Evaluate the fresnel term
+    float fresnel = std::pow(1.0f - VdotH, 5.0f);
+    fresnel *= 1.0f - F;
+    fresnel += F;
+
+    // Put the terms together
+    float Rs = (geo * rough * fresnel) / (PI * NdotV * NdotL + EPSILON);
+
+    // Calculate the cook-torrance brdf value
+    brdf = (1.0f / PI) * NdotL * (Rs * (1.0f - K) + K);
+
+    // There's no transmission, so btdf stays 0.0f
+    btdf = 0.0f;
 }
 
 void GlossyMaterial::evalPDF(float &pdf) const

@@ -116,14 +116,18 @@ vec3 Pathtracer::radiance(const Scene *scene, const Ray &ray, float weight, int 
         // Intersect the scene with it and add light contribution to Le if nothing was hit
         if (!scene->intersectP(r_shadow))
         {
-            // Get the surface brdf & btdf
-            M->evalBSDF_direct(P, N, We.normalize(), Wr, Wt, Wo, BRDF_direct, BTDF_direct);
-
             // Create a temporary variable to hold the current Le
             vec3 Ler_;
 
             // Get the light amount from We
-            currlight->Le(P, N, We, Wo, Ler_); // Parameters are silly, gotta change this
+            currlight->Le(P, N, We, Wo, Ler_);
+
+            // Continue to next light if Ler_ is <= 0.0f
+            if (Ler_.length() <= 0.0f)
+                continue;
+
+            // Get the surface brdf & btdf
+            M->evalBSDF_direct(P, N, We.normalize(), Wr, Wt, Wo, BRDF_direct, BTDF_direct);
 
             // Scale the current Le_ by BRDF_direct
             Ler_ *= BRDF_direct;

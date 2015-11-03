@@ -26,6 +26,7 @@
 #include "materials/glossymat.h"
 #include "lights/pointlight.h"
 #include "lights/dirlight.h"
+#include "lights/spotlight.h"
 
 using namespace mirage;
 
@@ -60,6 +61,8 @@ int main(int argc, char **argv)
 #endif
     std::thread *threads = new std::thread[tcount];
 
+    LOG("Main: Initialized " << tcount << " worker threads...");
+
     // Initialize miragerender related variables/objects
     Display display("MirageRender", WIDTH, HEIGHT, SCALE);
 
@@ -71,63 +74,77 @@ int main(int argc, char **argv)
     float fps = 0;
     bool running = true;
 
-    // Initialize test scene data / seed scene, build acc, etc...
+    // Camera film
     Film film(WIDTH, HEIGHT);
-    CameraOrtho cam_ortho(Transform(vec3(0, 0.5f, -128), quaternion().identity()), film, 8, 64, 0.01f);
-    CameraPersp cam_persp(Transform(vec3(0, 1, 4.0f), quaternion().euler(0, 1, 0, 180)), film, 8, 64, 70.0f);
+
+    // Cameras to be used
+    CameraOrtho cam_ortho(Transform(vec3(0, 0, -128), quaternion().identity()), film, 8, 64, 0.01f);
+    CameraPersp cam_persp(Transform(vec3(0.25f, 2, 3.0f), quaternion(-0.1f, 0.0f, 0.98f, -0.15f).normalize()), film, 8, 64, 70.0f);
+
+    // Chosen camera
     Camera *camera = &cam_persp;
-    ObjFactory objFactory;
+
+    // Object factory
+    ObjFactory obj_factory;
 
     // Materials
-    DiffuseMaterial matl1(vec3(), vec3(1, 1, 1) * 16);
-    DiffuseMaterial matl2(vec3(), vec3(1.0f, 0.5f, 0.1f) * 16);
-
-    DiffuseMaterial matdwhite(vec3(0.75f, 0.75f, 0.75f), vec3());
-    DiffuseMaterial matdgreen(vec3(0.25f, 0.9f, 0.25f), vec3());
-    DiffuseMaterial matdblue(vec3(0.25f, 0.25f, 0.9f), vec3());
-    DiffuseMaterial matdyellow(vec3(0.75f, 0.75f, 0.25f), vec3());
-    SpecularMaterial matmirror(vec3(1, 1, 1), vec3(), vec3());
-    GlassMaterial matglass(vec3(1, 1, 1), vec3(), vec3(), 1.52f);
-    GlassMaterial matglassr(vec3(0.9f, 0.25f, 0.25f), vec3(), vec3(), 1.52f);
-    GlassMaterial matglassg(vec3(0.25f, 0.9f, 0.25f), vec3(), vec3(), 1.52f);
-    GlassMaterial matglassy(vec3(0.9f, 0.9f, 0.25f), vec3(), vec3(), 1.52f);
-    GlassMaterial matglassb(vec3(0.25f, 0.9f, 0.9f), vec3(), vec3(), 1.52f);
-    GlossyMaterial matsilver(vec3(0.73f, 0.77f, 0.8f), vec3(), vec3(),  0.2f, 0.95f, 0.25f);
-    GlossyMaterial matbronze(vec3(0.80392156862f, 0.49803921568f, 0.19607843137f), vec3(), vec3(),  0.05f, 0.95f, 0.1f);
-
-    // Lightsources
-    Sphere light(Transform(vec3(-2.5f, 5, -5)), &matl1, vec3(0, 0, 0), 1.0f);
-    PointLight plight(Transform(vec3(0, 1.96f, 0)), vec3(0.9f, 1, 1) * 10.0f, 0, 0, 5);
-    PointLight plight2(Transform(vec3(0, 1.96f, 0)), vec3(17, 12, 4) * 2.0f, 0, 0, 15);
-    PointLight plight3(Transform(vec3(0, 4, 0)), vec3(1, 1, 1) * 20.0f, 0, 0, 0.05f);
-    DirectionalLight dirlight(Transform(vec3(), quaternion(0.1f, -0.11f, -0.9f, -0.25f).normalize()), vec3(1, 1, 1) * 5.0f);
+    DiffuseMaterial diffuse_white(vec3(0.75f, 0.75f, 0.75f), vec3());
+    DiffuseMaterial diffuse_cyan(vec3(0.25f, 0.75f, 0.75f), vec3());
+    SpecularMaterial spec_mirror(vec3(1, 1, 1));
+    GlossyMaterial glossy_gold(vec3(1.0f, 0.9f, 0.4f), vec3(), vec3(), 0.05f, 0.75f, 0.1f);
 
     // Meshes
-    Mesh box(Transform(vec3(0, 0, 0), quaternion().euler(0, 1, 0, 0), vec3(1, 1, 1)), &matdwhite, &objFactory, "cornellbox_water.obj");
-    //Mesh pla(Transform(vec3(0, 0, 0), quaternion().euler(0, 1, 0, 0), vec3(20, 1, 20)), &matdwhite, &objFactory, "plane.obj");
-    //Mesh dragon(Transform(vec3(-0.3f, 1.19f, -0.1f), quaternion().euler(0, 1, 0, -33), vec3(0.05f, 0.05f, 0.05f)), &matsilver, &objFactory, "dragon.obj");
+    Mesh mesh_main(Transform(vec3(0, 0, 0), quaternion().identity(), vec3(1, 1, 1) * 5.0f), &diffuse_white, &obj_factory, "plane.obj");
+    Mesh mesh_objt_d(Transform(vec3(-1.25f, 0, -1), quaternion().identity(), vec3(1, 1, 1) * 0.5f), &diffuse_white, &obj_factory, "mitsuba_sphere.obj");
+    Mesh mesh_objt_g(Transform(vec3(0, 0, -2), quaternion().identity(), vec3(1, 1, 1) * 0.5f), &glossy_gold, &obj_factory, "mitsuba_sphere.obj");
+    Mesh mesh_dirl(Transform(vec3(-2.25f, 0.1f, -1.2f), quaternion().euler(1, 0, 0, 90.0f) * quaternion().euler(0, 1, 0, -70.0f), vec3(1, 1, 1) * 0.1f), &diffuse_white, &obj_factory, "directional_light.obj");
 
-    Sphere sphere(Transform(vec3(-0.25f, 0.25f, 0.5f)), &matglassr, vec3(0, 0, 0), 0.25f);
+    // Allocate memory for all the shapes to be stored in a vector
+    std::vector<Shape *> shapes_main = mesh_main.getShapes();
+    std::vector<Shape *> shapes_objt_d = mesh_objt_d.getShapes();
+    std::vector<Shape *> shapes_objt_g = mesh_objt_g.getShapes();
+    std::vector<Shape *> shapes_dirl = mesh_dirl.getShapes();
+    std::vector<Shape *> shapes_allo;
 
-    std::vector<Shape *> shapes = box.getShapes();
-    /*std::vector<Shape *> shapes_pla = pla.getShapes();
-
-    for (size_t i = 0; i < shapes_pla.size(); i++)
+    // Insert shapes from meshes to the vector
+    for (size_t i = 0; i < shapes_main.size(); i++)
     {
-        shapes.push_back(shapes_pla[i]);
-    }*/
+        shapes_allo.push_back(shapes_main[i]);
+    }
 
-    shapes.push_back(&sphere);
+    for (size_t i = 0; i < shapes_objt_d.size(); i++)
+    {
+        shapes_allo.push_back(shapes_objt_d[i]);
+    }
 
-    KDTreeAccel accelerator(shapes);
+    for (size_t i = 0; i < shapes_objt_g.size(); i++)
+    {
+        shapes_allo.push_back(shapes_objt_g[i]);
+    }
+
+    for (size_t i = 0; i < shapes_dirl.size(); i++)
+    {
+        shapes_allo.push_back(shapes_dirl[i]);
+    }
+
+    // Lights
+    PointLight plight_1(Transform(vec3(0, 2.5f, 0)), vec3(1, 0.9f, 0.75f) * 15.0f, 0, 0, 1);
+    //PointLight plight_2(Transform(vec3(-0.24f, 0.1f, -1.105f)), vec3(1, 1, 1) * 15.0f, 0, 0, 5);
+    SpotLight slight_1(Transform(vec3(0, 0.5f, 0.0f), quaternion().euler(0, 1, 0, 25)), vec3(1, 0.9f, 0.75f) * 10.0f, 0, 0, 1, 0.6f);
+
+    // Ray acceleration tree structure
+    KDTreeAccel accelerator(shapes_allo);
     accelerator.init();
-    Scene scene(&accelerator, camera);
-    //scene.addLight(&plight);
-    //scene.addLight(&plight2);
-    //scene.addLight(&plight3);
-    //scene.addLight(&dirlight);
-    Pathtracer ptracer(vec3(0.75f, 0.87f, 0.98f) * 0.0f, 10.0f, 10);
 
+    // Scene object
+    Scene scene(&accelerator, camera);
+    //scene.addLight(&plight_2);
+    scene.addLight(&slight_1);
+
+    // Renderer object
+    Pathtracer renderer(vec3(1, 1, 1) * 0.25f, 10.0f, 5);
+
+    // Main loop
     while (running)
     {
         // Calculate framerate related variables
@@ -136,7 +153,7 @@ int main(int argc, char **argv)
         fps = frameCount / (static_cast<float>(SDL_GetTicks() - startTime) / 1000.0f);
         lastTime = currentTime;
 
-        // Display info
+        // Display info every n frames
         if (frameCount % 16 == 1)
         {
             std::string fps_str = std::to_string(fps);
@@ -145,28 +162,30 @@ int main(int argc, char **argv)
             display.setTitle(title);
         }
 
-        // Update everything
-        camera->update(deltaTime, g_keys);
-
-        if (g_keys[SDL_SCANCODE_F1]) // Print info
+        // Print info with F1
+        if (g_keys[SDL_SCANCODE_F1])
         {
             LOG("cam " << camera->getTransform().getPosition().toString() << ", " << camera->getTransform().getOrientation().toString());
             LOG("spp: " << camera->getFilm().getSample(0, 0).getNumSamples());
         }
 
+        // Save screenshot with F2
         if (g_keys[SDL_SCANCODE_F2]) // Image file saving
         {
             display.saveToPPM("render");
         }
+
+        // Update camera / meshes
+        camera->update(deltaTime, g_keys);
 
         // Render a portion of the screen per thread
         int width = camera->getFilm().getResolutionX();
         int height = camera->getFilm().getResolutionY();
         for (unsigned int i = 0; i < tcount; i++)
         {
-            threads[i] = std::thread ([=,&ptracer, &scene, &display]
+            threads[i] = std::thread ([=,&renderer, &scene, &display]
             {
-                ptracer.render(&scene, &display, width, height/tcount, 0, height/tcount * i);
+                renderer.render(&scene, &display, width, height/tcount, 0, height/tcount * i);
             });
         }
 
@@ -211,7 +230,10 @@ int main(int argc, char **argv)
         frameCount++;
     }
 
+    // Clear all allocated heap memory
     delete[] threads;
+
+    // Inform that we are done
     LOG("MirageRender, exit program successfully.");
 
     return 0;
