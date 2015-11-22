@@ -15,6 +15,7 @@ class Shape
 {
 public:
     Shape(const Transform o2w = Transform(), Material *m = nullptr);
+    virtual ~Shape();
     virtual void update() = 0;
     virtual AABB objectBound() const = 0;
     virtual AABB worldBound() const = 0;

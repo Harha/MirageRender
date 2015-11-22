@@ -74,75 +74,14 @@ int main(int argc, char **argv)
     float fps = 0;
     bool running = true;
 
-    // Camera film
-    Film film(WIDTH, HEIGHT);
+    // Load the scene
+    Scene scene;
 
-    // Cameras to be used
-    CameraOrtho cam_ortho(Transform(vec3(0, 0, -128), quaternion().identity()), film, 8, 64, 0.01f);
-    CameraPersp cam_persp(Transform(vec3(0.25f, 2, 3.0f), quaternion(-0.1f, 0.0f, 0.98f, -0.15f).normalize()), film, 8, 64, 70.0f);
+    // Pick camera
+    Camera *camera = scene.getCamera();
 
-    // Chosen camera
-    Camera *camera = &cam_persp;
-
-    // Object factory
-    ObjFactory obj_factory;
-
-    // Materials
-    DiffuseMaterial diffuse_white(vec3(0.75f, 0.75f, 0.75f), vec3());
-    DiffuseMaterial diffuse_cyan(vec3(0.25f, 0.75f, 0.75f), vec3());
-    SpecularMaterial spec_mirror(vec3(1, 1, 1));
-    GlossyMaterial glossy_gold(vec3(1.0f, 0.9f, 0.4f), vec3(), vec3(), 0.05f, 0.75f, 0.1f);
-
-    // Meshes
-    Mesh mesh_main(Transform(vec3(0, 0, 0), quaternion().identity(), vec3(1, 1, 1) * 5.0f), &diffuse_white, &obj_factory, "plane.obj");
-    Mesh mesh_objt_d(Transform(vec3(-1.25f, 0, -1), quaternion().identity(), vec3(1, 1, 1) * 0.5f), &diffuse_white, &obj_factory, "mitsuba_sphere.obj");
-    Mesh mesh_objt_g(Transform(vec3(0, 0, -2), quaternion().identity(), vec3(1, 1, 1) * 0.5f), &glossy_gold, &obj_factory, "mitsuba_sphere.obj");
-    Mesh mesh_dirl(Transform(vec3(-2.25f, 0.1f, -1.2f), quaternion().euler(1, 0, 0, 90.0f) * quaternion().euler(0, 1, 0, -70.0f), vec3(1, 1, 1) * 0.1f), &diffuse_white, &obj_factory, "directional_light.obj");
-
-    // Allocate memory for all the shapes to be stored in a vector
-    std::vector<Shape *> shapes_main = mesh_main.getShapes();
-    std::vector<Shape *> shapes_objt_d = mesh_objt_d.getShapes();
-    std::vector<Shape *> shapes_objt_g = mesh_objt_g.getShapes();
-    std::vector<Shape *> shapes_dirl = mesh_dirl.getShapes();
-    std::vector<Shape *> shapes_allo;
-
-    // Insert shapes from meshes to the vector
-    for (size_t i = 0; i < shapes_main.size(); i++)
-    {
-        shapes_allo.push_back(shapes_main[i]);
-    }
-
-    for (size_t i = 0; i < shapes_objt_d.size(); i++)
-    {
-        shapes_allo.push_back(shapes_objt_d[i]);
-    }
-
-    for (size_t i = 0; i < shapes_objt_g.size(); i++)
-    {
-        shapes_allo.push_back(shapes_objt_g[i]);
-    }
-
-    for (size_t i = 0; i < shapes_dirl.size(); i++)
-    {
-        shapes_allo.push_back(shapes_dirl[i]);
-    }
-
-    // Lights
-    PointLight plight_1(Transform(vec3(0, 2.5f, 0)), vec3(1, 0.9f, 0.75f) * 15.0f, 0, 0, 1);
-    //PointLight plight_2(Transform(vec3(-0.24f, 0.1f, -1.105f)), vec3(1, 1, 1) * 15.0f, 0, 0, 5);
-    SpotLight slight_1(Transform(vec3(0, 0.5f, 0.0f), quaternion().euler(0, 1, 0, 25)), vec3(1, 0.9f, 0.75f) * 10.0f, 0, 0, 1, 0.6f);
-
-    // Ray acceleration tree structure
-    KDTreeAccel accelerator(shapes_allo);
-    accelerator.init();
-
-    // Scene object
-    Scene scene(&accelerator, camera);
-    //scene.addLight(&plight_2);
-    scene.addLight(&slight_1);
-
-    // Renderer object
-    Pathtracer renderer(vec3(1, 1, 1) * 0.25f, 10.0f, 5);
+    // Load the renderer
+    Pathtracer renderer(vec3(1, 1, 1) * 0, scene.getRadClamping(), scene.getRecMax());
 
     // Main loop
     while (running)

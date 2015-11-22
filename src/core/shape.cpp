@@ -14,6 +14,11 @@ Shape::Shape(const Transform o2w, Material *m) : m_objToWorld(o2w), m_worldToObj
 
 }
 
+Shape::~Shape()
+{
+
+}
+
 void Shape::update()
 {
     ERR("Purely virtual function Shape::update called!");

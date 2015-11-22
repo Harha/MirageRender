@@ -29,10 +29,8 @@ bool KDNode::isLeaf()
     return (lChild == nullptr) && (rChild == nullptr);
 }
 
-KDTreeAccel::KDTreeAccel(std::vector<Shape *> shapes, const float iCost, const float tCost,
-                         const float maxP, const float maxD, const float lThreshold)
-    : Accelerator(shapes), m_iSectCost(iCost), m_travCost(tCost),
-      m_maxPrims(maxP), m_maxDepth(maxD), m_leafThreshold(lThreshold)
+KDTreeAccel::KDTreeAccel(std::vector<Shape *> shapes, const float lThreshold)
+    : Accelerator(shapes), m_leafThreshold(lThreshold)
 {
     LOG("K-D Tree: a New K-D Tree accelerator object was created.");
     LOG("K-D Tree: Number of loaded shapes: " << m_shapes.size());

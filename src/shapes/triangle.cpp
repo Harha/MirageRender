@@ -50,7 +50,7 @@ bool Triangle::intersect(const Ray &ray, Intersection &iSect) const
     if (d < EPSILON)
         return false;
 
-    /* <-- Not completely sure about this. (1)
+    /* <-- Not completely sure about this. (1) This is very heavy if enabled.
     if (!m_material->isRefractive())
     {
         if (d < EPSILON)

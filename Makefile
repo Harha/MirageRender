@@ -79,6 +79,9 @@ clean:
 .PHONY: init
 init:
 	@$(MKDIR) $(BINDIR)
+	@$(MKDIR) $(BINDIR)/res
+	@$(MKDIR) $(BINDIR)/res/models
+	@$(MKDIR) $(BINDIR)/res/scenes
 	@$(MKDIR) $(BINDIR)/core
 	@$(MKDIR) $(BINDIR)/math
 	@$(MKDIR) $(BINDIR)/shapes

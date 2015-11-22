@@ -28,10 +28,10 @@ void SpotLight::Le(const vec3 &P, const vec3 &N, const vec3 &Wi, const vec3 &Wo,
         float d = Wi.length();
 
         // Get light attenuatin factor
-        float attenuation = m_attenuationC + m_attenuationL * d + m_attenuationQ * d * d;
+        float attenuation = 1.0f / (m_attenuationC + m_attenuationL * d + m_attenuationQ * d * d);
 
         // Get incident radiation
-        Le = m_emission / attenuation;
+        Le = m_emission * attenuation;
         Le *= (1.0f - (1.0f - spot_factor) / (1.0f - m_cutoff));
     }
 }

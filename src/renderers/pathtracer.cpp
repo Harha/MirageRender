@@ -153,7 +153,7 @@ vec3 Pathtracer::radiance(const Scene *scene, const Ray &ray, float weight, int 
     }
 
     // Return the final radiance
-    return (1.0f / (1.0f - p)) * Ke + Kd * (weight * Le + (BRDF / PDF) * Lr + (BTDF / PDF) * Lt);
+    return vec3::clampv((1.0f / (1.0f - p)) * Ke + Kd * (weight * Le + (BRDF / PDF) * Lr + (BTDF / PDF) * Lt), 0.0f, m_maxRadiance);
 }
 
 }

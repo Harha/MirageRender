@@ -94,7 +94,7 @@ int Mesh::loadObj()
 
     LOG("Mesh: Attempting to load: " << m_mdlFileName);
 
-    file.open("res/" + m_mdlFileName);
+    file.open("res/models/" + m_mdlFileName);
 
     if (file.is_open())
     {
@@ -219,10 +219,10 @@ int Mesh::loadObj()
                     indices.push_back(f);
                 }
             }
-            else if (line.substr(0, 1) == "#")
+            /*else if (line.substr(0, 1) == "#")
             {
                 LOG(".obj: " << line);
-            }
+            }*/
             else
             {
                 continue;
@@ -273,7 +273,7 @@ int Mesh::loadMTL(std::map<std::string, Material *> &materials)
 
     LOG("Mesh: Attempting to load: " << m_mtlFileName);
 
-    file.open("res/" + m_mtlFileName);
+    file.open("res/models/" + m_mtlFileName);
 
     if (file.is_open())
     {
@@ -335,7 +335,7 @@ int Mesh::loadMTL(std::map<std::string, Material *> &materials)
                 s >> ns;
                 info_materials.at(str_currentMaterial).r = ns / 1000.0f;
                 info_materials.at(str_currentMaterial).k = 0.95f;
-                info_materials.at(str_currentMaterial).d = 0.5f;
+                info_materials.at(str_currentMaterial).d = 0.1f;
             }
             else if (line.substr(0, 3) == "Ni ") // Index of refraction
             {
@@ -351,10 +351,10 @@ int Mesh::loadMTL(std::map<std::string, Material *> &materials)
                 s >> illum;
                 info_materials.at(str_currentMaterial).illum = illum;
             }
-            else if (line.substr(0, 1) == "#")
+            /*else if (line.substr(0, 1) == "#")
             {
                 LOG(".mtl: " << line);
-            }
+            }*/
             else
             {
                 continue;

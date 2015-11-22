@@ -78,6 +78,54 @@ struct quaternion
         return *this;
     }
 
+    quaternion lookAt(const vec3 &pos, const vec3 &dest)
+    {
+        if ((pos + dest).length() <= EPSILON)
+        {
+            return this->identity();
+        }
+
+        vec3 u_old = vec3(0, 1, 0);
+        vec3 f_old = vec3(0, 0, 1);
+        vec3 f_new = (dest - pos).normalize();
+        float dot = vec3::dot(f_old, f_new);
+
+        if (std::abs(dot + 1.0f) < EPSILON)
+        {
+            return this->euler(u_old.x, u_old.y, u_old.z, 180);
+        }
+        else if (std::abs(dot - 1.0f) < EPSILON)
+        {
+            return this->identity();
+        }
+
+        float theta = std::acos(dot);
+        vec3 r_axs = vec3::cross(f_old, f_new).normalize();
+
+        quaternion q = quaternion().euler(r_axs.x, r_axs.y, r_axs.z, theta * 180.0f / PI);
+        //quaternion s = quaternion().fromTo(q.getUpVector(), u_old);
+        return q;
+    }
+
+    quaternion fromTo(const vec3 &u, const vec3 &v)
+    {
+        float k = std::sqrt(vec3::dot(u, u) * vec3::dot(v, v));
+        float k_cos_theta = k + vec3::dot(u, v);
+        vec3 w;
+
+        if (k_cos_theta < 1.e6f * k)
+        {
+            k_cos_theta = 0.0f;
+            w = std::abs(u.x) > std::abs(u.z) ? vec3(-u.y, u.x, 0.f) : vec3(0.f, -u.z, u.y);
+        }
+        else
+        {
+            w = vec3::cross(u, v);
+        }
+
+        return quaternion(k_cos_theta, w.x, w.y, w.z).normalize();
+    }
+
     quaternion conjugate() const
     {
         return quaternion(w, -x, -y, -z);

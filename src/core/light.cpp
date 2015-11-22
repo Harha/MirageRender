@@ -11,6 +11,11 @@ Light::Light(Transform l2w, vec3 emission) : m_lightToWorld(l2w), m_emission(emi
 
 }
 
+Light::~Light()
+{
+
+}
+
 Transform Light::getL2W() const
 {
     return m_lightToWorld;

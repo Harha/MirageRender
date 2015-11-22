@@ -169,6 +169,16 @@ struct vec3
         return vec3(x * l, y * l, z * l);
     }
 
+    static vec3 orthogonal(const vec3 &v)
+    {
+        float x = std::abs(v.x);
+        float y = std::abs(v.y);
+        float z = std::abs(v.z);
+
+        vec3 other = x < y ? (x < z ? vec3(1, 0, 0) : vec3(0, 0, 1)) : (y < z ? vec3(0, 1, 0) : vec3(0, 0, 1));
+        return vec3::cross(v, other);
+    }
+
     static float dot(const vec3 &left, const vec3 &right)
     {
         return left.x * right.x + left.y * right.y + left.z * right.z;

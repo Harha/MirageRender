@@ -16,6 +16,11 @@ Camera::Camera(Transform transform, Film film, float speed, float sensitivity) :
 
 }
 
+Camera::~Camera()
+{
+
+}
+
 void Camera::update(float dt, bool keys[256])
 {
 

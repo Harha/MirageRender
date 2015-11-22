@@ -11,6 +11,7 @@ class Accelerator
 {
 public:
     Accelerator(const std::vector<Shape *> shapes = std::vector<Shape *>());
+    virtual ~Accelerator();
     virtual void update() const = 0;
     virtual AABB objectBound() const;
     virtual AABB worldBound() const;

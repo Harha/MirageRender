@@ -13,6 +13,11 @@ Accelerator::Accelerator(std::vector<Shape *> shapes) : m_shapes(shapes)
     m_initialized = false;
 }
 
+Accelerator::~Accelerator()
+{
+
+}
+
 void Accelerator::update() const
 {
     ERR("Purely virtual function Accelerator::update called!");
