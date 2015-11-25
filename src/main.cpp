@@ -27,6 +27,7 @@
 #include "lights/pointlight.h"
 #include "lights/dirlight.h"
 #include "lights/spotlight.h"
+#include "core/luaengine.h"
 
 using namespace mirage;
 
@@ -73,6 +74,14 @@ int main(int argc, char **argv)
     float deltaTime = 0;
     float fps = 0;
     bool running = true;
+
+    // Initialize Lua 5.3.x
+    lua::init();
+
+    // Run simple test lua script
+    lua::load("res/scripts/test.lua");
+    lua::exec("res/scripts/test.lua", "test");
+    lua::exec("res/scripts/test.lua", "loop");
 
     // Load the scene
     Scene scene;
@@ -168,6 +177,9 @@ int main(int argc, char **argv)
 
         frameCount++;
     }
+
+    // Unload lua 5.3.x
+    lua::kill();
 
     // Clear all allocated heap memory
     delete[] threads;

@@ -114,6 +114,46 @@ mat4 mat4::perspective(float fov, float ar, float n, float f)
     return *this;
 }
 
+mat4 mat4::RGBtoXYZ()
+{
+    identity();
+
+    // Adobe RGB to XYZ
+    m[0 + 0 * 4] = 0.5767309f;
+    m[0 + 1 * 4] = 0.1855540f;
+    m[0 + 2 * 4] = 0.1881852f;
+
+    m[1 + 0 * 4] = 0.2973769f;
+    m[1 + 1 * 4] = 0.6273491f;
+    m[1 + 2 * 4] = 0.0752741f;
+
+    m[2 + 0 * 4] = 0.0270343f;
+    m[2 + 1 * 4] = 0.0706872f;
+    m[2 + 2 * 4] = 0.9911085f;
+
+    return *this;
+}
+
+mat4 mat4::SRGBtoXYZ()
+{
+    identity();
+
+    // Standard SRGB to XYZ
+    m[0 + 0 * 4] = 0.4124564f;
+    m[0 + 1 * 4] = 0.2126729f;
+    m[0 + 2 * 4] = 0.0193339f;
+
+    m[1 + 0 * 4] = 0.3575761f;
+    m[1 + 1 * 4] = 0.7151522f;
+    m[1 + 2 * 4] = 0.1191920f;
+
+    m[2 + 0 * 4] = 0.1804375f;
+    m[2 + 1 * 4] = 0.0721750f;
+    m[2 + 2 * 4] = 0.9503041f;
+
+    return *this;
+}
+
 mat4 mat4::transpose()
 {
     mat4 result;

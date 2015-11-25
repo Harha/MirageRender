@@ -10,7 +10,7 @@ LDFLAGS = -Wl,--as-needed
 ifeq ($(OS), Windows_NT)
   LDLIBS = -lmingw32 -lSDL2main
 endif
-LDLIBS += -lSDL2 -lstdc++ -lm
+LDLIBS += -lSDL2 -llua -lstdc++ -lm -static-libgcc -static-libstdc++
 
 # Compiler
 CXX = gcc
@@ -79,12 +79,12 @@ clean:
 .PHONY: init
 init:
 	@$(MKDIR) $(BINDIR)
-	@$(MKDIR) $(BINDIR)/res
-	@$(MKDIR) $(BINDIR)/res/models
-	@$(MKDIR) $(BINDIR)/res/scenes
 	@$(MKDIR) $(BINDIR)/core
 	@$(MKDIR) $(BINDIR)/math
 	@$(MKDIR) $(BINDIR)/shapes
 	@$(MKDIR) $(BINDIR)/cameras
 	@$(MKDIR) $(BINDIR)/accelerators
+	@$(MKDIR) $(BINDIR)/renderers
+	@$(MKDIR) $(BINDIR)/materials
+	@$(MKDIR) $(BINDIR)/lights
 	@echo "Initialization done."

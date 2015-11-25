@@ -30,9 +30,13 @@ Scene::Scene(std::string filePath) : m_filePath(filePath)
     /* Load scene from the provided filepath */
     if (m_filePath != "")
     {
-        Camera *cam_persp = new CameraPersp(Transform(vec3(0, 0, 0)));
-        m_cameras.push_back(cam_persp);
         loadSceneFile();
+
+        if (m_cameras.size() <= 0)
+        {
+            Camera *cam_persp = new CameraPersp(Transform(vec3(0, 0, 0)));
+            m_cameras.push_back(cam_persp);
+        }
     }
     else
     {

@@ -52,6 +52,18 @@ struct mat4
         return result;
     }
 
+    mat4 operator*(const float f) const
+    {
+        mat4 result;
+
+        for (size_t i = 0; i < 16; i++)
+        {
+            result.m[i] = m[i] * f;
+        }
+
+        return result;
+    }
+
     vec4 operator*(const vec4 &v) const
     {
         vec4 result;
@@ -95,6 +107,8 @@ struct mat4
     mat4 scale(const vec3 &v);
     mat4 orthographic(const float l, const float r, const float b, const float t, const float n, const float f);
     mat4 perspective(float fov, float ar, float n, float f);
+    mat4 RGBtoXYZ();
+    mat4 SRGBtoXYZ();
     mat4 transpose();
     mat4 inverse();
 

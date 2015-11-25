@@ -6,10 +6,10 @@ Accelerator kd-tree
 
 # Scene settings
 radclamp 2.5
-recmax 25
+recmax 5
 
 # Test film objects
-Film film 512 512
+Film film 256 256
 
 # Test transform objects
 Transform trans_camera 0 1 4 0 1 0 1 1 1
@@ -28,4 +28,4 @@ Mesh world trans_world mat_white cornellbox_nolight.obj
 Mesh dragon trans_dragon mat_white dragon.obj
 
 # Test light objects
-Light pl1 trans_pl1 point 2 1.5 1 0 0 0.5
+Light pl1 trans_pl1 point 20 20 20 0 0 10

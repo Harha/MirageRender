@@ -65,9 +65,6 @@ vec3 Pathtracer::radiance(const Scene *scene, const Ray &ray, float weight, int 
     // Find the maximum reflectance amount
     float Kd_max = Kd.x > Kd.y && Kd.x > Kd.z ? Kd.x : Kd.y > Kd.z ? Kd.y : Kd.z;
 
-    // Find the XYZ color space luminance of the surface
-    //float Y = 0.2126 * Kd.x + 0.7152 * Kd.y + 0.0722 * Kd.z;
-
     // Russian roulette, absorb or continue
     float p = pseudorand();
     p = (p != 0.0f) ? p : 0.01f;
