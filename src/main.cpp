@@ -40,10 +40,10 @@ void dispose()
 
 int main(int argc, char **argv)
 {
-    // Print program name and version
+    /* Print info and version */
     LOG("Main: MirageRender, version " << VERSION_R << "." << VERSION_B << "." << VERSION_A);
 
-    // Initialize SDL2
+    /* Initialize SDL2 */
     if (SDL_Init(SDL_INIT_VIDEO) != 0)
     {
         ERR("Main: SDL_Init Error: " << SDL_GetError());
@@ -51,21 +51,35 @@ int main(int argc, char **argv)
     }
     SDL_Event event;
 
-    // Set-up atexit hooks
+    /* Initialize function hooks */
     atexit(dispose);
 
-    // Initialize multithreading related stuff
+    /* Initialize render threads */
 #if THREADS>0
     const unsigned int tcount = THREADS;
 #else
     const unsigned int tcount = SDL_GetCPUCount();
 #endif
     std::thread *threads = new std::thread[tcount];
+    LOG("Main: Initialized " << tcount << " rendering threads...");
 
-    LOG("Main: Initialized " << tcount << " worker threads...");
-
-    // Initialize miragerender related variables/objects
+    /* Initialize the main display */
     Display display("MirageRender", WIDTH, HEIGHT, SCALE);
+
+    /* Initialize the scene */
+    Scene scene;
+
+    /* Initialize Lua 5.3.x and load script(s) */
+    lua::init(&scene);
+    lua::load("res/scripts/example.lua");
+    //lua::exec("res/scripts/main.lua", "test");
+    //lua::exec("res/scripts/main.lua", "loop");
+
+    /* Choose a camera */
+    Camera *camera = scene.getCamera();
+
+    /* Initialize the chosen renderer */
+    Pathtracer renderer(vec3(1, 1, 1) * 0, scene.getRadClamping(), scene.getRecMax());
 
     uint32_t startTime = SDL_GetTicks();
     uint32_t currentTime = SDL_GetTicks();
@@ -75,33 +89,16 @@ int main(int argc, char **argv)
     float fps = 0;
     bool running = true;
 
-    // Initialize Lua 5.3.x
-    lua::init();
-
-    // Run simple test lua script
-    lua::load("res/scripts/test.lua");
-    lua::exec("res/scripts/test.lua", "test");
-    lua::exec("res/scripts/test.lua", "loop");
-
-    // Load the scene
-    Scene scene;
-
-    // Pick camera
-    Camera *camera = scene.getCamera();
-
-    // Load the renderer
-    Pathtracer renderer(vec3(1, 1, 1) * 0, scene.getRadClamping(), scene.getRecMax());
-
     // Main loop
     while (running)
     {
-        // Calculate framerate related variables
+        /* Calculate FPS and delta time */
         currentTime = SDL_GetTicks();
         deltaTime = static_cast<float>(currentTime - lastTime) / 1000.0f;
         fps = frameCount / (static_cast<float>(SDL_GetTicks() - startTime) / 1000.0f);
         lastTime = currentTime;
 
-        // Display info every n frames
+        /* Update title with info every 16th frame */
         if (frameCount % 16 == 1)
         {
             std::string fps_str = std::to_string(fps);
@@ -110,41 +107,40 @@ int main(int argc, char **argv)
             display.setTitle(title);
         }
 
-        // Print info with F1
-        if (g_keys[SDL_SCANCODE_F1])
-        {
-            LOG("cam " << camera->getTransform().getPosition().toString() << ", " << camera->getTransform().getOrientation().toString());
-            LOG("spp: " << camera->getFilm().getSample(0, 0).getNumSamples());
-        }
-
-        // Save screenshot with F2
-        if (g_keys[SDL_SCANCODE_F2]) // Image file saving
+        /* Save screenshot to render.ppm with F2 */
+        if (g_keys[SDL_SCANCODE_F2])
         {
             display.saveToPPM("render");
         }
 
-        // Update camera / meshes
-        camera->update(deltaTime, g_keys);
-
-        // Render a portion of the screen per thread
-        int width = camera->getFilm().getResolutionX();
-        int height = camera->getFilm().getResolutionY();
-        for (unsigned int i = 0; i < tcount; i++)
+        /* Render the scene if possible */
+        if (scene.getCamera() && scene.getAccelerator())
         {
-            threads[i] = std::thread ([=,&renderer, &scene, &display]
+            // Update camera / meshes
+            camera->update(deltaTime, g_keys);
+
+            // Render a portion of the screen per thread
+            int width = camera->getFilm().getResolutionX();
+            int height = camera->getFilm().getResolutionY();
+            for (unsigned int i = 0; i < tcount; i++)
             {
-                renderer.render(&scene, &display, width, height/tcount, 0, height/tcount * i);
-            });
+                threads[i] = std::thread ([=,&renderer, &scene, &display]
+                {
+                    renderer.render(&scene, &display, width, height/tcount, 0, height/tcount * i);
+                });
+            }
+
+            // Wait for all the threads to finish on the main thread by joining them.
+            for (unsigned int i = 0; i < tcount; i++)
+            {
+                threads[i].join();
+            }
+
+            // Display results on screen
+            display.render();
         }
 
-        // Wait for all the threads to finish on the main thread by joining them.
-        for (unsigned int i = 0; i < tcount; i++)
-        {
-            threads[i].join();
-        }
-
-        // Display results on screen
-        display.render();
+        //display.render();
 
         // Process SDL events
         while (SDL_PollEvent(&event))
@@ -178,13 +174,13 @@ int main(int argc, char **argv)
         frameCount++;
     }
 
-    // Unload lua 5.3.x
+    /* Unload lua 5.3.x */
     lua::kill();
 
-    // Clear all allocated heap memory
+    /* Free the allocated rendering threads */
     delete[] threads;
 
-    // Inform that we are done
+    /* Inform that the program exit successfully */
     LOG("MirageRender, exit program successfully.");
 
     return 0;

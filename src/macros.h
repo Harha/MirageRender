@@ -9,7 +9,8 @@
 // Logging
 #define LOG(msg)  std::cout << "LOG | " << msg << std::endl;
 #define ERR(msg)  std::cerr << "ERR | " << msg << std::endl;
-//#define LOG(msg)  std::cout << __FILENAME__ << "(" << __LINE__ << "): " << msg << std::endl;
-//#define ERR(msg)  std::cerr << "ERR: " << __FILENAME__ << "(" << __LINE__ << "): " << msg << std::endl;
+
+// Other stuff
+#define DELETE(a) if( (a) != NULL ) delete (a); (a) = NULL;
 
 #endif // MACROS_H

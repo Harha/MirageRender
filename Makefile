@@ -10,7 +10,7 @@ LDFLAGS = -Wl,--as-needed
 ifeq ($(OS), Windows_NT)
   LDLIBS = -lmingw32 -lSDL2main
 endif
-LDLIBS += -lSDL2 -llua -lstdc++ -lm -static-libgcc -static-libstdc++
+LDLIBS += -lSDL2 -llua -ldl -lpthread -lstdc++ -lm -static-libgcc -static-libstdc++
 
 # Compiler
 CXX = gcc
