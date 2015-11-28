@@ -17,6 +17,7 @@
 #include "../lights/dirlight.h"
 #include "../lights/pointlight.h"
 #include "../lights/spotlight.h"
+#include "shape.h"
 #include "material.h"
 #include "../materials/diffusemat.h"
 #include "../materials/glassmat.h"
@@ -25,6 +26,8 @@
 
 namespace mirage
 {
+
+class Mesh;
 
 class ObjFactory
 {
@@ -42,6 +45,7 @@ public:
     Light *initDirLight(const Transform t, const vec3 emission);
     Light *initPointLight(const Transform t, const vec3 emission, float aC, float aL, float aQ);
     Light *initSpotLight(const Transform t, const vec3 emission, float aC, float aL, float aQ, float cutoff);
+    Mesh *initMesh(Mesh *m);
     Material *initDiffuseMaterial(const vec3 kd, const vec3 ke);
     Material *initGlassMaterial(const vec3 kd, const vec3 ks, const vec3 ke, const float ior);
     Material *initGlossyMaterial(const vec3 kd, const vec3 ks, const vec3 ke, const float r, const float k, const float d);
@@ -53,6 +57,7 @@ private:
     std::vector<Transform *> m_loadedTransforms;
     std::vector<Camera *> m_loadedCameras;
     std::vector<Light *> m_loadedLights;
+    std::vector<Mesh *> m_loadedMeshes;
     std::vector<Material *> m_loadedMaterials;
 };
 

@@ -18,7 +18,7 @@
 namespace mirage
 {
 
-Scene::Scene() : m_accelerator(nullptr), m_objFactory(new ObjFactory()), m_radClamping(100.0f), m_recMax(5)
+Scene::Scene() : m_accelerator(nullptr), m_objFactory(new ObjFactory()), m_radianceClamping(100.0f), m_maxRecursion(5)
 {
     LOG("Scene: a New Scene object was created.");
 }
@@ -65,6 +65,16 @@ void Scene::addMesh(Mesh *m)
     m_meshes.push_back(m);
 }
 
+void Scene::setRadianceClamping(float f)
+{
+    m_radianceClamping = f;
+}
+
+void Scene::setMaxRecursion(int n)
+{
+    m_maxRecursion = n;
+}
+
 Accelerator *Scene::getAccelerator() const
 {
     return m_accelerator;
@@ -92,14 +102,35 @@ std::vector<Light *> Scene::getLights() const
     return m_lights;
 }
 
-float Scene::getRadClamping() const
+std::vector<Mesh *> Scene::getMeshes() const
 {
-    return m_radClamping;
+    return m_meshes;
 }
 
-int Scene::getRecMax() const
+std::vector<Shape *> Scene::getShapes() const
 {
-    return m_recMax;
+    std::vector<Shape *> result;
+
+    for (auto *m : m_meshes)
+    {
+        std::vector<Shape *> mesh_shapes = m->getShapes();
+        for (size_t i = 0; i < mesh_shapes.size(); i++)
+        {
+            result.push_back(mesh_shapes[i]);
+        }
+    }
+
+    return result;
+}
+
+float Scene::getRadianceClamping() const
+{
+    return m_radianceClamping;
+}
+
+int Scene::getMaxRecursion() const
+{
+    return m_maxRecursion;
 }
 
 }

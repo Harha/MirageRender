@@ -94,6 +94,19 @@ ObjFactory::~ObjFactory()
         }
     }
 
+    /* Deallocate all Meshes */
+    for (size_t i = 0; i < m_loadedMeshes.size(); i++)
+    {
+        Mesh *mesh = m_loadedMeshes[i];
+
+        if (mesh)
+        {
+            delete mesh;
+
+            LOG("ObjFactory: an Instance of (Mesh *) was destroyed succesfully...");
+        }
+    }
+
     /* Deallocate all materials */
     for (size_t i = 0; i < m_loadedMaterials.size(); i++)
     {
@@ -190,6 +203,14 @@ Light *ObjFactory::initSpotLight(const Transform t, const vec3 emission, float a
 
     LOG("ObjFactory: Initialized a new spot light.");
     return m_loadedLights.back();
+}
+
+Mesh *ObjFactory::initMesh(Mesh *m)
+{
+    m_loadedMeshes.push_back(m);
+
+    LOG("ObjFactory: Initialized a new mesh.");
+    return m_loadedMeshes.back();
 }
 
 Material *ObjFactory::initDiffuseMaterial(const vec3 kd, const vec3 ke)

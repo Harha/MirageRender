@@ -77,9 +77,10 @@ int main(int argc, char **argv)
 
     /* Choose a camera */
     Camera *camera = scene.getCamera();
+    Accelerator *accelerator = scene.getAccelerator();
 
     /* Initialize the chosen renderer */
-    Pathtracer renderer(vec3(1, 1, 1) * 0, scene.getRadClamping(), scene.getRecMax());
+    Pathtracer renderer(vec3(1, 1, 1) * 0, scene.getRadianceClamping(), scene.getMaxRecursion());
 
     uint32_t startTime = SDL_GetTicks();
     uint32_t currentTime = SDL_GetTicks();
@@ -114,9 +115,9 @@ int main(int argc, char **argv)
         }
 
         /* Render the scene if possible */
-        if (scene.getCamera() && scene.getAccelerator())
+        if (camera && accelerator)
         {
-            // Update camera / meshes
+            // Update scene
             camera->update(deltaTime, g_keys);
 
             // Render a portion of the screen per thread
@@ -139,8 +140,12 @@ int main(int argc, char **argv)
             // Display results on screen
             display.render();
         }
-
-        //display.render();
+        /* Else, don't render anything and sleep for a while instead */
+        /* This is just to keep the OS sane */
+        else
+        {
+            std::this_thread::sleep_for(std::chrono::milliseconds(1));
+        }
 
         // Process SDL events
         while (SDL_PollEvent(&event))

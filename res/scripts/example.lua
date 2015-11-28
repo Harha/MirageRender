@@ -1,31 +1,50 @@
 -- example.lua
 
 function init()
-	print("MirageRender example.lua script file initializing...")
+	print("MirageRender example.lua script file init() function.")
 	
-	-- Create some test objects
-	color_white = NewVector3(0.9, 0.9, 0.9)
-	color_lamp1 = NewVector3(0.9, 0.75, 0.5)
-	mat_diffuse_white = NewDiffMaterial(color_white)
-	mat_emissiv_lamp1 = NewEmisMaterial(color_lamp1)
-	mat_diffuse_red = NewDiffMaterial(NewVector3(0.9, 0.1, 0.1))
+	-- Define scene settings
+	setRadianceClamping(5)
+	setMaxRecursion(10)
 	
-	q1 = NewQuaternion(0, 1, 0, 0)
-	q2 = NewQuaternionLookAt(NewVector3(0, 0, 0), NewVector3(0, 1, 5))
-	v4 = NewVector4(1, 0, 0, 1)
-	tr = NewTransform(NewVector3(0, 0, 0), q1, NewVector3(1, 1, 1))
+	-- Initialize objects
+	v_zero = NewVector3(0, 0, 0)
+	v_full = NewVector3(1, 1, 1)
+	q_idnt = NewQuaternion(1, 0, 0, 0)
+	t_zero = NewTransform(v_zero, q_idnt, v_full)
 	
-	camera = NewCameraPersp(tr, 1, 1, 70.0)
+	col_white = NewVector3(0.9, 0.9, 0.9)
+	col_red = NewVector3(0.9, 0.1, 0.1)
+	col_green = NewVector3(0.1, 0.9, 0.1)
+	col_blue = NewVector3(0.1, 0.1, 0.9)
 	
-	print(camera)
-end
-
-function test()
-	print("Hello world, from ",_VERSION,"! This is the test() function.\n")
-end
-
-function loop()
-	for i = 0, 10, 1 do
-		print("For loop: " .. i)
-	end
+	mat_diff_white = NewDiffMaterial(col_white)
+	mat_diff_red = NewDiffMaterial(col_red)
+	mat_diff_green = NewDiffMaterial(col_green)
+	mat_diff_blue = NewDiffMaterial(col_blue)
+	
+	v_camera = NewVector3(0, 1, 4)
+	t_camera = NewTransform(v_camera, NewQuaternionLookAt(v_camera, NewVector3(0, 1, 0)), v_full)
+	camera_persp = NewCameraPersp(t_camera, 4, 64, 70.0)
+	camera_ortho = NewCameraOrtho(t_camera, 4, 64, 0.01)
+	
+	q_cbox = NewQuaternionLookAt(v_zero, NewVector3(0, 0, 1))
+	t_cbox = NewTransform(v_zero, q_cbox, v_full)
+	mesh_cbox = NewMesh(t_cbox, mat_diff_white, "cornellbox_nolight.obj")
+	
+	v_dragon = NewVector3(-0.5, 0, 0.5)
+	t_dragon = NewTransform(v_dragon, NewQuaternionLookAt(v_dragon, NewVector3(-1, 0, 1)), NewVector3(0.05, 0.05, 0.05))
+	mesh_dragon = NewMesh(t_dragon, mat_diff_white, "dragon.obj")
+	
+	t_plight1 = NewTransform(NewVector3(0, 0.25, 0), q_idnt, v_full)
+	plight1 = NewLightPoint(t_plight1, NewVector3(20, 17.5, 16.0), 0, 0, 7.5)
+	
+	-- Add objects to scene
+	AddMesh(mesh_cbox)
+	AddMesh(mesh_dragon)
+	AddLight(plight1)
+	AddCamera(camera_persp)
+	
+	-- Build ray acceleration structure
+	AddRayAccelerator("k-d_tree")
 end

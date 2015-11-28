@@ -29,20 +29,24 @@ public:
     void addCamera(Camera *c);
     void addLight(Light *l);
     void addMesh(Mesh *m);
+    void setRadianceClamping(float f);
+    void setMaxRecursion(int n);
     Accelerator *getAccelerator() const;
     ObjFactory *getObjFactory() const;
     Camera *getCamera() const;
     std::vector<Light *> getLights() const;
-    float getRadClamping() const;
-    int getRecMax() const;
+    std::vector<Mesh *> getMeshes() const;
+    std::vector<Shape *> getShapes() const;
+    float getRadianceClamping() const;
+    int getMaxRecursion() const;
 private:
     Accelerator *m_accelerator;
     ObjFactory *m_objFactory;
     std::vector<Camera *> m_cameras;
     std::vector<Light *> m_lights;
     std::vector<Mesh *> m_meshes;
-    float m_radClamping;
-    int m_recMax;
+    float m_radianceClamping;
+    int m_maxRecursion;
 };
 
 }

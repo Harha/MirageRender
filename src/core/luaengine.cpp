@@ -6,6 +6,9 @@
 // mirage includes
 #include "luaengine.h"
 #include "../macros.h"
+#include "../shapes/mesh.h"
+#include "accelerator.h"
+#include "../accelerators/kdtree.h"
 
 namespace mirage
 {
@@ -74,8 +77,12 @@ void load(const std::string filename)
         int status = luaL_loadfile(g_state, filename.c_str());
 
         /* Register available C/C++ functions & objects */
+
+        /* Utility functions */
         lua_pushcfunction(g_state, lua_print_func);
         lua_setglobal(g_state, "print");
+
+        /* C++ Object constructors */
         lua_pushcfunction(g_state, lua_NewVector3_func);
         lua_setglobal(g_state, "NewVector3");
         lua_pushcfunction(g_state, lua_NewVector4_func);
@@ -90,10 +97,34 @@ void load(const std::string filename)
         lua_setglobal(g_state, "NewCameraOrtho");
         lua_pushcfunction(g_state, lua_NewCameraPersp_func);
         lua_setglobal(g_state, "NewCameraPersp");
+        lua_pushcfunction(g_state, lua_NewLightDir_func);
+        lua_setglobal(g_state, "NewLightDir");
+        lua_pushcfunction(g_state, lua_NewLightPoint_func);
+        lua_setglobal(g_state, "NewLightPoint");
+        lua_pushcfunction(g_state, lua_NewLightSpot_func);
+        lua_setglobal(g_state, "NewLightSpot");
+        lua_pushcfunction(g_state, lua_NewMesh_func);
+        lua_setglobal(g_state, "NewMesh");
         lua_pushcfunction(g_state, lua_NewDiffMaterial_func);
         lua_setglobal(g_state, "NewDiffMaterial");
         lua_pushcfunction(g_state, lua_NewEmisMaterial_func);
         lua_setglobal(g_state, "NewEmisMaterial");
+
+        /* C++ Scene object adders */
+        lua_pushcfunction(g_state, lua_AddCamera_func);
+        lua_setglobal(g_state, "AddCamera");
+        lua_pushcfunction(g_state, lua_AddLight_func);
+        lua_setglobal(g_state, "AddLight");
+        lua_pushcfunction(g_state, lua_AddMesh_func);
+        lua_setglobal(g_state, "AddMesh");
+        lua_pushcfunction(g_state, lua_AddRayAccelerator_func);
+        lua_setglobal(g_state, "AddRayAccelerator");
+
+        /* C++ Scene setting setters */
+        lua_pushcfunction(g_state, lua_SetRadianceClamping_func);
+        lua_setglobal(g_state, "setRadianceClamping");
+        lua_pushcfunction(g_state, lua_SetMaxRecursion_func);
+        lua_setglobal(g_state, "setMaxRecursion");
 
         /* Execute the program if no errors found */
         if (status == 0)
@@ -119,6 +150,7 @@ void exec(const std::string filename, const std::string funcname)
     lua_call(g_state, 0, 0);
 }
 
+/* Utility functions */
 int lua_print_func(lua_State *L)
 {
     /* Get the function argument */
@@ -130,6 +162,7 @@ int lua_print_func(lua_State *L)
     return 0;
 }
 
+/* C++ Object constructors */
 int lua_NewVector3_func(lua_State *L)
 {
     /* Get the function arguments */
@@ -263,8 +296,64 @@ int lua_NewLightDir_func(lua_State *L)
     return 1;
 }
 
-//int lua_NewLightPoint_func(lua_State *L);
-//int lua_NewLightSpot_func(lua_State *L);
+int lua_NewLightPoint_func(lua_State *L)
+{
+    /* Get the function arguments */
+    std::size_t address_transform = static_cast<std::size_t>(luaL_checkinteger(L, 1));
+    std::size_t address_emission = static_cast<std::size_t>(luaL_checkinteger(L, 2));
+    float aC = luaL_checknumber(L, 3);
+    float aL = luaL_checknumber(L, 4);
+    float aQ = luaL_checknumber(L, 5);
+
+    /* Get the objects from address */
+    Transform *t = reinterpret_cast<Transform *>(address_transform);
+    vec3 *e = reinterpret_cast<vec3 *>(address_emission);
+
+    /* Create the object and return the address */
+    std::size_t address = reinterpret_cast<std::size_t>(g_scene->getObjFactory()->initPointLight(*t, *e, aC, aL, aQ));
+    lua_pushinteger(L, address);
+
+    return 1;
+}
+
+int lua_NewLightSpot_func(lua_State *L)
+{
+    /* Get the function arguments */
+    std::size_t address_transform = static_cast<std::size_t>(luaL_checkinteger(L, 1));
+    std::size_t address_emission = static_cast<std::size_t>(luaL_checkinteger(L, 2));
+    float aC = luaL_checknumber(L, 3);
+    float aL = luaL_checknumber(L, 4);
+    float aQ = luaL_checknumber(L, 5);
+    float cutoff = luaL_checknumber(L, 6);
+
+    /* Get the objects from address */
+    Transform *t = reinterpret_cast<Transform *>(address_transform);
+    vec3 *e = reinterpret_cast<vec3 *>(address_emission);
+
+    /* Create the object and return the address */
+    std::size_t address = reinterpret_cast<std::size_t>(g_scene->getObjFactory()->initSpotLight(*t, *e, aC, aL, aQ, cutoff));
+    lua_pushinteger(L, address);
+
+    return 1;
+}
+
+int lua_NewMesh_func(lua_State *L)
+{
+    /* Get the function arguments */
+    std::size_t address_transform = static_cast<std::size_t>(luaL_checkinteger(L, 1));
+    std::size_t address_material = static_cast<std::size_t>(luaL_checkinteger(L, 2));
+    std::string filename(luaL_checkstring(L, 3));
+
+    /* Get the objects from address */
+    Transform *t = reinterpret_cast<Transform *>(address_transform);
+    Material *m = reinterpret_cast<Material *>(address_material);
+
+    /* Create the object and return the address */
+    std::size_t address = reinterpret_cast<std::size_t>(g_scene->getObjFactory()->initMesh(new Mesh(*t, m, g_scene->getObjFactory(), filename)));
+    lua_pushinteger(L, address);
+
+    return 1;
+}
 
 int lua_NewDiffMaterial_func(lua_State *L)
 {
@@ -294,6 +383,110 @@ int lua_NewEmisMaterial_func(lua_State *L)
     lua_pushinteger(L, address);
 
     return 1;
+}
+
+/* C++ Scene object adders */
+int lua_AddCamera_func(lua_State *L)
+{
+    /* Get the function arguments */
+    std::size_t address_camera = static_cast<std::size_t>(luaL_checkinteger(L, 1));
+
+    /* Get the object from address */
+    Camera *camera = reinterpret_cast<Camera *>(address_camera);
+
+    /* Add the object to scene */
+    g_scene->addCamera(camera);
+
+    LOG("Lua: a New Camera was added to the current scene.");
+
+    return 0;
+}
+
+int lua_AddLight_func(lua_State *L)
+{
+    /* Get the function arguments */
+    std::size_t address_light = static_cast<std::size_t>(luaL_checkinteger(L, 1));
+
+    /* Get the object from address */
+    Light *light = reinterpret_cast<Light *>(address_light);
+
+    /* Add the object to scene */
+    g_scene->addLight(light);
+
+    LOG("Lua: a New Light was added to the current scene.");
+
+    return 0;
+}
+
+int lua_AddMesh_func(lua_State *L)
+{
+    /* Get the function arguments */
+    std::size_t address_mesh = static_cast<std::size_t>(luaL_checkinteger(L, 1));
+
+    /* Get the object from address */
+    Mesh *mesh = reinterpret_cast<Mesh *>(address_mesh);
+
+    /* Add the object to scene */
+    g_scene->addMesh(mesh);
+
+    LOG("Lua: a New Mesh was added to the current scene.");
+
+    return 0;
+}
+
+int lua_AddRayAccelerator_func(lua_State *L)
+{
+    /* Get the function arguments */
+    std::string type(luaL_checkstring(L, 1));
+
+    /* Check if an accelerator exists already */
+    if (g_scene->getAccelerator())
+    {
+        ERR("Lua: There is already present a ray acceleration structure in the current scene!");
+        return 0;
+    }
+
+    /* Create the object and add it to the scene */
+    if (type == "k-d_tree")
+    {
+        Accelerator *accel = new KDTreeAccel(g_scene->getShapes(), 1);
+        accel->init();
+        g_scene->setAccelerator(accel);
+
+        LOG("Lua: a New K-D Tree accelerator was added to the current scene.");
+    }
+    else
+    {
+        ERR("Lua: Invalid ray acceleration structure type. Accelerator was not created.");
+    }
+
+    return 0;
+}
+
+extern int lua_SetRadianceClamping_func(lua_State *L)
+{
+    /* Get the function argument */
+    int n = luaL_checknumber(L, 1);
+
+    /* Set the variable */
+    g_scene->setRadianceClamping(n);
+
+    LOG("Lua: Set scene radiance clamping to " << n << ".");
+
+    return 0;
+}
+
+extern int lua_SetMaxRecursion_func(lua_State *L)
+{
+    /* Get the function argument */
+    int n = luaL_checkinteger(L, 1);
+
+    /* Set the variable */
+    g_scene->setMaxRecursion(n);
+
+    LOG("Lua: Set scene maximum recursion for rays to " << n << ".");
+
+    return 0;
 }
 
 }
