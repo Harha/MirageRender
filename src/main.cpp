@@ -13,21 +13,8 @@
 #include "core/input.h"
 #include "core/display.h"
 #include "core/scene.h"
-#include "core/objfactory.h"
-#include "shapes/sphere.h"
-#include "shapes/mesh.h"
-#include "cameras/orthographic.h"
-#include "cameras/perspective.h"
-#include "accelerators/kdtree.h"
-#include "renderers/pathtracer.h"
-#include "materials/diffusemat.h"
-#include "materials/specmat.h"
-#include "materials/glassmat.h"
-#include "materials/glossymat.h"
-#include "lights/pointlight.h"
-#include "lights/dirlight.h"
-#include "lights/spotlight.h"
 #include "core/luaengine.h"
+#include "renderers/pathtracer.h"
 
 using namespace mirage;
 
@@ -66,22 +53,19 @@ int main(int argc, char **argv)
     /* Initialize the main display */
     Display display("MirageRender", WIDTH, HEIGHT, SCALE);
 
-    /* Initialize the scene */
+    /* Initialize Scene & Lua 5.3.x and load script(s) */
     Scene scene;
-
-    /* Initialize Lua 5.3.x and load script(s) */
     lua::init(&scene);
     lua::load("res/scripts/example.lua");
-    //lua::exec("res/scripts/main.lua", "test");
-    //lua::exec("res/scripts/main.lua", "loop");
 
-    /* Choose a camera */
+    /* Choose a camera and an accelerator */
     Camera *camera = scene.getCamera();
     Accelerator *accelerator = scene.getAccelerator();
 
     /* Initialize the chosen renderer */
     Pathtracer renderer(vec3(1, 1, 1) * 0, scene.getRadianceClamping(), scene.getMaxRecursion());
 
+    /* FPS/DeltaTime related variables */
     uint32_t startTime = SDL_GetTicks();
     uint32_t currentTime = SDL_GetTicks();
     uint32_t lastTime = 0;
@@ -90,10 +74,9 @@ int main(int argc, char **argv)
     float fps = 0;
     bool running = true;
 
-    // Main loop
     while (running)
     {
-        /* Calculate FPS and delta time */
+        /* Calculate FPS and DeltaTime */
         currentTime = SDL_GetTicks();
         deltaTime = static_cast<float>(currentTime - lastTime) / 1000.0f;
         fps = frameCount / (static_cast<float>(SDL_GetTicks() - startTime) / 1000.0f);
@@ -117,10 +100,10 @@ int main(int argc, char **argv)
         /* Render the scene if possible */
         if (camera && accelerator)
         {
-            // Update scene
+            /* Update everything */
             camera->update(deltaTime, g_keys);
 
-            // Render a portion of the screen per thread
+            /* Give a portion of the screen as a task for each thread */
             int width = camera->getFilm().getResolutionX();
             int height = camera->getFilm().getResolutionY();
             for (unsigned int i = 0; i < tcount; i++)
@@ -131,13 +114,13 @@ int main(int argc, char **argv)
                 });
             }
 
-            // Wait for all the threads to finish on the main thread by joining them.
+            /* Wait for all the threads to finish on the main thread by joining them */
             for (unsigned int i = 0; i < tcount; i++)
             {
                 threads[i].join();
             }
 
-            // Display results on screen
+            /* Display results on screen */
             display.render();
         }
         /* Else, don't render anything and sleep for a while instead */
@@ -147,7 +130,7 @@ int main(int argc, char **argv)
             std::this_thread::sleep_for(std::chrono::milliseconds(1));
         }
 
-        // Process SDL events
+        /* Process SDL events */
         while (SDL_PollEvent(&event))
         {
             switch (event.type)

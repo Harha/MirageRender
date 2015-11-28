@@ -10,6 +10,6 @@ Example images
 
 _a Cornell box scene rendered using monte carlo path tracing, caustics caused by water, indirect illumination._
 
-![Cornell Box, gi test](img/mirage_cornellbox_alight.png "Cornell Box, gi test")
+![Cornell Box, gi test](img/mirage_cornellbox_plight.png "Cornell Box, gi test")
 
-_a Cornell box scene rendered using monte carlo path tracing, indirect illumination._
+_a Cornell box scene rendered using monte carlo path tracing, direct & indirect illumination._

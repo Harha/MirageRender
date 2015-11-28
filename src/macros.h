@@ -10,7 +10,7 @@
 #define LOG(msg)  std::cout << "LOG | " << msg << std::endl;
 #define ERR(msg)  std::cerr << "ERR | " << msg << std::endl;
 
-// Other stuff
+// Utility stuff
 #define DELETE(a) if( (a) != NULL ) delete (a); (a) = NULL;
 
 #endif // MACROS_H

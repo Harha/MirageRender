@@ -127,7 +127,7 @@ void Display::saveToPPM(std::string filename)
     fclose(f);
     m_isSavingImage = false;
 
-    LOG("Display: Successfully saved the current displayed scene as an image, name: " << filename);
+    LOG("Display: Screenshot successfully saved, filename: " << filename);
 }
 
 }

@@ -16,6 +16,8 @@ ObjFactory::ObjFactory()
 
 ObjFactory::~ObjFactory()
 {
+    /* Replace these all with DELETE some day, for now print info */
+
     /* Deallocate all vector3s */
     for (size_t i = 0; i < m_loadedVector3s.size(); i++)
     {
