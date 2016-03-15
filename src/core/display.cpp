@@ -10,7 +10,12 @@
 namespace mirage
 {
 
-Display::Display(std::string title, int width, int height, int scale) : m_title(title), m_width(width), m_height(height), m_scale(scale), m_isSavingImage(false)
+Display::Display(std::string title, unsigned width, unsigned height, unsigned scale) :
+    m_title(title),
+    m_width(width),
+    m_height(height),
+    m_scale(scale),
+    m_isSavingImage(false)
 {
     init();
 
@@ -74,12 +79,12 @@ void Display::render()
 
 void Display::clear(const Uint32 &color)
 {
-    Uint32 resolution = static_cast<Uint32>(m_width * m_height);
+    unsigned resolution = static_cast<unsigned>(m_width * m_height);
     for (size_t i = 0; i < resolution; i++)
         m_pixels[i] = color;
 }
 
-void Display::setPixel(const int x, const int y, vec3 v)
+void Display::setPixel(const unsigned x, const unsigned y, vec3 v)
 {
     assert(x >= 0 || x < m_width || y >= 0 || y < m_height);
 
@@ -128,6 +133,21 @@ void Display::saveToPPM(std::string filename)
     m_isSavingImage = false;
 
     LOG("Display: Screenshot successfully saved, filename: " << filename);
+}
+
+unsigned Display::getWidth() const
+{
+    return m_width;
+}
+
+unsigned Display::getHeight() const
+{
+    return m_height;
+}
+
+unsigned Display::getScale() const
+{
+    return m_scale;
 }
 
 }

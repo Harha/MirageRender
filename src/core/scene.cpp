@@ -18,7 +18,11 @@
 namespace mirage
 {
 
-Scene::Scene() : m_accelerator(nullptr), m_objFactory(new ObjFactory()), m_radianceClamping(100.0f), m_maxRecursion(5)
+Scene::Scene() :
+    m_accelerator(nullptr),
+    m_objFactory(new ObjFactory()),
+    m_radianceClamping(100.0f),
+    m_maxRecursion(5)
 {
     LOG("Scene: a New Scene object was created.");
 }
@@ -63,6 +67,11 @@ void Scene::addLight(Light *l)
 void Scene::addMesh(Mesh *m)
 {
     m_meshes.push_back(m);
+}
+
+void Scene::addShape(Shape *s)
+{
+    m_shapes.push_back(s);
 }
 
 void Scene::setRadianceClamping(float f)
@@ -118,6 +127,11 @@ std::vector<Shape *> Scene::getShapes() const
         {
             result.push_back(mesh_shapes[i]);
         }
+    }
+
+    for (size_t i = 0; i < m_shapes.size(); i++)
+    {
+        result.push_back(m_shapes[i]);
     }
 
     return result;

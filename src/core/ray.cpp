@@ -4,7 +4,12 @@
 namespace mirage
 {
 
-Ray::Ray(vec3 origin, vec3 direction, float tmin, float tmax) : m_origin(origin), m_direction(direction.normalize()), m_directionInv(1.0f / m_direction), mint(tmin), maxt(tmax)
+Ray::Ray(vec3 origin, vec3 direction, float tmin, float tmax) :
+    m_origin(origin),
+    m_direction(direction.normalize()),
+    m_directionInv(1.0f / m_direction),
+    mint(tmin),
+    maxt(tmax)
 {
 
 }

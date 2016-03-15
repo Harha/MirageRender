@@ -3,6 +3,25 @@
 
 // mirage includes
 #include "objfactory.h"
+#include "../math/vec3.h"
+#include "../math/vec4.h"
+#include "../math/mat4.h"
+#include "../math/quaternion.h"
+#include "transform.h"
+#include "camera.h"
+#include "../cameras/orthographic.h"
+#include "../cameras/perspective.h"
+#include "light.h"
+#include "../lights/dirlight.h"
+#include "../lights/pointlight.h"
+#include "../lights/spotlight.h"
+#include "shape.h"
+#include "../shapes/mesh.h"
+#include "material.h"
+#include "../materials/diffusemat.h"
+#include "../materials/glassmat.h"
+#include "../materials/glossymat.h"
+#include "../materials/specmat.h"
 #include "../macros.h"
 #include "../config.h"
 
@@ -96,6 +115,19 @@ ObjFactory::~ObjFactory()
         }
     }
 
+    /* Deallocate all Shapes */
+    for (size_t i = 0; i < m_loadedShapes.size(); i++)
+    {
+        Shape *shape = m_loadedShapes[i];
+
+        if (shape)
+        {
+            delete shape;
+
+            LOG("ObjFactory: an Instance of (Shape *) was destroyed succesfully...");
+        }
+    }
+
     /* Deallocate all Meshes */
     for (size_t i = 0; i < m_loadedMeshes.size(); i++)
     {
@@ -167,17 +199,17 @@ Transform *ObjFactory::initTransform(const vec3 p, const quaternion o, const vec
     return m_loadedTransforms.back();
 }
 
-Camera *ObjFactory::initOrthoCamera(const Transform t, float speed, float sensitivity, float zoom)
+Camera *ObjFactory::initOrthoCamera(const Transform t, float speed, float sensitivity, float zoom, unsigned resX, unsigned resY)
 {
-    m_loadedCameras.push_back(new CameraOrtho(t, Film(WIDTH, HEIGHT), speed, sensitivity, zoom));
+    m_loadedCameras.push_back(new CameraOrtho(t, Film(resX, resY), speed, sensitivity, zoom));
 
     LOG("ObjFactory: Initialized a new orthographic camera.");
     return m_loadedCameras.back();
 }
 
-Camera *ObjFactory::initPerspCamera(const Transform t, float speed, float sensitivity, float fov)
+Camera *ObjFactory::initPerspCamera(const Transform t, float speed, float sensitivity, float fov, unsigned resX, unsigned resY)
 {
-    m_loadedCameras.push_back(new CameraPersp(t, Film(WIDTH, HEIGHT), speed, sensitivity, fov));
+    m_loadedCameras.push_back(new CameraPersp(t, Film(resX, resY), speed, sensitivity, fov));
 
     LOG("ObjFactory: Initialized a new perspective camera.");
     return m_loadedCameras.back();
@@ -205,6 +237,14 @@ Light *ObjFactory::initSpotLight(const Transform t, const vec3 emission, float a
 
     LOG("ObjFactory: Initialized a new spot light.");
     return m_loadedLights.back();
+}
+
+Shape *ObjFactory::initShape(Shape *s)
+{
+    m_loadedShapes.push_back(s);
+
+    LOG("ObjFactory: Initialized a new shape.");
+    return m_loadedShapes.back();
 }
 
 Mesh *ObjFactory::initMesh(Mesh *m)

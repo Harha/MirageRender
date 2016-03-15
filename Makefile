@@ -3,20 +3,23 @@
 # Linker
 LD = gcc
 
-# Linker flags
-LDFLAGS = -Wl,--as-needed
+# Include directories
+CXXINCS += -I./include/
 
-# Linker libs
+# Linker flags
+LDFLAGS = -Wl,--as-needed -m64
+
+# Linker libs, lua might be -llua or -llua53 or -lluaXX, XX being your installed lua version
 ifeq ($(OS), Windows_NT)
-  LDLIBS = -lmingw32 -lSDL2main
+  LDLIBS = -L./lib/ -lmingw32 -lSDL2main
 endif
-LDLIBS += -lSDL2 -llua -ldl -lpthread -lstdc++ -lm -static-libgcc -static-libstdc++
+LDLIBS += -lSDL2 -llua53 -lpthread -lstdc++ -lm -static-libgcc -static-libstdc++
 
 # Compiler
 CXX = gcc
 
 # Compiler flags
-CXXFLAGS = -std=c++11 -Wall -Wextra
+CXXFLAGS = -std=c++11 -Wall -Wextra -m64
 
 # Apply optimization parameters if !DEBUG
 DEBUG ?= 0
@@ -60,7 +63,7 @@ all: $(TARGET)
 
 # Compile all
 $(OBJS): $(BINDIR)/%.o : $(SRCDIR)/%.cpp
-	@$(CXX) $(CXXFLAGS) $^ -c $c -o $@
+	@$(CXX) $(CXXFLAGS) $(CXXINCS) $^ -c $c -o $@
 	@echo "Compiling done for file $@"
 
 # Link all to executable

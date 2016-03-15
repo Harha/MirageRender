@@ -1,5 +1,6 @@
 # Blender v2.71 (sub 0) OBJ File: 'dragon.blend'
 # www.blender.org
+mtllib dragon.mtl
 o default
 v 1.625369 2.996523 -0.996997
 v 3.126621 4.264846 -1.961778

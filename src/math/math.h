@@ -6,6 +6,7 @@
 #include <random>
 #include <algorithm>
 #include <ctime>
+#include <cstdio>
 
 namespace mirage
 {

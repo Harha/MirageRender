@@ -4,30 +4,19 @@
 // std includes
 #include <vector>
 
-// mirage includes
-#include "../math/vec3.h"
-#include "../math/vec4.h"
-#include "../math/mat4.h"
-#include "../math/quaternion.h"
-#include "transform.h"
-#include "camera.h"
-#include "../cameras/orthographic.h"
-#include "../cameras/perspective.h"
-#include "light.h"
-#include "../lights/dirlight.h"
-#include "../lights/pointlight.h"
-#include "../lights/spotlight.h"
-#include "shape.h"
-#include "material.h"
-#include "../materials/diffusemat.h"
-#include "../materials/glassmat.h"
-#include "../materials/glossymat.h"
-#include "../materials/specmat.h"
-
 namespace mirage
 {
 
+struct vec3;
+struct vec4;
+struct mat4;
+struct quaternion;
+class Transform;
+class Camera;
+class Light;
+class Shape;
 class Mesh;
+class Material;
 
 class ObjFactory
 {
@@ -40,11 +29,12 @@ public:
     quaternion *initQuaternion(float w, float x, float y, float z);
     quaternion *initQuaternion(const vec3 origin, const vec3 target);
     Transform *initTransform(const vec3 p, const quaternion o, const vec3 s);
-    Camera *initOrthoCamera(const Transform t, float speed, float sensitivity, float zoom);
-    Camera *initPerspCamera(const Transform t, float speed, float sensitivity, float fov);
+    Camera *initOrthoCamera(const Transform t, float speed, float sensitivity, float zoom, unsigned resX, unsigned resY);
+    Camera *initPerspCamera(const Transform t, float speed, float sensitivity, float fov, unsigned resX, unsigned resY);
     Light *initDirLight(const Transform t, const vec3 emission);
     Light *initPointLight(const Transform t, const vec3 emission, float aC, float aL, float aQ);
     Light *initSpotLight(const Transform t, const vec3 emission, float aC, float aL, float aQ, float cutoff);
+    Shape *initShape(Shape *s);
     Mesh *initMesh(Mesh *m);
     Material *initDiffuseMaterial(const vec3 kd, const vec3 ke);
     Material *initGlassMaterial(const vec3 kd, const vec3 ks, const vec3 ke, const float ior);
@@ -57,6 +47,7 @@ private:
     std::vector<Transform *> m_loadedTransforms;
     std::vector<Camera *> m_loadedCameras;
     std::vector<Light *> m_loadedLights;
+    std::vector<Shape *> m_loadedShapes;
     std::vector<Mesh *> m_loadedMeshes;
     std::vector<Material *> m_loadedMaterials;
 };

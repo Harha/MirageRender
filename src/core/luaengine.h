@@ -17,6 +17,18 @@ extern "C" {
 #include <lauxlib.h>
 }
 
+struct DisplayInitInfo
+{
+    unsigned width;
+    unsigned height;
+    unsigned scale;
+};
+
+struct MultiThreadInitInfo
+{
+    unsigned rThreadCount;
+};
+
 namespace mirage
 {
 
@@ -25,6 +37,8 @@ namespace lua
 
 extern lua_State *g_state;
 extern Scene *g_scene;
+extern DisplayInitInfo g_dispInitInfo;
+extern MultiThreadInitInfo g_mThreadInitInfo;
 
 extern void init(Scene *scene);
 extern void kill();
@@ -47,16 +61,23 @@ extern int lua_NewLightDir_func(lua_State *L);
 extern int lua_NewLightPoint_func(lua_State *L);
 extern int lua_NewLightSpot_func(lua_State *L);
 extern int lua_NewMesh_func(lua_State *L);
+extern int lua_NewSphere_func(lua_State *L);
 extern int lua_NewDiffMaterial_func(lua_State *L);
 extern int lua_NewEmisMaterial_func(lua_State *L);
+extern int lua_NewGlassMaterial_func(lua_State *L);
+extern int lua_NewSpecMaterial_func(lua_State *L);
+extern int lua_NewGlossyMaterial_func(lua_State *L);
 
 /* C++ Scene object adders */
 extern int lua_AddCamera_func(lua_State *L);
 extern int lua_AddLight_func(lua_State *L);
 extern int lua_AddMesh_func(lua_State *L);
+extern int lua_AddShape_func(lua_State *L);
 extern int lua_AddRayAccelerator_func(lua_State *L);
 
 /* C++ Scene setting setters */
+extern int lua_SetDisplayInitInfo_func(lua_State *L);
+extern int lua_SetMThreadInitInfo_func(lua_State *L);
 extern int lua_SetRadianceClamping_func(lua_State *L);
 extern int lua_SetMaxRecursion_func(lua_State *L);
 

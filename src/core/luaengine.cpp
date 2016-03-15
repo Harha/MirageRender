@@ -1,12 +1,15 @@
-
 // std includes
 #include <iostream>
 #include <cstring>
+
+// lib includes
+#include <SDL2/SDL.h>
 
 // mirage includes
 #include "luaengine.h"
 #include "../macros.h"
 #include "../shapes/mesh.h"
+#include "../shapes/sphere.h"
 #include "accelerator.h"
 #include "../accelerators/kdtree.h"
 
@@ -18,13 +21,17 @@ namespace lua
 
 lua_State *g_state;
 Scene *g_scene;
+DisplayInitInfo g_dispInitInfo;
+MultiThreadInitInfo g_mThreadInitInfo;
 
 void init(Scene *scene)
 {
     if (!g_state)
     {
-        g_scene = scene;
         g_state = luaL_newstate();
+        g_scene = scene;
+        g_dispInitInfo = {512, 512, 1};
+        g_mThreadInitInfo = {SDL_GetCPUCount()};
 
         luaopen_io(g_state);
         luaopen_base(g_state);
@@ -105,10 +112,18 @@ void load(const std::string filename)
         lua_setglobal(g_state, "NewLightSpot");
         lua_pushcfunction(g_state, lua_NewMesh_func);
         lua_setglobal(g_state, "NewMesh");
+        lua_pushcfunction(g_state, lua_NewSphere_func);
+        lua_setglobal(g_state, "NewSphere");
         lua_pushcfunction(g_state, lua_NewDiffMaterial_func);
         lua_setglobal(g_state, "NewDiffMaterial");
         lua_pushcfunction(g_state, lua_NewEmisMaterial_func);
         lua_setglobal(g_state, "NewEmisMaterial");
+        lua_pushcfunction(g_state, lua_NewGlassMaterial_func);
+        lua_setglobal(g_state, "NewGlassMaterial");
+        lua_pushcfunction(g_state, lua_NewSpecMaterial_func);
+        lua_setglobal(g_state, "NewSpecMaterial");
+        lua_pushcfunction(g_state, lua_NewGlossyMaterial_func);
+        lua_setglobal(g_state, "NewGlossyMaterial");
 
         /* C++ Scene object adders */
         lua_pushcfunction(g_state, lua_AddCamera_func);
@@ -117,14 +132,20 @@ void load(const std::string filename)
         lua_setglobal(g_state, "AddLight");
         lua_pushcfunction(g_state, lua_AddMesh_func);
         lua_setglobal(g_state, "AddMesh");
+        lua_pushcfunction(g_state, lua_AddShape_func);
+        lua_setglobal(g_state, "AddShape");
         lua_pushcfunction(g_state, lua_AddRayAccelerator_func);
         lua_setglobal(g_state, "AddRayAccelerator");
 
         /* C++ Scene setting setters */
+        lua_pushcfunction(g_state, lua_SetDisplayInitInfo_func);
+        lua_setglobal(g_state, "SetDisplayInitInfo");
+        lua_pushcfunction(g_state, lua_SetMThreadInitInfo_func);
+        lua_setglobal(g_state, "SetMThreadInitInfo");
         lua_pushcfunction(g_state, lua_SetRadianceClamping_func);
-        lua_setglobal(g_state, "setRadianceClamping");
+        lua_setglobal(g_state, "SetRadianceClamping");
         lua_pushcfunction(g_state, lua_SetMaxRecursion_func);
-        lua_setglobal(g_state, "setMaxRecursion");
+        lua_setglobal(g_state, "SetMaxRecursion");
 
         /* Execute the program if no errors found */
         if (status == 0)
@@ -255,7 +276,9 @@ int lua_NewCameraOrtho_func(lua_State *L)
     Transform *t = reinterpret_cast<Transform *>(address_transform);
 
     /* Create the object and return the address */
-    std::size_t address = reinterpret_cast<std::size_t>(g_scene->getObjFactory()->initOrthoCamera(*t, speed, sensitivity, zoom));
+    std::size_t address = reinterpret_cast<std::size_t>(g_scene->getObjFactory()->initOrthoCamera(*t, speed, sensitivity, zoom,
+                          g_dispInitInfo.width,
+                          g_dispInitInfo.height));
     lua_pushinteger(L, address);
 
     return 1;
@@ -273,7 +296,9 @@ int lua_NewCameraPersp_func(lua_State *L)
     Transform *t = reinterpret_cast<Transform *>(address_transform);
 
     /* Create the object and return the address */
-    std::size_t address = reinterpret_cast<std::size_t>(g_scene->getObjFactory()->initPerspCamera(*t, speed, sensitivity, fov));
+    std::size_t address = reinterpret_cast<std::size_t>(g_scene->getObjFactory()->initPerspCamera(*t, speed, sensitivity, fov,
+                          g_dispInitInfo.width,
+                          g_dispInitInfo.height));
     lua_pushinteger(L, address);
 
     return 1;
@@ -355,6 +380,26 @@ int lua_NewMesh_func(lua_State *L)
     return 1;
 }
 
+int lua_NewSphere_func(lua_State *L)
+{
+    /* Get the function arguments */
+    std::size_t address_transform = static_cast<std::size_t>(luaL_checkinteger(L, 1));
+    std::size_t address_material = static_cast<std::size_t>(luaL_checkinteger(L, 2));
+    std::size_t address_center_vec3 = static_cast<std::size_t>(luaL_checkinteger(L, 3));
+    float r = luaL_checknumber(L, 4);
+
+    /* Get the objects from address */
+    Transform *t = reinterpret_cast<Transform *>(address_transform);
+    Material *m = reinterpret_cast<Material *>(address_material);
+    vec3 *c = reinterpret_cast<vec3 *>(address_center_vec3);
+
+    /* Create the object and return the address */
+    std::size_t address = reinterpret_cast<std::size_t>(g_scene->getObjFactory()->initShape(new Sphere(*t, m, *c, r)));
+    lua_pushinteger(L, address);
+
+    return 1;
+}
+
 int lua_NewDiffMaterial_func(lua_State *L)
 {
     /* Get the function arguments */
@@ -380,6 +425,55 @@ int lua_NewEmisMaterial_func(lua_State *L)
 
     /* Create the desired object and return the address */
     std::size_t address = reinterpret_cast<std::size_t>(g_scene->getObjFactory()->initDiffuseMaterial(vec3(0, 0, 0), *emis_vec3));
+    lua_pushinteger(L, address);
+
+    return 1;
+}
+
+int lua_NewGlassMaterial_func(lua_State *L)
+{
+    /* Get the function arguments */
+    std::size_t address_diff_vec3 = static_cast<std::size_t>(luaL_checkinteger(L, 1));
+    float ior = luaL_checknumber(L, 2);
+
+    /* Get the vector from address */
+    vec3 *diff_vec3 = reinterpret_cast<vec3 *>(address_diff_vec3);
+
+    /* Create the object and return the address */
+    std::size_t address = reinterpret_cast<std::size_t>(g_scene->getObjFactory()->initGlassMaterial(*diff_vec3, vec3(), vec3(), ior));
+    lua_pushinteger(L, address);
+
+    return 1;
+}
+
+int lua_NewSpecMaterial_func(lua_State *L)
+{
+    /* Get the function arguments */
+    std::size_t address_diff_vec3 = static_cast<std::size_t>(luaL_checkinteger(L, 1));
+
+    /* Get the vector from address */
+    vec3 *diff_vec3 = reinterpret_cast<vec3 *>(address_diff_vec3);
+
+    /* Create the object and return the address */
+    std::size_t address = reinterpret_cast<std::size_t>(g_scene->getObjFactory()->initSpecularMaterial(*diff_vec3, vec3(), vec3()));
+    lua_pushinteger(L, address);
+
+    return 1;
+}
+
+int lua_NewGlossyMaterial_func(lua_State *L)
+{
+    /* Get the function arguments */
+    std::size_t address_diff_vec3 = static_cast<std::size_t>(luaL_checkinteger(L, 1));
+    float r = luaL_checknumber(L, 2);
+    float k = luaL_checknumber(L, 3);
+    float d = luaL_checknumber(L, 4);
+
+    /* Get the vector from address */
+    vec3 *diff_vec3 = reinterpret_cast<vec3 *>(address_diff_vec3);
+
+    /* Create the object and return the address */
+    std::size_t address = reinterpret_cast<std::size_t>(g_scene->getObjFactory()->initGlossyMaterial(*diff_vec3, vec3(), vec3(), r, k, d));
     lua_pushinteger(L, address);
 
     return 1;
@@ -434,6 +528,22 @@ int lua_AddMesh_func(lua_State *L)
     return 0;
 }
 
+int lua_AddShape_func(lua_State *L)
+{
+    /* Get the function arguments */
+    std::size_t address_shape = static_cast<std::size_t>(luaL_checkinteger(L, 1));
+
+    /* Get the object from address */
+    Shape *shape = reinterpret_cast<Shape *>(address_shape);
+
+    /* Add the object to scene */
+    g_scene->addShape(shape);
+
+    LOG("Lua: a New Shape was added to the current scene.");
+
+    return 0;
+}
+
 int lua_AddRayAccelerator_func(lua_State *L)
 {
     /* Get the function arguments */
@@ -459,6 +569,31 @@ int lua_AddRayAccelerator_func(lua_State *L)
     {
         ERR("Lua: Invalid ray acceleration structure type. Accelerator was not created.");
     }
+
+    return 0;
+}
+
+extern int lua_SetDisplayInitInfo_func(lua_State *L)
+{
+    /* Get the function arguments */
+    g_dispInitInfo.width = luaL_checknumber(L, 1);
+    g_dispInitInfo.height = luaL_checknumber(L, 2);
+    g_dispInitInfo.scale = luaL_checknumber(L, 3);
+
+    LOG("Lua: Set display init info to: [" <<
+        g_dispInitInfo.width << ", " <<
+        g_dispInitInfo.height << ", " <<
+        g_dispInitInfo.scale << "].");
+
+    return 0;
+}
+
+extern int lua_SetMThreadInitInfo_func(lua_State *L)
+{
+    /* Get the function argument(s) */
+    g_mThreadInitInfo.rThreadCount = luaL_checknumber(L, 1);
+
+    LOG("Lua: Set multithreading init info to " << g_mThreadInitInfo.rThreadCount << ".");
 
     return 0;
 }

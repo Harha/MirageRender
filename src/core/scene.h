@@ -17,6 +17,8 @@
 namespace mirage
 {
 
+class Display;
+
 class Scene
 {
 public:
@@ -29,6 +31,7 @@ public:
     void addCamera(Camera *c);
     void addLight(Light *l);
     void addMesh(Mesh *m);
+    void addShape(Shape *s);
     void setRadianceClamping(float f);
     void setMaxRecursion(int n);
     Accelerator *getAccelerator() const;
@@ -45,6 +48,7 @@ private:
     std::vector<Camera *> m_cameras;
     std::vector<Light *> m_lights;
     std::vector<Mesh *> m_meshes;
+    std::vector<Shape *> m_shapes;
     float m_radianceClamping;
     int m_maxRecursion;
 };

@@ -4,7 +4,7 @@
 namespace mirage
 {
 
-static bool g_keys[256] = { false };
+extern bool g_keys[256];
 
 }
 

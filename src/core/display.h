@@ -18,19 +18,22 @@ namespace mirage
 class Display
 {
 public:
-    Display(std::string title = "null", int width = 128, int height = 128, int scale = 4);
+    Display(std::string title = "null", unsigned width = 128, unsigned height = 128, unsigned scale = 4);
     ~Display();
     void render();
     void clear(const Uint32 &color);
-    void setPixel(const int x, const int y, vec3 v);
+    void setPixel(const unsigned x, const unsigned y, vec3 v);
     void setTitle(std::string title);
     void saveToPPM(std::string filename = "null");
+    unsigned getWidth() const;
+    unsigned getHeight() const;
+    unsigned getScale() const;
 private:
     void init();
     std::string m_title;
-    int m_width;
-    int m_height;
-    int m_scale;
+    unsigned m_width;
+    unsigned m_height;
+    unsigned m_scale;
     bool m_isSavingImage;
     Uint32 *m_pixels;
     SDL_Window *m_window;

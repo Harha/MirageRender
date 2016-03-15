@@ -53,7 +53,7 @@ private:
     int m_travCost;
     int m_maxPrims;
     int m_maxDepth;
-    int m_leafThreshold;
+    unsigned m_leafThreshold;
     KDNode *m_root;
 };
 

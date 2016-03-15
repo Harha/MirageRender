@@ -43,3 +43,7 @@ TAGS
 
 # Windows make building related files
 *.bat
+
+# Folders
+out/
+include/

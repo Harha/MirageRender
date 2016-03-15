@@ -5,7 +5,7 @@
 #include <vector>
 
 // lib includes
-#include "SDL2/SDL.h"
+#include <SDL2/SDL.h>
 
 // mirage includes
 #include "config.h"
@@ -25,12 +25,24 @@ void dispose()
     LOG("Main: atexit(dispose) Hook called.");
 }
 
-int main(int argc, char **argv)
+int main(int argc, char *argv[])
 {
-    /* Print info and version */
+    // Print info and version
     LOG("Main: MirageRender, version " << VERSION_R << "." << VERSION_B << "." << VERSION_A);
 
-    /* Initialize SDL2 */
+    // Startup arguments
+    if (argc > 1)
+    {
+        if (std::string(argv[1]) == "--help" || std::string(argv[1]) == "-h" ||
+                ((std::string(argv[1]) == "--script" || std::string(argv[1]) == "-s") &&
+                 argc <= 2))
+        {
+            LOG("Usage: mirage.exe --script OR -s scriptfilename.lua");
+            return 0;
+        }
+    }
+
+    // Initialize SDL2
     if (SDL_Init(SDL_INIT_VIDEO) != 0)
     {
         ERR("Main: SDL_Init Error: " << SDL_GetError());
@@ -38,34 +50,41 @@ int main(int argc, char **argv)
     }
     SDL_Event event;
 
-    /* Initialize function hooks */
+    // Initialize function hooks
     atexit(dispose);
 
-    /* Initialize render threads */
-#if THREADS>0
-    const unsigned int tcount = THREADS;
-#else
-    const unsigned int tcount = SDL_GetCPUCount();
-#endif
-    std::thread *threads = new std::thread[tcount];
-    LOG("Main: Initialized " << tcount << " rendering threads...");
-
-    /* Initialize the main display */
-    Display display("MirageRender", WIDTH, HEIGHT, SCALE);
-
-    /* Initialize Scene & Lua 5.3.x and load script(s) */
+    // Initialize Scene & Lua 5.3.x + load script(s)
     Scene scene;
     lua::init(&scene);
-    lua::load("res/scripts/example.lua");
 
-    /* Choose a camera and an accelerator */
+    if (argc > 2 && (std::string(argv[1]) == "--script" || std::string(argv[1]) == "-s"))
+    {
+        lua::load(std::string("res/scripts/") + std::string(argv[2]));
+    }
+    else
+    {
+        lua::load("res/scripts/example.lua");
+    }
+
+    // Initialize render threads
+    const unsigned tcount = lua::g_mThreadInitInfo.rThreadCount;
+    std::thread *threads = new std::thread[tcount];
+    LOG("Main: Initialized " << tcount << " rendering thread(s)...");
+
+    // Initialize the main display
+    Display display("MirageRender",
+                    lua::g_dispInitInfo.width,
+                    lua::g_dispInitInfo.height,
+                    lua::g_dispInitInfo.scale);
+
+    // Choose a camera and an accelerator
     Camera *camera = scene.getCamera();
     Accelerator *accelerator = scene.getAccelerator();
 
-    /* Initialize the chosen renderer */
+    // Initialize the chosen renderer
     Pathtracer renderer(vec3(1, 1, 1) * 0, scene.getRadianceClamping(), scene.getMaxRecursion());
 
-    /* FPS/DeltaTime related variables */
+    // FPS/DeltaTime related variables
     uint32_t startTime = SDL_GetTicks();
     uint32_t currentTime = SDL_GetTicks();
     uint32_t lastTime = 0;
@@ -76,34 +95,29 @@ int main(int argc, char **argv)
 
     while (running)
     {
-        /* Calculate FPS and DeltaTime */
+        // Calculate FPS and DeltaTime
         currentTime = SDL_GetTicks();
         deltaTime = static_cast<float>(currentTime - lastTime) / 1000.0f;
         fps = frameCount / (static_cast<float>(SDL_GetTicks() - startTime) / 1000.0f);
         lastTime = currentTime;
 
-        /* Update title with info every 16th frame */
-        if (frameCount % 16 == 1)
+        // Save screenshot to render.ppm with F2
+        if (g_keys[SDL_SCANCODE_F1])
         {
-            std::string fps_str = std::to_string(fps);
-            std::string dt_str = std::to_string(deltaTime);
-            std::string title = "MirageRender | FPS: " + fps_str + " DT: " + dt_str;
-            display.setTitle(title);
+            LOG("FPS: " << fps << " DT: " << deltaTime << " SPPX: " << camera->getFilm().getSample(0, 0).getNumSamples());
         }
-
-        /* Save screenshot to render.ppm with F2 */
-        if (g_keys[SDL_SCANCODE_F2])
+        else if (g_keys[SDL_SCANCODE_F2])
         {
             display.saveToPPM("render");
         }
 
-        /* Render the scene if possible */
+        // Render the scene if possible
         if (camera && accelerator)
         {
-            /* Update everything */
+            // Update everything
             camera->update(deltaTime, g_keys);
 
-            /* Give a portion of the screen as a task for each thread */
+            // Give a portion of the screen as a task for each thread
             int width = camera->getFilm().getResolutionX();
             int height = camera->getFilm().getResolutionY();
             for (unsigned int i = 0; i < tcount; i++)
@@ -114,23 +128,23 @@ int main(int argc, char **argv)
                 });
             }
 
-            /* Wait for all the threads to finish on the main thread by joining them */
+            // Wait for all the threads to finish on the main thread by joining them
             for (unsigned int i = 0; i < tcount; i++)
             {
                 threads[i].join();
             }
 
-            /* Display results on screen */
+            // Display results on screen
             display.render();
         }
-        /* Else, don't render anything and sleep for a while instead */
-        /* This is just to keep the OS sane */
+        // Else, don't render anything and sleep for a while instead
+        // This is just to keep the OS sane by letting CPU sleep
         else
         {
             std::this_thread::sleep_for(std::chrono::milliseconds(1));
         }
 
-        /* Process SDL events */
+        // Process SDL events
         while (SDL_PollEvent(&event))
         {
             switch (event.type)
@@ -162,13 +176,13 @@ int main(int argc, char **argv)
         frameCount++;
     }
 
-    /* Unload lua 5.3.x */
+    // Unload lua 5.3.x
     lua::kill();
 
-    /* Free the allocated rendering threads */
+    // Free the allocated rendering threads
     delete[] threads;
 
-    /* Inform that the program exit successfully */
+    // Inform that the program exit successfully
     LOG("MirageRender, exit program successfully.");
 
     return 0;

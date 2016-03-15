@@ -14,7 +14,7 @@ namespace mirage
 class Renderer
 {
 public:
-    virtual void render(const Scene *scene, Display *display, const int w, const int h, const int xa, const int ya) = 0;
+    virtual void render(const Scene *scene, Display *display, const unsigned w, const unsigned h, const unsigned xa, const unsigned ya) = 0;
 private:
 protected:
 };
