@@ -7,7 +7,7 @@
 #include <cstdio>
 
 // lib includes
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
 // mirage includes
 #include "../math/vec3.h"

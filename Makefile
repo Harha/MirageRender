@@ -81,13 +81,13 @@ clean:
 # Initialize bin directory structure
 .PHONY: init
 init:
-	@$(MKDIR) $(BINDIR)
-	@$(MKDIR) $(BINDIR)/core
-	@$(MKDIR) $(BINDIR)/math
-	@$(MKDIR) $(BINDIR)/shapes
-	@$(MKDIR) $(BINDIR)/cameras
-	@$(MKDIR) $(BINDIR)/accelerators
-	@$(MKDIR) $(BINDIR)/renderers
-	@$(MKDIR) $(BINDIR)/materials
-	@$(MKDIR) $(BINDIR)/lights
+	mkdir $(BINDIR)
+	mkdir $(BINDIR)/core
+	mkdir $(BINDIR)/math
+	mkdir $(BINDIR)/shapes
+	mkdir $(BINDIR)/cameras
+	mkdir $(BINDIR)/accelerators
+	mkdir $(BINDIR)/renderers
+	mkdir $(BINDIR)/materials
+	mkdir $(BINDIR)/lights
 	@echo "Initialization done."

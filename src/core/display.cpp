@@ -116,9 +116,9 @@ void Display::saveToPPM(std::string filename)
     filename = filename + ".ppm";
 
     m_isSavingImage = true;
-    FILE *f = fopen(filename.c_str(), "w");
+    FILE *f;
 
-    if (f == NULL)
+    if (fopen_s(&f, filename.c_str(), "w"))
     {
         ERR("Display: Writing image to a .ppm file failed... fopen returned NULL.");
         return;

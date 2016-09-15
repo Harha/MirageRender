@@ -9,7 +9,7 @@
 #include "scene.h"
 #include "../macros.h"
 #include "transform.h"
-#include "../accelerators/kdtree.h"
+#include "../accelerators/bvh.h"
 #include "../cameras/orthographic.h"
 #include "../cameras/perspective.h"
 #include "light.h"

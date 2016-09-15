@@ -4,6 +4,7 @@
 #include <sstream>
 #include <algorithm>
 #include <regex>
+#include <functional>
 
 // mirage includes
 #include "mesh.h"

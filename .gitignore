@@ -41,6 +41,18 @@ TAGS
 *.depend
 *.layout
 
+# Visual Studio project related files & folders
+*.VC.opendb
+*.VC.db
+*.sln
+*.vcxproj*
+
+/.vs
+/Release
+/Debug
+/inc
+/lib
+
 # Windows make building related files
 *.bat
 

@@ -12,5 +12,6 @@
 
 // Utility stuff
 #define DELETE(a) if( (a) != NULL ) delete (a); (a) = NULL;
+#define DELETEA(a) if ( (a) != NULL ) delete[] (a); (a) = NULL;
 
 #endif // MACROS_H

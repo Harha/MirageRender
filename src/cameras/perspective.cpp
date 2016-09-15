@@ -2,7 +2,7 @@
 #include <iostream>
 
 // lib includes
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
 // mirage includes
 #include "perspective.h"
