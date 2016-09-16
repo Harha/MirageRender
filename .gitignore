@@ -57,5 +57,5 @@ TAGS
 *.bat
 
 # Folders
-out/
+out*/
 include/

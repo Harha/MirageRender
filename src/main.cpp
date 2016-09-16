@@ -5,7 +5,7 @@
 #include <vector>
 
 // lib includes
-#include <SDL.h>
+#include <SDL2/SDL.h>
 
 // mirage includes
 #include "config.h"

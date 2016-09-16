@@ -1,7 +1,10 @@
 # Makefile for building mirage render
 
+# Toolchain
+ENV ?= gcc
+
 # Linker
-LD = gcc
+LD = $(ENV)
 
 # Include directories
 CXXINCS += -I./include/
@@ -13,13 +16,13 @@ LDFLAGS = -Wl,--as-needed -m64
 ifeq ($(OS), Windows_NT)
   LDLIBS = -L./lib/ -lmingw32 -lSDL2main
 endif
-LDLIBS += -lSDL2 -llua53 -lpthread -lstdc++ -lm -static-libgcc -static-libstdc++
+LDLIBS += -lSDL2 -llua -lpthread -lstdc++ -lm -static-libgcc -static-libstdc++
 
 # Compiler
-CXX = gcc
+CXX = $(ENV)
 
 # Compiler flags
-CXXFLAGS = -std=c++11 -Wall -Wextra -m64
+CXXFLAGS = -std=c++14 -Wall -Wextra -m64
 
 # Apply optimization parameters if !DEBUG
 DEBUG ?= 0
@@ -32,7 +35,7 @@ endif
 
 # src & bin directories
 SRCDIR = src
-BINDIR = out
+BINDIR = out_$(ENV)
 
 # Target binary
 TARGET = $(BINDIR)/mirage
@@ -74,20 +77,46 @@ $(TARGET): $(OBJS)
 # Clean all in BINDIR
 .PHONY: clean
 clean:
-	@$(RM) $(OBJS)
-	@$(RM) $(TARGET)
+ifeq ($(OS), Windows_NT)
+	- RMDIR /S /Q $(BINDIR)\core
+	- RMDIR /S /Q $(BINDIR)\math
+	- RMDIR /S /Q $(BINDIR)\shapes
+	- RMDIR /S /Q $(BINDIR)\cameras
+	- RMDIR /S /Q $(BINDIR)\accelerators
+	- RMDIR /S /Q $(BINDIR)\renderers
+	- RMDIR /S /Q $(BINDIR)\materials
+	- RMDIR /S /Q $(BINDIR)\lights
+	- DEL /S /Q $(BINDIR)\main.o
+	- MKDIR $(BINDIR)\core
+	- MKDIR $(BINDIR)\math
+	- MKDIR $(BINDIR)\shapes
+	- MKDIR $(BINDIR)\cameras
+	- MKDIR $(BINDIR)\accelerators
+	- MKDIR $(BINDIR)\renderers
+	- MKDIR $(BINDIR)\materials
+	- MKDIR $(BINDIR)\lights
+else
+	- @$(RM) $(OBJS)
+	- @$(RM) $(TARGET)
+endif
 	@echo "Cleanup done."
 
 # Initialize bin directory structure
 .PHONY: init
 init:
-	mkdir $(BINDIR)
-	mkdir $(BINDIR)/core
-	mkdir $(BINDIR)/math
-	mkdir $(BINDIR)/shapes
-	mkdir $(BINDIR)/cameras
-	mkdir $(BINDIR)/accelerators
-	mkdir $(BINDIR)/renderers
-	mkdir $(BINDIR)/materials
-	mkdir $(BINDIR)/lights
+	- MKDIR $(BINDIR)
+	- MKDIR $(BINDIR)\core
+	- MKDIR $(BINDIR)\math
+	- MKDIR $(BINDIR)\shapes
+	- MKDIR $(BINDIR)\cameras
+	- MKDIR $(BINDIR)\accelerators
+	- MKDIR $(BINDIR)\renderers
+	- MKDIR $(BINDIR)\materials
+	- MKDIR $(BINDIR)\lights
+	- MKDIR $(BINDIR)\res
+ifeq ($(OS), Windows_NT)
+	- XCOPY /E res $(BINDIR)\res
+else
+	- cp res $(BINDIR)\res
+endif
 	@echo "Initialization done."
