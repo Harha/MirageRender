@@ -13,3 +13,7 @@ _a Cornell box scene rendered using monte carlo path tracing, caustics caused by
 ![Cornell Box, gi test](img/mirage_cornellbox_plight.png "Cornell Box, gi test")
 
 _a Cornell box scene rendered using monte carlo path tracing, direct & indirect illumination._
+
+![Cornell Box, Golden Dragon](img/golden_dragon.png "Cornell Box, glossy material test")
+
+_a Cornell box scene with a glossy metallic floor, a golden dragon and two room surfaces acting as light sources._

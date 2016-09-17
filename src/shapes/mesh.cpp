@@ -32,7 +32,7 @@ namespace mirage
 			// Load the model into memory
 			WavefrontFile file("./res/models/" + fileName);
 
-			// Get maps of meshes and materials
+			// Get the file data into temp references
 			auto & points = file.getPoints();
 			auto & normals = file.getNormals();
 			auto & texcoords = file.getTexcoords();
@@ -42,9 +42,8 @@ namespace mirage
 			// Extract the shapes from the model
 			for (auto const & mesh : meshes)
 			{
-				// Hold current material info in these
-				std::string currentMaterialKey;
-				Material * currentMaterialValue = m;
+				// Hold loaded material info in this map
+				std::map<std::string, Material *> loadedMaterials;
 
 				for (auto const & face : mesh.second.faces)
 				{
@@ -59,52 +58,54 @@ namespace mirage
 					verts[1].setNormal(normals[face.normals[1]]);
 					verts[2].setNormal(normals[face.normals[2]]);
 
-					// Get current face material properties if they differ from previous
-					// TODO: This is not ideal. This still makes duplicates. Handle that.
-					if (currentMaterialKey != face.material)
+					// Get current face material properties if they differ from previous and if the wf material exists
+					if (loadedMaterials.count(face.material) <= 0 && materials.count(face.material) > 0)
 					{
-						currentMaterialKey = face.material;
+						WavefrontMaterial wf_material = materials.at(face.material);
 
-						if (materials.count(currentMaterialKey) <= 0)
+						// Create appropriate material
+						// TODO: Add missing material properties to WavefrontMaterial
+						switch (wf_material.illum)
 						{
-							currentMaterialValue = m;
+						case 0:
+						case 1:
+						case 2:
+							loadedMaterials[face.material] = m_objFactory->initDiffuseMaterial(wf_material.Kd, wf_material.Ke);
+							break;
+						case 4:
+						case 6:
+						case 7:
+						case 9:
+							loadedMaterials[face.material] = m_objFactory->initGlassMaterial(wf_material.Kd, wf_material.Ks, wf_material.Ke, wf_material.Ni);
+							break;
+						case 3:
+						case 8:
+							loadedMaterials[face.material] = m_objFactory->initSpecularMaterial(wf_material.Kd, wf_material.Ks, wf_material.Ke);
+							break;
+						case 5:
+							LOG("r: " << 1.0f - std::max(wf_material.Ks.x, std::max(wf_material.Ks.y, wf_material.Ks.z)));
+							loadedMaterials[face.material] = m_objFactory->initGlossyMaterial(
+								wf_material.Kd,
+								wf_material.Ks,
+								wf_material.Ke,
+								wf_material.Ns / 1000.0f,
+								wf_material.Fr,
+								1.0f - std::max(wf_material.Ks.x, std::max(wf_material.Ks.y, wf_material.Ks.z))
+							);
+							break;
+						default:
+							loadedMaterials[face.material] = m_objFactory->initDiffuseMaterial(vec3(1, 1, 1), vec3(0, 0, 0));
+							ERR("Mesh::Mesh - Loading of material " << face.material << " failed, no illumination mode was specified in the material properties file!");
+							break;
 						}
-						else
-						{
-							WavefrontMaterial wf_material = materials.at(currentMaterialKey);
-
-							// Create appropriate material
-							// TODO: Add missing material properties to WavefrontMaterial
-							switch (wf_material.illum)
-							{
-							case 0:
-							case 1:
-							case 2:
-								currentMaterialValue = m_objFactory->initDiffuseMaterial(wf_material.Kd, wf_material.Ke);
-								break;
-							case 4:
-							case 6:
-							case 7:
-							case 9:
-								currentMaterialValue = m_objFactory->initGlassMaterial(wf_material.Kd, wf_material.Ks, wf_material.Ke, 1.0f);
-								break;
-							case 3:
-							case 8:
-								currentMaterialValue = m_objFactory->initSpecularMaterial(wf_material.Kd, wf_material.Ks, wf_material.Ke);
-								break;
-							case 5:
-								currentMaterialValue = m_objFactory->initGlossyMaterial(wf_material.Kd, wf_material.Ks, wf_material.Ke, 0.25f, 0.75f, 0.9f);
-								break;
-							default:
-								currentMaterialValue = m_objFactory->initDiffuseMaterial(vec3(1, 1, 1), vec3(0, 0, 0));
-								ERR("Mesh::Mesh - Loading of material " << face.material << " failed, no illumination mode was specified in the material properties file!");
-								break;
-							}
-						}
+					}
+					else if (loadedMaterials.count(face.material) <= 0 && materials.count(face.material) <= 0)
+					{
+						loadedMaterials[face.material] = m;
 					}
 
 					// Push our triangle to the vector
-					m_triangles.push_back(Triangle(m_objToWorld, currentMaterialValue, verts));
+					m_triangles.push_back(Triangle(m_objToWorld, loadedMaterials[face.material], verts));
 				}
 			}
 		}

@@ -271,6 +271,15 @@ namespace mirage
 				l_stream >> m_materials[currentMaterial].Ke.y;
 				l_stream >> m_materials[currentMaterial].Ke.z;
 				break;
+			case cstr2int("Ns"):
+				l_stream >> m_materials[currentMaterial].Ns;
+				break;
+			case cstr2int("Ni"):
+				l_stream >> m_materials[currentMaterial].Ni;
+				break;
+			case cstr2int("Fr"):
+				l_stream >> m_materials[currentMaterial].Ni;
+				break;
 			}
 		}
 

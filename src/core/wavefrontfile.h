@@ -47,12 +47,28 @@ namespace mirage
 		vec3 Kd; // Diffuse color
 		vec3 Ks; // Specular color
 		vec3 Ke; // Emissive color
+		double Ns; // Specular exponent
+		double Ni; // Index of refraction
+		double Fr; // Fresnel reflectance
 
-		WavefrontMaterial(const vec3 & Ka = vec3(), const vec3 & Kd = vec3(), const vec3 & Ks = vec3(), const vec3 & Ke = vec3()) :
+		WavefrontMaterial(
+			const uint16_t illum = 0,
+			const vec3 & Ka = vec3(),
+			const vec3 & Kd = vec3(),
+			const vec3 & Ks = vec3(),
+			const vec3 & Ke = vec3(),
+			const double Ns = 100.0f,
+			const double Ni = 1.0f,
+			const double Fr = 0.75f
+		) :
+			illum(illum),
 			Ka(Ka),
 			Kd(Kd),
 			Ks(Ks),
-			Ke(Ke)
+			Ke(Ke),
+			Ns(Ns),
+			Ni(Ni),
+			Fr(Fr)
 		{
 
 		}

@@ -42,7 +42,7 @@ function init()
 	-- Meshes
 	q_sponza = NewQuaternionLookAt(v_zero, NewVector3(0, 0, 1))
 	t_sponza = NewTransform(v_zero, q_sponza, v_full)
-	m_sponza = NewMesh(t_sponza, mat_diff_white, "dabrovic_sponza.obj")
+	m_sponza = NewMesh(t_sponza, mat_diff_white, "sponza_dabrovic/dabrovic_sponza.obj")
 
 	q_dragon = NewQuaternionLookAt(v_zero, NewVector3(-0.5, 0, -0.5))
 	t_dragon = NewTransform(NewVector3(0.5, 0.0, 0.25), q_dragon, NewVector3(0.25, 0.25, 0.25))

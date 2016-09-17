@@ -15,31 +15,31 @@
 namespace mirage
 {
 
-class Display
-{
-public:
-    Display(std::string title = "null", unsigned width = 128, unsigned height = 128, unsigned scale = 4);
-    ~Display();
-    void render();
-    void clear(const Uint32 &color);
-    void setPixel(const unsigned x, const unsigned y, vec3 v);
-    void setTitle(std::string title);
-    void saveToPPM(std::string filename = "null");
-    unsigned getWidth() const;
-    unsigned getHeight() const;
-    unsigned getScale() const;
-private:
-    void init();
-    std::string m_title;
-    unsigned m_width;
-    unsigned m_height;
-    unsigned m_scale;
-    bool m_isSavingImage;
-    Uint32 *m_pixels;
-    SDL_Window *m_window;
-    SDL_Renderer *m_renderer;
-    SDL_Texture *m_texture;
-};
+	class Display
+	{
+	public:
+		Display(std::string title = "null", unsigned width = 128, unsigned height = 128, unsigned scale = 4);
+		~Display();
+		void render();
+		void clear(const int32_t &color);
+		void setPixel(const unsigned x, const unsigned y, vec3 v);
+		void setTitle(std::string title);
+		void saveToPPM(std::string filename = "null");
+		unsigned getWidth() const;
+		unsigned getHeight() const;
+		unsigned getScale() const;
+	private:
+		void init();
+		std::string m_title;
+		unsigned m_width;
+		unsigned m_height;
+		unsigned m_scale;
+		bool m_isSavingImage;
+		int32_t *m_pixels;
+		SDL_Window *m_window;
+		SDL_Renderer *m_renderer;
+		SDL_Texture *m_texture;
+	};
 
 }
 

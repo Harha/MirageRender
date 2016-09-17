@@ -10,7 +10,7 @@ function init()
 	SetMThreadInitInfo(16) -- Render thread amount
 	
 	-- Define display
-	SetDisplayInitInfo(1280/4, 720/4, 1) -- resX, resY, scale
+	SetDisplayInitInfo(1280/4, 720/4, 2) -- resX, resY, scale
 	
 	-- Define scene rendering settings
 	SetRadianceClamping(10.0) -- Floating point value, lesser = unrealistic, but most noise goes nearly instantly away.
@@ -65,7 +65,7 @@ function init()
 	-- Meshes
 	q_cbox = NewQuaternionLookAt(v_zero, NewVector3(0, 0, 1))
 	t_cbox = NewTransform(v_zero, q_cbox, v_full)
-	mesh_cbox = NewMesh(t_cbox, mat_diff_white, "cornellbox_empty.obj")
+	mesh_cbox = NewMesh(t_cbox, mat_diff_white, "cornellboxes/cornellbox_empty.obj")
 	
 	--v_dragon = NewVector3(-0.5, 0, 0.5)
 	--t_dragon = NewTransform(v_dragon, NewQuaternionLookAt(v_dragon, NewVector3(-1, 0, 1)), NewVector3(0.05, 0.05, 0.05))
