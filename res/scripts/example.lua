@@ -67,9 +67,9 @@ function init()
 	t_cbox = NewTransform(v_zero, q_cbox, v_full)
 	mesh_cbox = NewMesh(t_cbox, mat_diff_white, "cornellbox_empty.obj")
 	
-	v_dragon = NewVector3(-0.5, 0, 0.5)
-	t_dragon = NewTransform(v_dragon, NewQuaternionLookAt(v_dragon, NewVector3(-1, 0, 1)), NewVector3(0.05, 0.05, 0.05))
-	mesh_dragon = NewMesh(t_dragon, mat_glossy_copper, "dragon.obj")
+	--v_dragon = NewVector3(-0.5, 0, 0.5)
+	--t_dragon = NewTransform(v_dragon, NewQuaternionLookAt(v_dragon, NewVector3(-1, 0, 1)), NewVector3(0.05, 0.05, 0.05))
+	--mesh_dragon = NewMesh(t_dragon, mat_glossy_copper, "dragon.obj")
 	
 	for i = 1, mat_gold_len do
 		ii = i - 1
@@ -84,7 +84,7 @@ function init()
 	
 	-- Add objects to scene
 	AddMesh(mesh_cbox)
-	AddMesh(mesh_dragon)
+	--AddMesh(mesh_dragon)
 	AddShape(glassball)
 	AddLight(plight1)
 	AddCamera(camera_persp)

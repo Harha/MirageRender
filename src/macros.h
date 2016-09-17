@@ -1,6 +1,7 @@
 #ifndef MACROS_H
 #define MACROS_H
 
+#include <iostream>
 #include <cstring>
 
 // Fix __FILE__ to use relative path instead

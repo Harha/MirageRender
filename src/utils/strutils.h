@@ -49,6 +49,15 @@ namespace mirage
 		return file.substr(0, file.find_last_of("/\\")) + "/";
 	}
 
+	// ---------------------------------------------------------------------------
+	// filetoextension
+	// Converts a filepath ending to a file into the file extension
+	// ---------------------------------------------------------------------------
+	inline std::string filetoextension(const std::string & file)
+	{
+		return file.substr(file.find_last_of(".") + 1);
+	}
+
 }
 
 #endif // STRUTIL_H

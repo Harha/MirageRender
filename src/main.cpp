@@ -31,19 +31,6 @@ int main(int argc, char * argv[])
 	// Print info and version
 	LOG("Main: MirageRender, version " << VERSION_R << "." << VERSION_B << "." << VERSION_A);
 
-	// Parse launch parameters
-	if (argc > 1)
-	{
-		switch (cstr2int(argv[1]))
-		{
-		default:
-		case cstr2int("--help"):
-		case cstr2int("-h"):
-			LOG("Usage: mirage.exe --script scriptfilename.lua, folder for scripts is ./res/scripts/");
-			break;
-		}
-	}
-
 	// Initialize SDL2
 	if (SDL_Init(SDL_INIT_VIDEO) != 0)
 	{
@@ -55,18 +42,34 @@ int main(int argc, char * argv[])
 	// Initialize function hooks
 	atexit(dispose);
 
+	// Parse launch parameters, get script, etc objects..
+	std::string script("example.lua");
+	switch (cstr2int(argc > 1 ? argv[1] : "default"))
+	{
+	case cstr2int("--script"):
+	case cstr2int("-s"):
+		if (argc > 2)
+			script = argv[2];
+		else
+			LOG("No script file specified. Loading default script (" << script << ").");
+		break;
+	case cstr2int("--help"):
+	case cstr2int("-h"):
+		LOG("Usage: mirage.exe --script scriptfilename.lua, folder for scripts is ./res/scripts/\n"
+			<< "      Available launch parameters:\n"
+			<< "      Show this help message: --help, -h\n"
+			<< "      Load a scene file: --script, -s"
+		);
+		return 0;
+	default:
+		LOG("No script file specified. Loading default script (" << script << ").");
+		break;
+	}
+
 	// Initialize Scene & Lua 5.3.x + load script(s)
 	Scene scene;
 	lua::init(&scene);
-
-	if (argc > 2 && (std::string(argv[1]) == "--script" || std::string(argv[1]) == "-s"))
-	{
-		lua::load(std::string("./res/scripts/") + std::string(argv[2]));
-	}
-	else
-	{
-		lua::load("./res/scripts/example.lua");
-	}
+	lua::load(std::string("./res/scripts/") + script);
 
 	// Initialize render threads
 	const unsigned tcount = lua::g_mThreadInitInfo.rThreadCount;
