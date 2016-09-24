@@ -10,11 +10,11 @@ function init()
 	SetMThreadInitInfo(16)
 	
 	-- Define display
-	SetDisplayInitInfo(1280/4, 720/4, 1)
+	SetDisplayInitInfo(1280/1, 720/1, 1)
 	
 	-- Define scene rendering settings
-	SetRadianceClamping(100.0)
-	SetMaxRecursion(3)
+	SetRadianceClamping(10.0)
+	SetMaxRecursion(5)
 	
 	-- Some stuff with default values
 	v_zero = NewVector3(0, 0, 0)
@@ -54,7 +54,7 @@ function init()
 	
 	-- Add objects to scene
 	AddMesh(m_sponza)
-	AddMesh(m_dragon)
+	--AddMesh(m_dragon)
 	AddLight(l_sun)
 	AddCamera(c_perspective)
 	

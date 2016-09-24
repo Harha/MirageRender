@@ -5,6 +5,8 @@
 #include <string>
 #include <cstring>
 #include <algorithm>
+#include <functional>
+#include <cctype>
 
 #ifdef _MSC_VER
 #define strncasecmp _strnicmp
@@ -51,11 +53,38 @@ namespace mirage
 
 	// ---------------------------------------------------------------------------
 	// filetoextension
-	// Converts a filepath ending to a file into the file extension
+	// Converts a filepath ending to a file into the file extension.
 	// ---------------------------------------------------------------------------
 	inline std::string filetoextension(const std::string & file)
 	{
 		return file.substr(file.find_last_of(".") + 1);
+	}
+
+	// ---------------------------------------------------------------------------
+	// ltrim
+	// Trim from start (in place).
+	// ---------------------------------------------------------------------------
+	static inline void ltrim(std::string &s) {
+		s.erase(s.begin(), std::find_if(s.begin(), s.end(),
+			std::not1(std::ptr_fun<int, int>(std::isspace))));
+	}
+
+	// ---------------------------------------------------------------------------
+	// rtrim
+	// Trim from end (in place).
+	// ---------------------------------------------------------------------------
+	static inline void rtrim(std::string &s) {
+		s.erase(std::find_if(s.rbegin(), s.rend(),
+			std::not1(std::ptr_fun<int, int>(std::isspace))).base(), s.end());
+	}
+
+	// ---------------------------------------------------------------------------
+	// trim
+	// Trim from both ends (in place).
+	// ---------------------------------------------------------------------------
+	static inline void trim(std::string &s) {
+		ltrim(s);
+		rtrim(s);
 	}
 
 }

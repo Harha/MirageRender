@@ -8,7 +8,7 @@
 namespace mirage
 {
 
-GlossyMaterial::GlossyMaterial(vec3 kd, vec3 ks, vec3 ke, float r, float k, float d) : Material(kd, ks, ke), m_r(r), m_k(k), m_d(d)
+GlossyMaterial::GlossyMaterial(vec3 kd, vec3 ks, vec3 ke, float r, float k, float d) : Material(nullptr, nullptr, nullptr, kd, ks, ke), m_r(r), m_k(k), m_d(d)
 {
 
 }

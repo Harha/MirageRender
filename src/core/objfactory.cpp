@@ -22,6 +22,7 @@
 #include "../materials/glassmat.h"
 #include "../materials/glossymat.h"
 #include "../materials/specmat.h"
+#include "texture.h"
 #include "../macros.h"
 #include "../config.h"
 
@@ -255,9 +256,9 @@ namespace mirage
 		return m_loadedMeshes.back();
 	}
 
-	Material *ObjFactory::initDiffuseMaterial(const vec3 kd, const vec3 ke)
+	Material *ObjFactory::initDiffuseMaterial(const std::string & kdText, const vec3 kd, const vec3 ke)
 	{
-		m_loadedMaterials.push_back(new DiffuseMaterial(kd, ke));
+		m_loadedMaterials.push_back(new DiffuseMaterial(kdText, kd, ke));
 
 		LOG("ObjFactory: Initialized a new DiffuseMaterial.");
 		return m_loadedMaterials.back();

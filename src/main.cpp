@@ -87,7 +87,7 @@ int main(int argc, char * argv[])
 	Accelerator * accelerator = scene.getAccelerator();
 
 	// Initialize the chosen renderer
-	Pathtracer renderer(vec3(1, 1, 1) * 0, scene.getRadianceClamping(), scene.getMaxRecursion());
+	Pathtracer renderer(scene.getRadianceClamping(), scene.getMaxRecursion());
 
 	// Runtime related state variables
 	uint32_t frameCount = 0;

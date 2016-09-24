@@ -10,12 +10,12 @@ function init()
 	SetMThreadInitInfo(16) -- Render thread amount
 	
 	-- Define display
-	SetDisplayInitInfo(1280/4, 720/4, 2) -- resX, resY, scale
+	SetDisplayInitInfo(512, 512, 1) -- resX, resY, scale
 	
 	-- Define scene rendering settings
 	SetRadianceClamping(10.0) -- Floating point value, lesser = unrealistic, but most noise goes nearly instantly away.
-							  -- 1.0 Is not that realistic, especially with indirect lighting.
-	SetMaxRecursion(10)       -- Integer value, maximum recursion per ray, usually 5-10 is fine.
+							 -- 1.0 Is not that realistic, especially with indirect lighting.
+	SetMaxRecursion(10)      -- Integer value, maximum recursion per ray, usually 5-10 is fine.
 	
 	-- Some stuff with default values
 	v_zero = NewVector3(0, 0, 0)
@@ -67,9 +67,9 @@ function init()
 	t_cbox = NewTransform(v_zero, q_cbox, v_full)
 	mesh_cbox = NewMesh(t_cbox, mat_diff_white, "cornellboxes/cornellbox_empty.obj")
 	
-	--v_dragon = NewVector3(-0.5, 0, 0.5)
-	--t_dragon = NewTransform(v_dragon, NewQuaternionLookAt(v_dragon, NewVector3(-1, 0, 1)), NewVector3(0.05, 0.05, 0.05))
-	--mesh_dragon = NewMesh(t_dragon, mat_glossy_copper, "dragon.obj")
+	v_dragon = NewVector3(-0.5, 0, 0.5)
+	t_dragon = NewTransform(v_dragon, NewQuaternionLookAt(v_dragon, NewVector3(-1, 0, 1)), NewVector3(0.05, 0.05, 0.05))
+	mesh_dragon = NewMesh(t_dragon, mat_diff_white, "dragon.obj")
 	
 	for i = 1, mat_gold_len do
 		ii = i - 1
@@ -80,12 +80,12 @@ function init()
 	
 	-- Light sources
 	t_plight1 = NewTransform(NewVector3(0.0, 2.2, 0.0), q_idnt, v_full)
-	plight1 = NewLightPoint(t_plight1, NewVector3(1.0 * 10.0, 0.945 * 10.0, 0.878 * 10.0), 0, 0, 1.0)
+	plight1 = NewLightPoint(t_plight1, NewVector3(1.0 * 10.0, 0.945 * 10.0, 0.878 * 10.0), 0, 0, 1.5)
 	
 	-- Add objects to scene
 	AddMesh(mesh_cbox)
-	--AddMesh(mesh_dragon)
-	AddShape(glassball)
+	AddMesh(mesh_dragon)
+	--AddShape(glassball)
 	AddLight(plight1)
 	AddCamera(camera_persp)
 	

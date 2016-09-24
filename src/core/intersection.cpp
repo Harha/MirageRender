@@ -4,7 +4,12 @@
 namespace mirage
 {
 
-	Intersection::Intersection(float t, vec3 position, vec3 normal, Material *material) : m_t(t), m_position(position), m_normal(normal), m_material(material)
+	Intersection::Intersection(float t, vec3 position, vec3 normal, vec2 texcoord, Material *material) :
+		m_t(t),
+		m_position(position),
+		m_normal(normal),
+		m_texcoord(texcoord),
+		m_material(material)
 	{
 
 	}
@@ -22,6 +27,11 @@ namespace mirage
 	void Intersection::setNormal(const vec3 &v)
 	{
 		m_normal = v;
+	}
+
+	void Intersection::setTexcoord(const vec2 &v)
+	{
+		m_texcoord = v;
 	}
 
 	void Intersection::setMaterial(Material *m)
@@ -42,6 +52,11 @@ namespace mirage
 	vec3 Intersection::getNormal() const
 	{
 		return m_normal;
+	}
+
+	vec2 Intersection::getTexcoord() const
+	{
+		return m_texcoord;
 	}
 
 	Material *Intersection::getMaterial() const

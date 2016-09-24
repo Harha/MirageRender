@@ -22,7 +22,8 @@ namespace mirage
 		m_accelerator(nullptr),
 		m_objFactory(new ObjFactory()),
 		m_radianceClamping(100.0f),
-		m_maxRecursion(5)
+		m_maxRecursion(5),
+		m_skyColor(vec3(0.0f, 0.0f, 0.0f))
 	{
 		LOG("Scene: a New Scene object was created.");
 	}
@@ -82,6 +83,11 @@ namespace mirage
 	void Scene::setMaxRecursion(int n)
 	{
 		m_maxRecursion = n;
+	}
+
+	void Scene::setSkyColor(const vec3 & c)
+	{
+		m_skyColor = c;
 	}
 
 	Accelerator *Scene::getAccelerator() const
@@ -145,6 +151,11 @@ namespace mirage
 	int Scene::getMaxRecursion() const
 	{
 		return m_maxRecursion;
+	}
+
+	vec3 Scene::getSkyColor() const
+	{
+		return m_skyColor;
 	}
 
 }

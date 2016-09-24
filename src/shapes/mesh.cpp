@@ -51,12 +51,34 @@ namespace mirage
 					std::array<Vertex, 3> verts;
 
 					// Assign values
-					verts[0].setPosition(points[face.points[0]]);
-					verts[1].setPosition(points[face.points[1]]);
-					verts[2].setPosition(points[face.points[2]]);
-					verts[0].setNormal(normals[face.normals[0]]);
-					verts[1].setNormal(normals[face.normals[1]]);
-					verts[2].setNormal(normals[face.normals[2]]);
+					if (!points.empty())
+					{
+						verts[0].setPosition(points[face.points[0]]);
+						verts[1].setPosition(points[face.points[1]]);
+						verts[2].setPosition(points[face.points[2]]);
+					}
+					else
+					{
+						ERR("Mesh::Mesh - WavefrontMaterial - Point vectors empty! Critical error converting .obj model to mesh.");
+					}
+
+					if (!normals.empty())
+					{
+						verts[0].setNormal(normals[face.normals[0]]);
+						verts[1].setNormal(normals[face.normals[1]]);
+						verts[2].setNormal(normals[face.normals[2]]);
+					}
+					else
+					{
+						ERR("Mesh::Mesh - WavefrontMaterial - Normal vectors empty! Critical error converting .obj model to mesh.");
+					}
+
+					if (!texcoords.empty())
+					{
+						verts[0].setTexcoord(texcoords[face.texcoords[0]]);
+						verts[1].setTexcoord(texcoords[face.texcoords[1]]);
+						verts[2].setTexcoord(texcoords[face.texcoords[2]]);
+					}
 
 					// Get current face material properties if they differ from previous and if the wf material exists
 					if (loadedMaterials.count(face.material) <= 0 && materials.count(face.material) > 0)
@@ -70,7 +92,7 @@ namespace mirage
 						case 0:
 						case 1:
 						case 2:
-							loadedMaterials[face.material] = m_objFactory->initDiffuseMaterial(wf_material.Kd, wf_material.Ke);
+							loadedMaterials[face.material] = m_objFactory->initDiffuseMaterial(wf_material.KdText, wf_material.Kd, wf_material.Ke);
 							break;
 						case 4:
 						case 6:
@@ -83,7 +105,6 @@ namespace mirage
 							loadedMaterials[face.material] = m_objFactory->initSpecularMaterial(wf_material.Kd, wf_material.Ks, wf_material.Ke);
 							break;
 						case 5:
-							LOG("r: " << 1.0f - std::max(wf_material.Ks.x, std::max(wf_material.Ks.y, wf_material.Ks.z)));
 							loadedMaterials[face.material] = m_objFactory->initGlossyMaterial(
 								wf_material.Kd,
 								wf_material.Ks,
@@ -94,7 +115,7 @@ namespace mirage
 							);
 							break;
 						default:
-							loadedMaterials[face.material] = m_objFactory->initDiffuseMaterial(vec3(1, 1, 1), vec3(0, 0, 0));
+							loadedMaterials[face.material] = m_objFactory->initDiffuseMaterial("", vec3(1, 1, 1), vec3(0, 0, 0));
 							ERR("Mesh::Mesh - Loading of material " << face.material << " failed, no illumination mode was specified in the material properties file!");
 							break;
 						}

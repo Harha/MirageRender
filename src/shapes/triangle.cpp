@@ -36,10 +36,10 @@ namespace mirage
 
 	bool Triangle::intersect(const Ray &ray, Intersection &iSect) const
 	{
+		std::array<Vertex, 3> vertices = m_verticesTransformed;
+
 		vec3 P, Q, T;
 		float d, inv_d, u, v, t, b0, b1, b2;
-
-		std::array<Vertex, 3> vertices = m_verticesTransformed;
 
 		const vec3 edge_a = vertices[1].getPosition() - vertices[0].getPosition();
 		const vec3 edge_b = vertices[2].getPosition() - vertices[0].getPosition();
@@ -76,21 +76,31 @@ namespace mirage
 		if (t < EPSILON)
 			return false;
 
+		// Get ray hit position
 		vec3 hit = ray(t);
+
+		// Get barycentric coordinates
 		getBarycentric(hit, edge_a, edge_b, b0, b1, b2);
-		vec3 N1 = vertices[0].getNormal();
-		vec3 N2 = vertices[1].getNormal();
-		vec3 N3 = vertices[2].getNormal();
+
+		// Interpolate normal vector
+		const vec3 & N1 = vertices[0].getNormal();
+		const vec3 & N2 = vertices[1].getNormal();
+		const vec3 & N3 = vertices[2].getNormal();
 		vec3 N = N1 + b1 * (N2 - N1) + b2 * (N3 - N1);
 
+		// Interpolate UV coordinates
+		const vec2 & UV1 = vertices[0].getTexcoord();
+		const vec2 & UV2 = vertices[1].getTexcoord();
+		const vec2 & UV3 = vertices[2].getTexcoord();
+		vec2 UV = UV1 * b0 + UV2 * b1 + UV3 * b2;
+
 		if (d < 0.0f)
-		{
 			N = N.negate();
-		}
 
 		iSect.setT(t);
 		iSect.setPosition(hit);
 		iSect.setNormal(N.normalize());
+		iSect.setTexcoord(UV);
 		iSect.setMaterial(m_material);
 
 		return true;

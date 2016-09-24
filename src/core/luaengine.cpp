@@ -146,6 +146,8 @@ namespace mirage
 				lua_setglobal(g_state, "SetRadianceClamping");
 				lua_pushcfunction(g_state, lua_SetMaxRecursion_func);
 				lua_setglobal(g_state, "SetMaxRecursion");
+				lua_pushcfunction(g_state, lua_SetSceneSkyColor_func);
+				lua_setglobal(g_state, "SetSceneSkyColor");
 
 				/* Execute the program if no errors found */
 				if (status == 0)
@@ -409,7 +411,7 @@ namespace mirage
 			vec3 *diff_vec3 = reinterpret_cast<vec3 *>(address_diff_vec3);
 
 			/* Create the object and return the address */
-			std::size_t address = reinterpret_cast<std::size_t>(g_scene->getObjFactory()->initDiffuseMaterial(*diff_vec3, vec3(0, 0, 0)));
+			std::size_t address = reinterpret_cast<std::size_t>(g_scene->getObjFactory()->initDiffuseMaterial("", *diff_vec3, vec3(0, 0, 0)));
 			lua_pushinteger(L, address);
 
 			return 1;
@@ -424,7 +426,7 @@ namespace mirage
 			vec3 *emis_vec3 = reinterpret_cast<vec3 *>(address_emis_vec3);
 
 			/* Create the desired object and return the address */
-			std::size_t address = reinterpret_cast<std::size_t>(g_scene->getObjFactory()->initDiffuseMaterial(vec3(0, 0, 0), *emis_vec3));
+			std::size_t address = reinterpret_cast<std::size_t>(g_scene->getObjFactory()->initDiffuseMaterial("", vec3(0, 0, 0), *emis_vec3));
 			lua_pushinteger(L, address);
 
 			return 1;
@@ -621,6 +623,22 @@ namespace mirage
 			g_scene->setMaxRecursion(n);
 
 			LOG("Lua: Set scene maximum recursion for rays to " << n << ".");
+
+			return 0;
+		}
+
+		extern int lua_SetSceneSkyColor_func(lua_State *L)
+		{
+			// Get the function argument
+			std::size_t address_col_vec3 = static_cast<std::size_t>(luaL_checkinteger(L, 1));
+
+			// Get the objects from address
+			vec3 * col_vec3 = reinterpret_cast<vec3 *>(address_col_vec3);
+
+			// Set the variable
+			g_scene->setSkyColor(*col_vec3);
+
+			LOG("Lua: Set scene sky color to: " << col_vec3->toString());
 
 			return 0;
 		}

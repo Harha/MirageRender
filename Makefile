@@ -22,7 +22,7 @@ LDLIBS += -lSDL2 -llua -lpthread -lstdc++ -lm -static-libgcc -static-libstdc++
 CXX = $(ENV)
 
 # Compiler flags
-CXXFLAGS = -std=c++14 -Wall -Wextra -m64
+CXXFLAGS = -std=c++11 -Wall -Wextra -Wno-unused-variable -Wno-unused-parameter -Wno-unused-function -m64
 
 # Apply optimization parameters if !DEBUG
 DEBUG ?= 0
@@ -50,6 +50,7 @@ CPPS += $(wildcard $(SRCDIR)/accelerators/*.cpp)
 CPPS += $(wildcard $(SRCDIR)/renderers/*.cpp)
 CPPS += $(wildcard $(SRCDIR)/materials/*.cpp)
 CPPS += $(wildcard $(SRCDIR)/lights/*.cpp)
+CPPS += $(wildcard $(SRCDIR)/3rdparty/*.cpp)
 INCS := $(wildcard $(SRCDIR)/*.h)
 INCS += $(wildcard $(SRCDIR)/core/*.h)
 INCS += $(wildcard $(SRCDIR)/math/*.h)
@@ -59,6 +60,7 @@ INCS += $(wildcard $(SRCDIR)/accelerators/*.h)
 INCS += $(wildcard $(SRCDIR)/renderers/*.h)
 INCS += $(wildcard $(SRCDIR)/materials/*.h)
 INCS += $(wildcard $(SRCDIR)/lights/*.h)
+INCS += $(wildcard $(SRCDIR)/3rdparty/*.h)
 OBJS := $(CPPS:$(SRCDIR)/%.cpp=$(BINDIR)/%.o)
 
 # Build target
@@ -86,6 +88,7 @@ ifeq ($(OS), Windows_NT)
 	- RMDIR /S /Q $(BINDIR)\renderers
 	- RMDIR /S /Q $(BINDIR)\materials
 	- RMDIR /S /Q $(BINDIR)\lights
+	- RMDIR /S /Q $(BINDIR)\3rdparty
 	- DEL /S /Q $(BINDIR)\main.o
 	- MKDIR $(BINDIR)\core
 	- MKDIR $(BINDIR)\math
@@ -95,6 +98,7 @@ ifeq ($(OS), Windows_NT)
 	- MKDIR $(BINDIR)\renderers
 	- MKDIR $(BINDIR)\materials
 	- MKDIR $(BINDIR)\lights
+	- MKDIR $(BINDIR)\3rdparty
 else
 	- @$(RM) $(OBJS)
 	- @$(RM) $(TARGET)
@@ -114,6 +118,7 @@ init:
 	- MKDIR $(BINDIR)\materials
 	- MKDIR $(BINDIR)\lights
 	- MKDIR $(BINDIR)\res
+	- MKDIR $(BINDIR)\3rdparty
 ifeq ($(OS), Windows_NT)
 	- XCOPY /E res $(BINDIR)\res
 else

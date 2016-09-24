@@ -1,5 +1,4 @@
 // std includes
-#include <cassert>
 
 // mirage includes
 #include "display.h"
@@ -90,8 +89,6 @@ namespace mirage
 
 	void Display::setPixel(const unsigned x, const unsigned y, vec3 v)
 	{
-		assert(x >= 0 || x < m_width || y >= 0 || y < m_height);
-
 		v = vec3::powv(v, 1.0f * GAMMA);
 		v = vec3::clampv(v, 0.0f, 1.0f);
 

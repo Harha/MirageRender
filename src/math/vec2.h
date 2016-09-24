@@ -3,7 +3,6 @@
 
 // std includes
 #include <string>
-#include <cassert>
 
 // mirage includes
 #include "math.h"
@@ -135,13 +134,11 @@ namespace mirage
 
 		float operator[](int i) const
 		{
-			assert(i >= 0 && i <= 1);
 			return (&x)[i];
 		}
 
 		float &operator[](int i)
 		{
-			assert(i >= 0 && i <= 1);
 			return (&x)[i];
 		}
 

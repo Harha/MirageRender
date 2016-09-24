@@ -36,7 +36,7 @@ namespace mirage
 		Light *initSpotLight(const Transform t, const vec3 emission, float aC, float aL, float aQ, float cutoff);
 		Shape *initShape(Shape *s);
 		Mesh *initMesh(Mesh *m);
-		Material *initDiffuseMaterial(const vec3 kd, const vec3 ke);
+		Material *initDiffuseMaterial(const std::string & kdText, const vec3 kd, const vec3 ke);
 		Material *initGlassMaterial(const vec3 kd, const vec3 ks, const vec3 ke, const float ior);
 		Material *initGlossyMaterial(const vec3 kd, const vec3 ks, const vec3 ke, const float r, const float k, const float d);
 		Material *initSpecularMaterial(const vec3 kd, const vec3 ks, const vec3 ke);

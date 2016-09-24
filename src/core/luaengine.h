@@ -46,10 +46,10 @@ namespace mirage
 		extern void load(const std::string filename);
 		extern void exec(const std::string filename, const std::string funcname);
 
-		/* Utility functions */
+		// Utility functions
 		extern int lua_print_func(lua_State *L);
 
-		/* C++ Object constructors */
+		// C++ Object constructors
 		extern int lua_NewVector3_func(lua_State *L);
 		extern int lua_NewVector4_func(lua_State *L);
 		extern int lua_NewQuaternion_func(lua_State *L);
@@ -68,18 +68,19 @@ namespace mirage
 		extern int lua_NewSpecMaterial_func(lua_State *L);
 		extern int lua_NewGlossyMaterial_func(lua_State *L);
 
-		/* C++ Scene object adders */
+		// C++ Scene object adders
 		extern int lua_AddCamera_func(lua_State *L);
 		extern int lua_AddLight_func(lua_State *L);
 		extern int lua_AddMesh_func(lua_State *L);
 		extern int lua_AddShape_func(lua_State *L);
 		extern int lua_AddRayAccelerator_func(lua_State *L);
 
-		/* C++ Scene setting setters */
+		// C++ Scene setting setters
 		extern int lua_SetDisplayInitInfo_func(lua_State *L);
 		extern int lua_SetMThreadInitInfo_func(lua_State *L);
 		extern int lua_SetRadianceClamping_func(lua_State *L);
 		extern int lua_SetMaxRecursion_func(lua_State *L);
+		extern int lua_SetSceneSkyColor_func(lua_State * L);
 
 	}
 

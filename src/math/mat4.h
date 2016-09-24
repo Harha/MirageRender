@@ -90,13 +90,11 @@ struct mat4
 
     float operator[](int i) const
     {
-        assert(i >= 0 && i <= 15);
         return m[i];
     }
 
     float &operator[](int i)
     {
-        assert(i >= 0 && i <= 15);
         return m[i];
     }
 

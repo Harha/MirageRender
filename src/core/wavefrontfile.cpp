@@ -251,6 +251,21 @@ namespace mirage
 			case cstr2int("illum"):
 				l_stream >> m_materials[currentMaterial].illum;
 				break;
+			case cstr2int("map_Kd"):
+				std::getline(l_stream, m_materials[currentMaterial].KdText);
+				trim(m_materials[currentMaterial].KdText);
+				m_materials[currentMaterial].KdText = filetofilepath(m_mtlFilePath) + m_materials[currentMaterial].KdText;
+				break;
+			case cstr2int("map_Ks"):
+				std::getline(l_stream, m_materials[currentMaterial].KsText);
+				trim(m_materials[currentMaterial].KsText);
+				m_materials[currentMaterial].KsText = filetofilepath(m_mtlFilePath) + m_materials[currentMaterial].KsText;
+				break;
+			case cstr2int("map_Ke"):
+				std::getline(l_stream, m_materials[currentMaterial].KeText);
+				trim(m_materials[currentMaterial].KeText);
+				m_materials[currentMaterial].KeText = filetofilepath(m_mtlFilePath) + m_materials[currentMaterial].KeText;
+				break;
 			case cstr2int("Ka"):
 				l_stream >> m_materials[currentMaterial].Ka.x;
 				l_stream >> m_materials[currentMaterial].Ka.y;

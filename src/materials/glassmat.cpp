@@ -8,7 +8,7 @@
 namespace mirage
 {
 
-	GlassMaterial::GlassMaterial(vec3 kd, vec3 ks, vec3 ke, float ior) : Material(kd, ks, ke, true), m_ior(ior)
+	GlassMaterial::GlassMaterial(vec3 kd, vec3 ks, vec3 ke, float ior) : Material(nullptr, nullptr, nullptr, kd, ks, ke, true), m_ior(ior)
 	{
 
 	}

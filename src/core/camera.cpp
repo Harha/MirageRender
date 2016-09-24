@@ -21,16 +21,6 @@ Camera::~Camera()
 
 }
 
-void Camera::update(float dt, bool keys[256])
-{
-
-}
-
-void Camera::calcCamRay(const int x, const int y, Ray &ray) const
-{
-    ERR("Purely virtual function Camera::calcCamRay called!");
-}
-
 void Camera::move(const vec3 &dir, float delta)
 {
     m_transform.setPosition(m_transform.getPosition() + dir * delta);

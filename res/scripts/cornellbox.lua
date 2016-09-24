@@ -10,10 +10,10 @@ function init()
 	SetMThreadInitInfo(16)
 	
 	-- Define display
-	SetDisplayInitInfo(1280, 720, 1)
+	SetDisplayInitInfo(512/2, 512/2, 2)
 	
 	-- Define scene rendering settings
-	SetRadianceClamping(100.0)
+	SetRadianceClamping(10.0)
 	SetMaxRecursion(10)
 	
 	-- Some stuff with default values
@@ -54,7 +54,7 @@ function init()
 	m_glassball = NewSphere(t_zero, mat_glass, NewVector3(-0.5, 0.25, 0.25), 0.25)
 	
 	-- Light sources
-	t_sun = NewTransform (v_zero, NewQuaternion(0.40, 0.16, 0.84, -0.33), v_full)
+	t_sun = NewTransform(v_zero, NewQuaternion(0.41, 0.11, 0.86, -0.27), v_full)
 	l_sun = NewLightDir(t_sun, NewVector3(1.0 * 5.5, 1.0 * 4.25, 1.0 * 4.0))
 	t_point = NewTransform(NewVector3(0.0, 2.24, 0.0), q_idnt, v_full)
 	l_point = NewLightPoint(t_point, NewVector3(1.0 * 5.0, 1.0 * 5.0, 1.0 * 5.0), 0, 0, 0.5)
@@ -63,7 +63,7 @@ function init()
 	AddMesh(m_cornellbox)
 	AddMesh(m_dragon)
 	AddShape(m_glassball)
-	--AddLight(l_sun)
+	AddLight(l_sun)
 	--AddLight(l_point)
 	AddCamera(c_perspective)
 	

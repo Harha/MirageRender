@@ -43,6 +43,9 @@ namespace mirage
 	{
 	public:
 		uint16_t illum; // Illumination mode
+		std::string KdText; // Diffuse texture
+		std::string KsText; // Specular texture
+		std::string KeText; // Emissive texture
 		vec3 Ka; // Ambient color
 		vec3 Kd; // Diffuse color
 		vec3 Ks; // Specular color
@@ -53,6 +56,9 @@ namespace mirage
 
 		WavefrontMaterial(
 			const uint16_t illum = 0,
+			const std::string & KdText = "",
+			const std::string & KsText = "",
+			const std::string & KeText = "",
 			const vec3 & Ka = vec3(),
 			const vec3 & Kd = vec3(),
 			const vec3 & Ks = vec3(),
@@ -62,6 +68,9 @@ namespace mirage
 			const double Fr = 0.75f
 		) :
 			illum(illum),
+			KdText(KdText),
+			KsText(KsText),
+			KeText(KeText),
 			Ka(Ka),
 			Kd(Kd),
 			Ks(Ks),

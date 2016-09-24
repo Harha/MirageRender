@@ -34,6 +34,7 @@ namespace mirage
 		void addShape(Shape *s);
 		void setRadianceClamping(float f);
 		void setMaxRecursion(int n);
+		void setSkyColor(const vec3 & c);
 		Accelerator *getAccelerator() const;
 		ObjFactory *getObjFactory() const;
 		Camera *getCamera() const;
@@ -42,6 +43,7 @@ namespace mirage
 		std::vector<Shape *> getShapes() const;
 		float getRadianceClamping() const;
 		int getMaxRecursion() const;
+		vec3 getSkyColor() const;
 	private:
 		Accelerator *m_accelerator;
 		ObjFactory *m_objFactory;
@@ -51,6 +53,7 @@ namespace mirage
 		std::vector<Shape *> m_shapes;
 		float m_radianceClamping;
 		int m_maxRecursion;
+		vec3 m_skyColor;
 	};
 
 }
