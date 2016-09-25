@@ -14,8 +14,8 @@ function init()
 	
 	-- Define scene rendering settings
 	SetRadianceClamping(100.0)
-	SetMaxRecursion(3)
-	SetSceneSkyColor(NewVector3(0.1, 0.1, 0.1))
+	SetMaxRecursion(10)
+	SetSceneSkyColor(NewVector3(0.25, 0.25, 0.25))
 	
 	-- Some stuff with default values
 	v_zero = NewVector3(0, 0, 0)
