@@ -6,6 +6,10 @@
 #include "../macros.h"
 #include "../math/mat4.h"
 
+#define OS_WINDOWS 	(defined(_WIN64) || defined(_WIN32) ||  defined(__WIN32__) || defined(__TOS_WIN__) || defined(__CYGWIN__) || defined(__CYGWIN32) || defined(__MINGW32__) || defined(__BORLANDC__) || defined(__WINDOWS__))
+#define OS_MACOS    (defined(macintosh) || defined(Macintosh) || defined(__APPLE__) || defined(__MACH__))
+#define OS_LINUX    (defined(__linux__) || defined(__linux))
+
 namespace mirage
 {
 
@@ -119,11 +123,20 @@ namespace mirage
 		m_isSavingImage = true;
 		FILE *f;
 
+#if OS_WINDOWS
 		if (fopen_s(&f, filename.c_str(), "w"))
 		{
 			ERR("Display: Writing image to a .ppm file failed... fopen returned NULL.");
 			return;
 		}
+#elif OS_MACOS || OS_LINUX
+		f = fopen(filename.c_str(), "w");
+		if (f != NULL)
+		{
+			ERR("Display: Writing image to a .ppm file failed... fopen returned NULL.");
+			return;
+		}
+#endif
 
 		fprintf(f, "P3\n%d %d\n%d\n", m_width, m_height, 255);
 		for (size_t i = 0; i < m_width * m_height; i++)

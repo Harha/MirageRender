@@ -9,14 +9,37 @@ LD = $(ENV)
 # Include directories
 CXXINCS += -I./include/
 
+ifneq ($(OS), Windows_NT)
+	ifeq ($(shell uname -s), Darwin)
+		LDFLAGS = -Wl -m64
+	else
+		LDFLAGS = -Wl,--as-needed -m64
+	endif
+endif
+
 # Linker flags
-LDFLAGS = -Wl,--as-needed -m64
+ifneq ($(OS), Windows_NT)
+	ifeq ($(shell uname -s), Darwin)
+		LDFLAGS = -Wl -m64
+	endif
+else
+	LDFLAGS = -Wl,--as-needed -m64
+endif
 
 # Linker libs, lua might be -llua or -llua53 or -lluaXX, XX being your installed lua version
 ifeq ($(OS), Windows_NT)
   LDLIBS = -L./lib/ -lmingw32 -lSDL2main
 endif
-LDLIBS += -lSDL2 -llua -lpthread -lstdc++ -lm -static-libgcc -static-libstdc++
+
+LDLIBS += -lSDL2 -llua -lpthread -lstdc++ -lm
+
+ifneq ($(OS), Windows_NT)
+	ifneq ($(shell uname -s), Darwin)
+		LDLIBS += -static-libgcc -static-libstdc++
+	endif
+else
+	LDLIBS += -static-libgcc -static-libstdc++
+endif
 
 # Compiler
 CXX = $(ENV)
