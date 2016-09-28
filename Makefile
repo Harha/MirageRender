@@ -9,14 +9,6 @@ LD = $(ENV)
 # Include directories
 CXXINCS += -I./include/
 
-ifneq ($(OS), Windows_NT)
-	ifeq ($(shell uname -s), Darwin)
-		LDFLAGS = -Wl -m64
-	else
-		LDFLAGS = -Wl,--as-needed -m64
-	endif
-endif
-
 # Linker flags
 ifneq ($(OS), Windows_NT)
 	ifeq ($(shell uname -s), Darwin)
