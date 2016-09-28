@@ -123,6 +123,7 @@ endif
 # Initialize bin directory structure
 .PHONY: init
 init:
+ifeq ($(OS), Windows_NT)
 	- MKDIR $(BINDIR)
 	- MKDIR $(BINDIR)\core
 	- MKDIR $(BINDIR)\math
@@ -134,9 +135,19 @@ init:
 	- MKDIR $(BINDIR)\lights
 	- MKDIR $(BINDIR)\res
 	- MKDIR $(BINDIR)\3rdparty
-ifeq ($(OS), Windows_NT)
 	- XCOPY /E res $(BINDIR)\res
 else
-	- cp res $(BINDIR)\res
+	- MKDIR $(BINDIR)
+	- MKDIR $(BINDIR)/core
+	- MKDIR $(BINDIR)/math
+	- MKDIR $(BINDIR)/shapes
+	- MKDIR $(BINDIR)/cameras
+	- MKDIR $(BINDIR)/accelerators
+	- MKDIR $(BINDIR)/renderers
+	- MKDIR $(BINDIR)/materials
+	- MKDIR $(BINDIR)/lights
+	- MKDIR $(BINDIR)/res
+	- MKDIR $(BINDIR)/3rdparty
+	- cp -r res $(BINDIR)
 endif
 	@echo "Initialization done."
