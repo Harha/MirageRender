@@ -119,11 +119,20 @@ namespace mirage
 		m_isSavingImage = true;
 		FILE *f;
 
+#if OS_WINDOWS
 		if (fopen_s(&f, filename.c_str(), "w"))
 		{
 			ERR("Display: Writing image to a .ppm file failed... fopen returned NULL.");
 			return;
 		}
+#elif OS_MACOS || OS_LINUX
+		f = fopen(filename.c_str(), "w");
+		if (f != NULL)
+		{
+			ERR("Display: Writing image to a .ppm file failed... fopen returned NULL.");
+			return;
+		}
+#endif
 
 		fprintf(f, "P3\n%d %d\n%d\n", m_width, m_height, 255);
 		for (size_t i = 0; i < m_width * m_height; i++)
