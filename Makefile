@@ -138,17 +138,17 @@ ifeq ($(OS), Windows_NT)
 	- MKDIR $(BINDIR)\3rdparty
 	- XCOPY /E res $(BINDIR)\res
 else
-	- @$(MKDIR) $(BINDIR)
-	- @$(MKDIR) $(BINDIR)/core
-	- @$(MKDIR) $(BINDIR)/math
-	- @$(MKDIR) $(BINDIR)/shapes
-	- @$(MKDIR) $(BINDIR)/cameras
-	- @$(MKDIR) $(BINDIR)/accelerators
-	- @$(MKDIR) $(BINDIR)/renderers
-	- @$(MKDIR) $(BINDIR)/materials
-	- @$(MKDIR) $(BINDIR)/lights
-	- @$(MKDIR) $(BINDIR)/res
-	- @$(MKDIR) $(BINDIR)/3rdparty
+	- mkdir $(BINDIR)
+	- mkdir $(BINDIR)/core
+	- mkdir $(BINDIR)/math
+	- mkdir $(BINDIR)/shapes
+	- mkdir $(BINDIR)/cameras
+	- mkdir $(BINDIR)/accelerators
+	- mkdir $(BINDIR)/renderers
+	- mkdir $(BINDIR)/materials
+	- mkdir $(BINDIR)/lights
+	- mkdir $(BINDIR)/res
+	- mkdir $(BINDIR)/3rdparty
 	- cp -r res $(BINDIR)
 endif
 	@echo "Initialization done."
