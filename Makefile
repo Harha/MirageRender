@@ -18,12 +18,12 @@ else
 	LDFLAGS = -Wl,--as-needed -m64
 endif
 
-# Linker libs, lua might be -llua or -llua53 or -lluaXX, XX being your installed lua version
+# Linker libs, lua might be -llua, -lluaXX or -lluaX.X, XX being your installed lua version
 ifeq ($(OS), Windows_NT)
   LDLIBS = -L./lib/ -lmingw32 -lSDL2main
 endif
 
-LDLIBS += -lSDL2 -llua -lpthread -lstdc++ -lm
+LDLIBS += -lSDL2 -llua5.3 -lpthread -lstdc++ -lm
 
 ifneq ($(OS), Windows_NT)
 	ifneq ($(shell uname -s), Darwin)
