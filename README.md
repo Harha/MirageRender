@@ -3,6 +3,10 @@ Mirage Render
 
 Mirage Render is a 3d renderer that aims for photorealistic results. Currently the software is in very early stage.
 
+Build status and downloads
+------------
+[![Build Status](http://harha.us.to:8080/buildStatus/icon?job=MirageRender_Linux_build)](http://harha.us.to:8080/job/MirageRender_Linux_build/) [Linux x64](http://harha.us.to/jenkins/MirageRender_Linux/)
+
 Usage
 -----
 
