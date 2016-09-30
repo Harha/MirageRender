@@ -1,6 +1,6 @@
 # Makefile for building mirage render
 
-# Toolchain
+# Toolchain, tested ones are gcc, clang and gcc-mingw-w64
 ENV ?= gcc
 
 # Linker
@@ -19,8 +19,10 @@ else
 endif
 
 # Linker libs, lua might be -llua, -lluaXX or -lluaX.X, XX being your installed lua version
-ifeq ($(OS), Windows_NT)
-  LDLIBS = -L./lib/ -lmingw32 -lSDL2main
+LDLIBS = -L./lib/
+
+ifneq (,$(findstring mingw, $(ENV)))
+  LDLIBS += -lmingw32 -lSDL2main
 endif
 
 LDLIBS += -lSDL2 -llua5.3 -lpthread -lstdc++ -lm

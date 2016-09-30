@@ -7,6 +7,8 @@ Build status and downloads
 ------------
 [![Build Status](http://harha.us.to:8080/buildStatus/icon?job=MirageRender_Linux_build)](http://harha.us.to:8080/job/MirageRender_Linux_build/) :: [Linux x64](http://harha.us.to/jenkins/MirageRender_Linux/)
 
+[![Build Status](http://harha.us.to:8080/buildStatus/icon?job=MirageRender_Windows_build)](http://harha.us.to:8080/job/MirageRender_Windows_build/) :: [Windows x64](http://harha.us.to/jenkins/MirageRender_Windows/)
+
 Usage
 -----
 
