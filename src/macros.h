@@ -15,9 +15,17 @@
 #define DELETE(a) if( (a) != NULL ) delete (a); (a) = NULL;
 #define DELETEA(a) if ( (a) != NULL ) delete[] (a); (a) = NULL;
 
-// Operating System Macros
-#define OS_WINDOWS  (defined(_WIN64) || defined(_WIN32) ||  defined(__WIN32__) || defined(__TOS_WIN__) || defined(__CYGWIN__) || defined(__CYGWIN32) || defined(__MINGW32__) || defined(__BORLANDC__) || defined(__WINDOWS__))
-#define OS_MACOS    (defined(macintosh) || defined(Macintosh) || defined(__APPLE__) || defined(__MACH__))
-#define OS_LINUX    (defined(__linux__) || defined(__linux))
+// Operating system detection macros
+#if defined(_WIN16) || defined(_WIN32) || defined(_WIN64) || defined(__WIN32__) || defined(__TOS_WIN__) || defined(__WINDOWS__)
+#define OS_WINDOWS
+#endif
+
+#if defined(__linux__) || defined(__gnu_linux__)
+#define OS_LINUX
+#endif
+
+#if defined(__APPLE__) || defined(__MACH__) || defined(macintosh)
+#define OS_MACOS
+#endif
 
 #endif // MACROS_H

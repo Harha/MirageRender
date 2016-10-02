@@ -108,41 +108,7 @@ namespace mirage
 
 	void Display::saveToPPM(std::string filename)
 	{
-		if (m_isSavingImage)
-		{
-			ERR("Display: Can't open a new file handle because an image is currently being saved, please wait...");
-			return;
-		}
-
-		filename = filename + ".ppm";
-
-		m_isSavingImage = true;
-		FILE *f;
-
-#if OS_WINDOWS
-		if (fopen_s(&f, filename.c_str(), "w"))
-		{
-			ERR("Display: Writing image to a .ppm file failed... fopen returned NULL.");
-			return;
-		}
-#elif OS_MACOS || OS_LINUX
-		f = fopen(filename.c_str(), "w");
-		if (f != NULL)
-		{
-			ERR("Display: Writing image to a .ppm file failed... fopen returned NULL.");
-			return;
-		}
-#endif
-
-		fprintf(f, "P3\n%d %d\n%d\n", m_width, m_height, 255);
-		for (size_t i = 0; i < m_width * m_height; i++)
-		{
-			fprintf(f, "%d %d %d ", (m_pixels[i] >> 16), (m_pixels[i] >> 8) & 0xFF, (m_pixels[i]) & 0xFF);
-		}
-		fclose(f);
-		m_isSavingImage = false;
-
-		LOG("Display: Screenshot successfully saved, filename: " << filename);
+		ERR("Display: Unsupported function! Screenshot saving was broken and has to be rewritten...");
 	}
 
 	unsigned Display::getWidth() const
