@@ -151,6 +151,7 @@ if (MINGW)
 
 	target_link_libraries (MirageRender PUBLIC
 		-lmingw32
+		-mconsole
 	)
 
 endif ()
