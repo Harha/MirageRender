@@ -1,1 +1,1 @@
-cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release ../
+cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release -DMIRAGE_BIN=bin_nix_64bit -DMIRAGE_M64=true -DMIRAGE_COMPILER=gcc ../

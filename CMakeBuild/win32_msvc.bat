@@ -1,1 +1,1 @@
-cmake -G "Visual Studio 14 Win32" -DCMAKE_BUILD_TYPE=Release ../
+cmake -G "Visual Studio 14 Win32" -DCMAKE_BUILD_TYPE=Release -DMIRAGE_BIN=bin_msvc_32bit ../

@@ -5,16 +5,22 @@ project (MirageRender CXX)
 set (VERSION_R 0)
 set (VERSION_B 1)
 set (VERSION_A 0)
-set (BIN_DIR "${PROJECT_SOURCE_DIR}/bin")
+
+# Set project bin and res directories
+if (MIRAGE_BIN)
+	set (BIN_DIR "${PROJECT_SOURCE_DIR}/${MIRAGE_BIN}")
+else ()
+	set (BIN_DIR "${PROJECT_SOURCE_DIR}/bin")
+endif ()
 set (RES_DIR "${PROJECT_SOURCE_DIR}/res")
 
-# Set recommended compilers for MinGW / *Nix
-if (MINGW OR UNIX)
+# Set compilers for MinGW / *Nix if requested
+if ((MINGW OR UNIX) AND MIRAGE_COMPILER)
 
-	MESSAGE (STATUS "C/C++ Compilers: MinGW or *Nix detected, defaulting to gcc.")
+	MESSAGE (STATUS "C/C++ Compilers: MinGW or *Nix detected, setting to ${MIRAGE_COMPILER}.")
 
-	set (CMAKE_C_COMPILER "gcc")
-	set (CMAKE_CXX_COMPILER "gcc")
+	set (CMAKE_C_COMPILER MIRAGE_COMPILER)
+	set (CMAKE_CXX_COMPILER MIRAGE_COMPILER)
 
 endif ()
 
@@ -26,10 +32,10 @@ file (GLOB_RECURSE RESOURCES "${PROJECT_SOURCE_DIR}/res/*")
 set (SDL2_INCLUDE_DIR ${SDL2_INCLUDE_DIR} "${PROJECT_SOURCE_DIR}/include")
 set (LUA_INCLUDE_DIR ${LUA_INCLUDE_DIR} "${PROJECT_SOURCE_DIR}/include")
 if (MSVC)
-	set (SDL2_LIBRARY ${SDL2_LIBRARY} "${PROJECT_SOURCE_DIR}/lib/SDL2.lib" "${PROJECT_SOURCE_DIR}/lib/SDL2main.lib")
+	set (SDL2_LIBRARY ${SDL2_LIBRARY} "${PROJECT_SOURCE_DIR}/lib/SDL2main.lib" "${PROJECT_SOURCE_DIR}/lib/SDL2.lib")
 	set (LUA_LIBRARY ${LUA_LIBRARY} "${PROJECT_SOURCE_DIR}/lib/lua*.lib")
 else ()
-	set (SDL2_LIBRARY ${SDL2_LIBRARY} "${PROJECT_SOURCE_DIR}/lib/libSDL2.a" "${PROJECT_SOURCE_DIR}/lib/libSDL2.dll.a" "${PROJECT_SOURCE_DIR}/lib/libSDL2main.a")
+	set (SDL2_LIBRARY ${SDL2_LIBRARY} "${PROJECT_SOURCE_DIR}/lib/libSDL2main.a" "${PROJECT_SOURCE_DIR}/lib/libSDL2.dll.a")
 	set (LUA_LIBRARY ${LUA_LIBRARY} "${PROJECT_SOURCE_DIR}/lib/liblua.a")
 endif ()
 
@@ -73,8 +79,25 @@ else ()
 		-Wno-unused-variable
 		-Wno-unused-parameter
 		-Wno-unused-function
-		-m64
 	)
+
+	if (MIRAGE_M64)
+
+		MESSAGE (STATUS "Compiler flags: MinGW or *Nix 64bit detected.")
+
+		target_compile_options (MirageRender PUBLIC
+			-m64
+		)
+
+	else ()
+
+		MESSAGE (STATUS "Compiler flags: MinGW or *Nix 32bit detected.")
+
+		target_compile_options (MirageRender PUBLIC
+			-m32
+		)
+
+	endif ()
 
 	if (CMAKE_BUILD_TYPE STREQUAL "Release")
 
