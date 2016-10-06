@@ -19,8 +19,15 @@ if ((MINGW OR UNIX) AND MIRAGE_COMPILER)
 
 	MESSAGE (STATUS "C/C++ Compilers: MinGW or *Nix detected, setting to ${MIRAGE_COMPILER}.")
 
-	set (CMAKE_C_COMPILER MIRAGE_COMPILER)
-	set (CMAKE_CXX_COMPILER MIRAGE_COMPILER)
+	set (CMAKE_C_COMPILER ${MIRAGE_COMPILER})
+	set (CMAKE_CXX_COMPILER ${MIRAGE_COMPILER})
+
+elseif (MINGW OR UNIX)
+
+	MESSAGE (STATUS "C/C++ Compilers: MinGW or *Nix detected, defaulting to gcc.")
+
+	set (CMAKE_C_COMPILER "gcc")
+	set (CMAKE_CXX_COMPILER "gcc")
 
 endif ()
 
