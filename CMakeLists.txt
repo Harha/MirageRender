@@ -47,6 +47,7 @@ else ()
 
 	if (EXISTS "${PROJECT_SOURCE_DIR}/include/SDL2")
 		set (SDL2_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/include")
+		set (SDL2_PATH "${PROJECT_SOURCE_DIR}")
 	endif ()
 	if (EXISTS "${PROJECT_SOURCE_DIR}/include/lua5.3")
 		set (LUA_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/include")
@@ -60,6 +61,11 @@ else ()
 	endif ()
 
 endif ()
+
+MESSAGE (STATUS "Resolved SDL2 Include dir(s): ${SDL2_INCLUDE_DIR}")
+MESSAGE (STATUS "Resolved SDL2 Library dir(s): ${SDL2_LIBRARY}")
+MESSAGE (STATUS "Resolved Lua Include dir(s): ${LUA_INCLUDE_DIR}")
+MESSAGE (STATUS "Resolved Lua Library dir(s): ${LUA_LIBRARY}")
 
 # CMake modules
 set (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/CMakeModules")
@@ -138,7 +144,7 @@ else ()
 endif ()
 
 # Linker flags for each generator
-if (MINGW)
+if (MINGW OR MIRAGE_CROSS)
 
 	MESSAGE (STATUS "Linker flags: MinGW Detected.")
 
