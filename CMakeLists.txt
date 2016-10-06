@@ -48,6 +48,7 @@ else ()
 	if (EXISTS "${PROJECT_SOURCE_DIR}/include/SDL2")
 		set (SDL2_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/include")
 		set (SDL2_PATH "${PROJECT_SOURCE_DIR}")
+		set (ENV{SDL2DIR} "${PROJECT_SOURCE_DIR}")
 	endif ()
 	if (EXISTS "${PROJECT_SOURCE_DIR}/include/lua5.3")
 		set (LUA_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/include")
@@ -144,7 +145,7 @@ else ()
 endif ()
 
 # Linker flags for each generator
-if (MINGW OR MIRAGE_CROSS)
+if (MINGW)
 
 	MESSAGE (STATUS "Linker flags: MinGW Detected.")
 

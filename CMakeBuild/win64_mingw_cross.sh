@@ -1,1 +1,1 @@
-cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release -DMIRAGE_BIN=bin_mingw_64bit -DMIRAGE_M64=true -DMIRAGE_COMPILER=x86_64-w64-mingw32-gcc -DMIRAGE_CROSS=true ../
+cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release -DMIRAGE_BIN=bin_mingw_64bit -DMIRAGE_M64=true -DMIRAGE_COMPILER=x86_64-w64-mingw32-gcc -DMINGW=true ../
