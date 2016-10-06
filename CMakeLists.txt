@@ -36,18 +36,29 @@ file (GLOB_RECURSE SOURCES "${PROJECT_SOURCE_DIR}/src/*.cpp" "${PROJECT_SOURCE_D
 file (GLOB_RECURSE RESOURCES "${PROJECT_SOURCE_DIR}/res/*")
 
 # SDL2 and Lua 5.3.x
-set (SDL2_INCLUDE_DIR ${SDL2_INCLUDE_DIR} "${PROJECT_SOURCE_DIR}/include")
-set (LUA_INCLUDE_DIR ${LUA_INCLUDE_DIR} "${PROJECT_SOURCE_DIR}/include")
 if (MSVC)
+
+	set (SDL2_INCLUDE_DIR ${SDL2_INCLUDE_DIR} "${PROJECT_SOURCE_DIR}/include")
+	set (LUA_INCLUDE_DIR ${LUA_INCLUDE_DIR} "${PROJECT_SOURCE_DIR}/include")
 	set (SDL2_LIBRARY ${SDL2_LIBRARY} "${PROJECT_SOURCE_DIR}/lib/SDL2main.lib" "${PROJECT_SOURCE_DIR}/lib/SDL2.lib")
 	set (LUA_LIBRARY ${LUA_LIBRARY} "${PROJECT_SOURCE_DIR}/lib/lua*.lib")
+
 else ()
+
+	if (EXISTS "${PROJECT_SOURCE_DIR}/include/SDL2")
+		set (SDL2_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/include")
+	endif ()
+	if (EXISTS "${PROJECT_SOURCE_DIR}/include/lua5.3")
+		set (LUA_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/include")
+	endif ()
+
 	if (EXISTS "${PROJECT_SOURCE_DIR}/lib/libSDL2main.a")
-		set (SDL2_LIBRARY ${SDL2_LIBRARY} "${PROJECT_SOURCE_DIR}/lib/libSDL2main.a" "${PROJECT_SOURCE_DIR}/lib/libSDL2.dll.a")
+		set (SDL2_LIBRARY "${PROJECT_SOURCE_DIR}/lib/libSDL2main.a" "${PROJECT_SOURCE_DIR}/lib/libSDL2.dll.a")
 	endif ()
 	if (EXISTS "${PROJECT_SOURCE_DIR}/lib/liblua.a")
-		set (LUA_LIBRARY ${LUA_LIBRARY} "${PROJECT_SOURCE_DIR}/lib/liblua.a")
+		set (LUA_LIBRARY "${PROJECT_SOURCE_DIR}/lib/liblua.a")
 	endif ()
+
 endif ()
 
 # CMake modules
