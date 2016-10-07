@@ -165,6 +165,7 @@ if (MINGW OR UNIX)
 		-lm
 		-static-libgcc
 		-static-libstdc++
+		-static
 	)
 
 	if (CMAKE_BUILD_TYPE STREQUAL "Release")
