@@ -8,8 +8,9 @@
 #define __FILENAME__ (strrchr(__FILE__, '\\') ? strrchr(__FILE__, '\\') + 1 : __FILE__)
 
 // Logging
-#define LOG(msg)  std::cout << "LOG | " << msg << std::endl;
-#define ERR(msg)  std::cerr << "ERR | " << msg << std::endl;
+#define LOG(msg)  std::cout << "LOG | " << __FILENAME__ << " | " << msg << std::endl;
+#define WRN(msg)  std::cout << "WRN | " << __FILENAME__ << " | " << msg << std::endl;
+#define ERR(msg)  std::cerr << "ERR | " << __FILENAME__ << " | " << msg << std::endl;
 
 // Utility stuff
 #define DELETE(a) if( (a) != NULL ) delete (a); (a) = NULL;

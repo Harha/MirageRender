@@ -78,6 +78,7 @@ namespace mirage
 
 		tHit0 = tboxmin;
 		tHit1 = tboxmax;
+
 		return true;
 	}
 

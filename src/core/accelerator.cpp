@@ -8,9 +8,10 @@
 namespace mirage
 {
 
-	Accelerator::Accelerator(std::vector<Shape *> shapes) : m_shapes(shapes)
+	Accelerator::Accelerator(const std::vector<Shape *> shapes) :
+		m_shapes(shapes),
+		m_initialized(false)
 	{
-		m_initialized = false;
 	}
 
 	Accelerator::~Accelerator()
