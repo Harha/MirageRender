@@ -41,7 +41,7 @@ if (MSVC)
 	set (SDL2_INCLUDE_DIR ${SDL2_INCLUDE_DIR} "${PROJECT_SOURCE_DIR}/include")
 	set (LUA_INCLUDE_DIR ${LUA_INCLUDE_DIR} "${PROJECT_SOURCE_DIR}/include")
 	set (SDL2_LIBRARY ${SDL2_LIBRARY} "${PROJECT_SOURCE_DIR}/lib/SDL2main.lib" "${PROJECT_SOURCE_DIR}/lib/SDL2.lib")
-	set (LUA_LIBRARY ${LUA_LIBRARY} "${PROJECT_SOURCE_DIR}/lib/lua*.lib")
+	set (LUA_LIBRARIES ${LUA_LIBRARIES} "${PROJECT_SOURCE_DIR}/lib/lua*.lib")
 
 else ()
 
@@ -58,7 +58,7 @@ else ()
 		set (SDL2_LIBRARY "${PROJECT_SOURCE_DIR}/lib/libSDL2main.a" "${PROJECT_SOURCE_DIR}/lib/libSDL2.dll.a")
 	endif ()
 	if (EXISTS "${PROJECT_SOURCE_DIR}/lib/liblua.a")
-		set (LUA_LIBRARY "${PROJECT_SOURCE_DIR}/lib/liblua.a")
+		set (LUA_LIBRARIES "${PROJECT_SOURCE_DIR}/lib/liblua.a")
 	endif ()
 
 endif ()
@@ -66,7 +66,7 @@ endif ()
 MESSAGE (STATUS "Resolved SDL2 Include dir(s): ${SDL2_INCLUDE_DIR}")
 MESSAGE (STATUS "Resolved SDL2 Library dir(s): ${SDL2_LIBRARY}")
 MESSAGE (STATUS "Resolved Lua Include dir(s): ${LUA_INCLUDE_DIR}")
-MESSAGE (STATUS "Resolved Lua Library dir(s): ${LUA_LIBRARY}")
+MESSAGE (STATUS "Resolved Lua Library dir(s): ${LUA_LIBRARIES}")
 
 # CMake modules
 set (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/CMakeModules")
@@ -192,7 +192,7 @@ target_include_directories (MirageRender PUBLIC ${LUA_INCLUDE_DIR})
 
 target_link_libraries (MirageRender PUBLIC
 	${SDL2_LIBRARY}
-	${LUA_LIBRARY}
+	${LUA_LIBRARIES}
 )
 
 # Install project

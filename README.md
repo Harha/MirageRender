@@ -45,7 +45,3 @@ _a Cornell box scene rendered using monte carlo path tracing, caustics caused by
 ![Cornell Box, gi test](img/mirage_cornellbox_plight.png "Cornell Box, gi test")
 
 _a Cornell box scene rendered using monte carlo path tracing, direct & indirect illumination._
-
-
-
-sponza_crytek_textures
