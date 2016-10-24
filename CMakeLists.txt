@@ -1,19 +1,5 @@
 cmake_minimum_required (VERSION 3.5 FATAL_ERROR)
 
-# Project setup
-project (MirageRender CXX)
-set (VERSION_R 0)
-set (VERSION_B 1)
-set (VERSION_A 0)
-
-# Set project bin and res directories
-if (MIRAGE_BIN)
-	set (BIN_DIR "${PROJECT_SOURCE_DIR}/${MIRAGE_BIN}")
-else ()
-	set (BIN_DIR "${PROJECT_SOURCE_DIR}/bin")
-endif ()
-set (RES_DIR "${PROJECT_SOURCE_DIR}/res")
-
 # Set compilers for MinGW / *Nix if requested
 if ((MINGW OR UNIX) AND MIRAGE_COMPILER)
 
@@ -30,6 +16,20 @@ elseif (MINGW OR UNIX)
 	set (CMAKE_CXX_COMPILER "gcc")
 
 endif ()
+
+# Project setup
+project (MirageRender CXX)
+set (VERSION_R 0)
+set (VERSION_B 1)
+set (VERSION_A 0)
+
+# Set project bin and res directories
+if (MIRAGE_BIN)
+	set (BIN_DIR "${PROJECT_SOURCE_DIR}/${MIRAGE_BIN}")
+else ()
+	set (BIN_DIR "${PROJECT_SOURCE_DIR}/bin")
+endif ()
+set (RES_DIR "${PROJECT_SOURCE_DIR}/res")
 
 # Sources, headers + resources
 file (GLOB_RECURSE SOURCES "${PROJECT_SOURCE_DIR}/src/*.cpp" "${PROJECT_SOURCE_DIR}/src/*.h")
@@ -152,6 +152,7 @@ if (MINGW)
 	target_link_libraries (MirageRender PUBLIC
 		-lmingw32
 		-mconsole
+		-static
 	)
 
 endif ()
@@ -165,7 +166,6 @@ if (MINGW OR UNIX)
 		-lm
 		-static-libgcc
 		-static-libstdc++
-		-static
 	)
 
 	if (CMAKE_BUILD_TYPE STREQUAL "Release")

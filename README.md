@@ -5,9 +5,10 @@ Mirage Render is a 3d renderer that aims for photorealistic results. Currently t
 
 Build status and downloads
 ------------
-[![Build Status](http://harha.us.to:8080/buildStatus/icon?job=MirageRender_Linux_build)](http://harha.us.to:8080/job/MirageRender_Linux_build/) :: [Linux x64](http://harha.us.to/jenkins/MirageRender_Linux/)
-
-[![Build Status](http://harha.us.to:8080/buildStatus/icon?job=MirageRender_Windows_build)](http://harha.us.to:8080/job/MirageRender_Windows_build/) :: [Windows x64](http://harha.us.to/jenkins/MirageRender_Windows/)
+| Build status | Build downloads |
+| ------------ | --------------- |
+| [![Build Status](http://harha.us.to:8080/buildStatus/icon?job=MirageRender_Linux_build)](http://harha.us.to:8080/job/MirageRender_Linux_build/) | [Linux x64](http://harha.us.to/jenkins/MirageRender_Linux/) |
+| [![Build Status](http://harha.us.to:8080/buildStatus/icon?job=MirageRender_Windows_build)](http://harha.us.to:8080/job/MirageRender_Windows_build/) | [Windows x64](http://harha.us.to/jenkins/MirageRender_Windows/) |
 
 Usage
 -----
@@ -25,13 +26,9 @@ LOG | Main: atexit(dispose) Hook called.
 Example images
 --------------
 
-![Cornell Box, caustics test](img/mirage_water3.png "Cornell Box, caustics test")
+![Crytek sponza test](img/sponza_crytek_textures.png "Crytek sponza, test")
 
-_a Cornell box scene rendered using monte carlo path tracing, caustics caused by water, indirect illumination._
-
-![Cornell Box, gi test](img/mirage_cornellbox_plight.png "Cornell Box, gi test")
-
-_a Cornell box scene rendered using monte carlo path tracing, direct & indirect illumination._
+_a Crytek sponza scene rendered with direct and indirect illumination._
 
 ![Cornell Box, Golden Dragon](img/golden_dragon.png "Cornell Box, glossy material test")
 
@@ -40,3 +37,15 @@ _a Cornell box scene with a glossy metallic floor, a golden dragon and two room 
 ![Mitsuba, Texture Mapping](img/texturemapping.png "Mitsuba, texture mapping test")
 
 _a Mitsuba sphere, spot light source and a diffuse texture applied on the floor mesh._
+
+![Cornell Box, caustics test](img/mirage_water3.png "Cornell Box, caustics test")
+
+_a Cornell box scene rendered using monte carlo path tracing, caustics caused by water, indirect illumination._
+
+![Cornell Box, gi test](img/mirage_cornellbox_plight.png "Cornell Box, gi test")
+
+_a Cornell box scene rendered using monte carlo path tracing, direct & indirect illumination._
+
+
+
+sponza_crytek_textures
