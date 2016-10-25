@@ -43,7 +43,7 @@ int main(int argc, char * argv[])
 	atexit(dispose);
 
 	// Parse launch parameters, get script, etc objects..
-	std::string script("sponza.lua");
+	std::string script("cornellbox.lua");
 	switch (cstr2int(argc > 1 ? argv[1] : "default"))
 	{
 	case cstr2int("--script"):
