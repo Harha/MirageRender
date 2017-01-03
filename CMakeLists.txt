@@ -13,6 +13,11 @@ elseif (MINGW OR UNIX)
 	set (CMAKE_CXX_COMPILER "gcc")
 endif ()
 
+# Detect mingw on windows and linux cross-compile
+if (MINGW)
+	set (MIRAGE_COMPILER "mingw")
+endif ()
+
 # Detect architecture
 if (MIRAGE_M64)
 	set (ARCH "x64")
@@ -140,7 +145,6 @@ if (MINGW)
 
 	target_link_libraries (MirageRender PUBLIC
 		-lmingw32
-		-lSDL2main
 		-mconsole
 		-static
 	)
