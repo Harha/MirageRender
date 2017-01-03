@@ -65,10 +65,8 @@ else ()
 	endif ()
 
 	# Library directories
-	if (EXISTS "${LIB_DIR}/libSDL2main.a")
+	if (MINGW)
 		set (SDL2_LIBRARY "${LIB_DIR}/libSDL2main.a" "${LIB_DIR}/libSDL2.dll.a")
-	endif ()
-	if (EXISTS "${LIB_DIR}/liblua.a")
 		set (LUA_LIBRARIES "${LIB_DIR}/liblua.a")
 	endif ()
 endif ()
@@ -139,7 +137,7 @@ else ()
 endif ()
 
 # Linker flags for each generator
-if (MIRAGE_COMPILER STREQUAL "mingw")
+if (MINGW)
 	MESSAGE (STATUS "Linker flags: MinGW Detected.")
 
 	target_link_libraries (MirageRender PUBLIC
@@ -149,7 +147,7 @@ if (MIRAGE_COMPILER STREQUAL "mingw")
 	)
 endif ()
 
-if (MIRAGE_COMPILER STREQUAL "mingw" OR UNIX)
+if (MINGW OR UNIX)
 	MESSAGE (STATUS "Linker flags: MinGW or *Nix Detected.")
 
 	target_link_libraries (MirageRender PUBLIC
