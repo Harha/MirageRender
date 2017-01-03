@@ -55,12 +55,10 @@ if (MSVC)
 	set (LUA_LIBRARIES ${LUA_LIBRARIES} "${LIB_DIR}/lua5.3.lib")
 else ()
 	# Include directories
-	if (EXISTS "${PROJECT_SOURCE_DIR}/include/SDL2")
+	if (MINGW)
 		set (SDL2_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/include")
 		set (SDL2_PATH "${PROJECT_SOURCE_DIR}")
 		set (ENV{SDL2DIR} "${PROJECT_SOURCE_DIR}")
-	endif ()
-	if (EXISTS "${PROJECT_SOURCE_DIR}/include/lua5.3")
 		set (LUA_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/include")
 	endif ()
 
@@ -142,6 +140,7 @@ if (MINGW)
 
 	target_link_libraries (MirageRender PUBLIC
 		-lmingw32
+		-lSDL2main
 		-mconsole
 		-static
 	)
