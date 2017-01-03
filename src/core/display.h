@@ -24,7 +24,7 @@ namespace mirage
 		void clear(const int32_t &color);
 		void setPixel(const unsigned x, const unsigned y, vec3 v);
 		void setTitle(std::string title);
-		void saveToPPM(std::string filename = "null");
+		void saveToPPM(std::string filePath);
 		unsigned getWidth() const;
 		unsigned getHeight() const;
 		unsigned getScale() const;

@@ -18,6 +18,8 @@ namespace mirage
 
 	}
 
+	// INFO: Nearly whole implementation of this glass BSDF was adapted from smallpt
+	// TODO: Make this better / more suited for MirageRender
 	void GlassMaterial::evalBSDF(const vec3 &P, const vec3 &N, const vec3 &Wr, const vec3 &Wt, const vec3 &Wo, float &brdf, float &btdf) const
 	{
 		// Re-orient the normal, are we going into the medium or out of it?

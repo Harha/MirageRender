@@ -1,4 +1,5 @@
 // std includes
+#include <fstream>
 
 // mirage includes
 #include "display.h"
@@ -106,9 +107,29 @@ namespace mirage
 		SDL_SetWindowTitle(m_window, m_title.c_str());
 	}
 
-	void Display::saveToPPM(std::string filename)
+	void Display::saveToPPM(std::string filePath)
 	{
-		ERR("Display: Unsupported function! Screenshot saving was broken and has to be rewritten...");
+		std::ofstream file(filePath, std::ios::binary);
+
+		std::string info_str = "#" + filePath + "\n";
+		std::string size_str = std::to_string(m_width) + " " + std::to_string(m_height) + "\n";
+		std::string data_str = "255\n";
+
+		file.write("P3\n", 3);
+		file.write(info_str.c_str(), info_str.size());
+		file.write(size_str.c_str(), size_str.size());
+		file.write(data_str.c_str(), data_str.size());
+
+		std::string write_str = "";
+		for (size_t i = 0; i < m_width * m_height; i++)
+		{
+			write_str = std::to_string((m_pixels[i]) & 0xFF) + " " + std::to_string((m_pixels[i] >> 8) & 0xFF) + " " + std::to_string((m_pixels[i] >> 16) & 0xFF) + " ";
+			file.write(write_str.c_str(), write_str.size());
+		}
+
+		file.close();
+
+		LOG("Display: Saved a new screenshot to " << filePath);
 	}
 
 	unsigned Display::getWidth() const

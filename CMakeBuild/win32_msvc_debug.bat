@@ -1,0 +1,1 @@
+cmake -G "Visual Studio 14 Win32" -DCMAKE_BUILD_TYPE=Debug -DMIRAGE_BIN=bin_msvc_32bit_debug -DMIRAGE_COMPILER=msvc ../

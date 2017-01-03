@@ -10,10 +10,10 @@ function init()
 	SetMThreadInitInfo(16)
 	
 	-- Define display
-	SetDisplayInitInfo(1280/2, 720/2, 2)
+	SetDisplayInitInfo(256, 256, 1)
 	
 	-- Define scene rendering settings
-	SetRadianceClamping(10.0)
+	SetRadianceClamping(5.0)
 	SetMaxRecursion(5)
 	SetSceneSkyColor(NewVector3(1.0, 1.0, 1.0))
 	

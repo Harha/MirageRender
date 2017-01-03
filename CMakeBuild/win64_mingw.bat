@@ -1,1 +1,1 @@
-cmake -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DMIRAGE_BIN=bin_mingw_64bit -DMIRAGE_M64=true -DMIRAGE_COMPILER=gcc ../
+cmake -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DMIRAGE_BIN=bin_mingw_64bit -DMIRAGE_M64=true -DMIRAGE_COMPILER=mingw ../

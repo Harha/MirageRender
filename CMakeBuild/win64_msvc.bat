@@ -1,1 +1,1 @@
-cmake -G "Visual Studio 14 Win64" -DCMAKE_BUILD_TYPE=Release -DMIRAGE_BIN=bin_msvc_64bit ../
+cmake -G "Visual Studio 14 Win64" -DCMAKE_BUILD_TYPE=Release -DMIRAGE_BIN=bin_msvc_64bit -DMIRAGE_M64=true -DMIRAGE_COMPILER=msvc ../

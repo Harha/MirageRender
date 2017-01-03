@@ -10,7 +10,7 @@ function init()
 	SetMThreadInitInfo(16)
 	
 	-- Define display
-	SetDisplayInitInfo(512, 512, 1)
+	SetDisplayInitInfo(256, 256, 1)
 	
 	-- Define scene rendering settings
 	SetRadianceClamping(100.0)
@@ -26,19 +26,12 @@ function init()
 	-- Colors
 	col_max = NewVector3(1, 1, 1)
 	col_white = NewVector3(0.9, 0.9, 0.9)
-	col_lime = NewVector3(0.25, 0.9, 0.175)
-	col_gold = NewVector3(0.788, 0.537, 0.062)
 	
 	-- Materials
 	mat_diff_white = NewDiffMaterial(col_white)
-	mat_diff_lime = NewDiffMaterial(col_lime)
-	mat_mirror = NewSpecMaterial(col_max)
-	mat_glass = NewGlassMaterial(col_lime, 1.523)
-	mat_gold = NewGlossyMaterial(col_gold, 0.075, 0.95, 0.005)
 	
 	-- Cameras
 	v_camera = NewVector3(0, 2.25, 7.5)
-	--q_camera = NewQuaternionLookAt(v_camera, NewVector3(0, 1.5, 0))
 	q_camera = NewQuaternion(-0.00, -0.00, 1.00, -0.08)
 	t_camera = NewTransform(v_camera, q_camera, v_full)
 	c_perspective = NewCameraPersp(t_camera, 4, 64, 70.0)

@@ -43,7 +43,7 @@ int main(int argc, char * argv[])
 	atexit(dispose);
 
 	// Parse launch parameters, get script, etc objects..
-	std::string script("cornellbox.lua");
+	std::string script("example.lua");
 	switch (cstr2int(argc > 1 ? argv[1] : "default"))
 	{
 	case cstr2int("--script"):
@@ -110,7 +110,7 @@ int main(int argc, char * argv[])
 		// F2, save the current framebuffer to a .ppm image file
 		if (g_keys[SDL_SCANCODE_F2])
 		{
-			display.saveToPPM("render");
+			display.saveToPPM("render_" + std::to_string(frameCount) + "sppx.ppm");
 		}
 
 		// Render the scene if possible
