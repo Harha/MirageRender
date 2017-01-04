@@ -25,8 +25,8 @@ newmtl floor
   Ns 10.0000
   Ni 1.0000
   illum 2
-  Ka 0.725 0.71 0.68 # White
-  Kd 0.725 0.71 0.68
+  Ka 0.925 0.91 0.88 # White
+  Kd 0.925 0.91 0.88
   Ks 0 0 0
   Ke 0 0 0
 
@@ -35,8 +35,8 @@ newmtl ceiling
   Ns 10.0000
   Ni 1.0000
   illum 2
-  Ka 0.725 0.71 0.68 # White
-  Kd 0.725 0.71 0.68
+  Ka 0.925 0.91 0.88 # White
+  Kd 0.925 0.91 0.88
   Ks 0     0    0
   Ke 0     0    0
   
@@ -45,8 +45,8 @@ newmtl backWall
   Ns 10.0000
   Ni 1.0000
   illum 2
-  Ka 0.725 0.71 0.68 # White
-  Kd 0.725 0.71 0.68
+  Ka 0.925 0.91 0.88 # White
+  Kd 0.925 0.91 0.88
   Ks 0 0 0
   Ke 0 0 0
 
@@ -55,8 +55,8 @@ newmtl shortBox
   Ns 10.0000
   Ni 1.0000
   illum 2
-  Ka 0.725 0.71 0.68 # White
-  Kd 0.725 0.71 0.68
+  Ka 0.925 0.91 0.88 # White
+  Kd 0.925 0.91 0.88
   Ks 0 0 0
   Ke 0 0 0
   
@@ -65,7 +65,7 @@ newmtl tallBox
   Ns 10.0000
   Ni 1.0000
   illum 2
-  Ka 0.725 0.71 0.68 # White
-  Kd 0.725 0.71 0.68
+  Ka 0.925 0.91 0.88 # White
+  Kd 0.925 0.91 0.88
   Ks 0 0 0
   Ke 0 0 0

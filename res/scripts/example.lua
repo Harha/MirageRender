@@ -13,8 +13,8 @@ function init()
 	SetDisplayInitInfo(256, 256, 1)
 	
 	-- Define scene rendering settings
-	SetRadianceClamping(5.0)
-	SetMaxRecursion(25)
+	SetRadianceClamping(10.0)
+	SetMaxRecursion(5)
 	
 	-- Some stuff with default values
 	v_zero = NewVector3(0, 0, 0)
