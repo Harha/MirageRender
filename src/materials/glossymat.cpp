@@ -1,4 +1,4 @@
-// std includes
+﻿// std includes
 #include <iostream>
 
 // mirage includes
@@ -8,130 +8,118 @@
 namespace mirage
 {
 
-GlossyMaterial::GlossyMaterial(vec3 kd, vec3 ks, vec3 ke, float r, float k, float d) : Material(nullptr, nullptr, nullptr, kd, ks, ke), m_r(r), m_k(k), m_d(d)
-{
+	GlossyMaterial::GlossyMaterial(vec3 kd, vec3 ks, vec3 ke, float r, float k, float d) : Material(nullptr, nullptr, nullptr, kd, ks, ke), m_r(r), m_k(k), m_d(d)
+	{
 
-}
+	}
 
-GlossyMaterial::~GlossyMaterial()
-{
+	GlossyMaterial::~GlossyMaterial()
+	{
 
-}
+	}
 
-void GlossyMaterial::evalBSDF(const vec3 &P, const vec3 &N, const vec3 &Wr, const vec3 &Wt, const vec3 &Wo, float &brdf, float &btdf) const
-{
-    // Get the surface values
-    float R = m_r + EPSILON;
-    float RR = R * R;
-    float F = m_k;
-    float K = m_d;
+	// The cook-torrance microfacet model:
+	// http://ruh.li/GraphicsCookTorrance.html
+	void GlossyMaterial::evalBSDF(const vec3 & P, const vec3 & N, const vec3 & Wr, const vec3 & Wt, const vec3 & Wo, float & brdf, float & btdf) const
+	{
+		// Surface properties
+		float R = m_r + EPSILON;									// Roughness
+		float RR = R * R;
+		float F = m_k;												// Fresnel reflectance
+		float K = m_d;												// Fraction of diffuse reflection
 
-    // Prepare all required information
-    vec3 V_vector = Wo;
-    vec3 N_vector = N;
-    vec3 L_vector = Wr;
-    vec3 H_vector = (V_vector + L_vector).normalize();
+		// Calculate the half vector
+		auto halfV = (Wo + Wr).normalize();
 
-    // Calculate all dot products
-    float NdotL = vec3::dot(N_vector, L_vector);
-    float NdotV = vec3::dot(N_vector, V_vector);
-    float NdotH = vec3::dot(N_vector, H_vector);
-    float VdotH = vec3::dot(V_vector, H_vector);
+		// Dot products at the incident
+		float NdotWo = vec3::dot(N, Wo);							// θi = incidence
+		float NdotWr = vec3::dot(N, Wr);							// θr = reflection
+		float NdotH = vec3::dot(N, halfV);
+		float WodotH = vec3::dot(Wo, halfV);
 
-    // Evaluate the geometric term
-    float geo_numer = 2.0f * NdotH;
-    float geo_denom = VdotH;
-    float geo = std::min(1.0f, std::min((geo_numer * NdotV) / geo_denom, (geo_numer * NdotL) / geo_denom));
+		// Calculate geometric attenuation
+		float g_numer = 2.0f * NdotH;
+		float geometric = std::min(1.0f, std::min((g_numer * NdotWo) / WodotH, (g_numer * NdotWr) / WodotH));
 
-    // Evaluate the roughness term
-    float rough_a = 1.0f / (4.0f * RR * std::pow(NdotH, 4.0f));
-    float rough_b = NdotH * NdotH - 1.0f;
-    float rough_c = RR * NdotH * NdotH;
-    float rough = rough_a * std::exp(rough_b / rough_c);
+		// Calculate the microfacet distribution based roughness
+		float r_scalar = 1.0f / (4.0f * RR * NdotH * NdotH * NdotH * NdotH);
+		float r_exponent = (NdotH * NdotH - 1.0f) / (RR * NdotH * NdotH);
+		float roughness = r_scalar * std::exp(r_exponent);
 
-    // Evaluate the fresnel term
-    float fresnel = std::pow(1.0f - VdotH, 5.0f);
-    fresnel *= 1.0f - F;
-    fresnel += F;
+		// Calculate fresnel equations using Schlick's approximations
+		float fresnel = std::pow(1.0f - WodotH, 5.0f);
+		fresnel *= (1.0f - F);
+		fresnel += F;
 
-    // Put the terms together
-    float Rs = (geo * rough * fresnel) / (PI * NdotV * NdotL + EPSILON);
+		// Combine the terms to get reflectance
+		float Rs = (geometric * roughness * fresnel) / (PI * NdotWo * NdotWr + EPSILON);
 
-    // Calculate the cook-torrance brdf value
-    brdf = (1.0f / PI) * NdotL * (Rs * (1.0f - K) + K);
+		// Get the final BRDF scalar value, transmission is 0.0
+		brdf = PI_INV * NdotWr * (Rs * (1.0f - K) + K);
+		btdf = 0.0f;
+	}
 
-    // There's no transmission, so btdf stays 0.0f
-    btdf = 0.0f;
-}
+	// The cook-torrance microfacet model:
+	// http://ruh.li/GraphicsCookTorrance.html
+	void GlossyMaterial::evalBSDF_direct(const vec3 & P, const vec3 & N, const vec3 & We, const vec3 & Wr, const vec3 & Wt, const vec3 & Wo, float & brdf, float & btdf) const
+	{
+		// Surface properties
+		float R = m_r + EPSILON;									// Roughness
+		float RR = R * R;
+		float F = m_k;												// Fresnel reflectance
+		float K = m_d;												// Fraction of diffuse reflection
 
-void GlossyMaterial::evalBSDF_direct(const vec3 &P, const vec3 &N, const vec3 &We, const vec3 &Wr, const vec3 &Wt, const vec3 &Wo, float &brdf, float &btdf) const
-{
-    // Get the surface values
-    float R = m_r + EPSILON;
-    float RR = R * R;
-    float F = m_k;
-    float K = m_d;
+		// Calculate the half vector
+		auto halfV = (Wo + We).normalize();
 
-    // Prepare all required information
-    vec3 V_vector = Wo;
-    vec3 N_vector = N;
-    vec3 L_vector = We;
-    vec3 H_vector = (V_vector + L_vector).normalize();
+		// Dot products at the incident
+		float NdotWo = vec3::dot(N, Wo);							// θi = incidence
+		float NdotWe = vec3::dot(N, We);							// θr = reflection
+		float NdotH = vec3::dot(N, halfV);
+		float WodotH = vec3::dot(Wo, halfV);
 
-    // Calculate all dot products
-    float NdotL = std::max(vec3::dot(N_vector, L_vector), 0.0f);
-    float NdotV = vec3::dot(N_vector, V_vector);
-    float NdotH = vec3::dot(N_vector, H_vector);
-    float VdotH = vec3::dot(V_vector, H_vector);
+		// Calculate geometric attenuation
+		float g_numer = 2.0f * NdotH;
+		float geometric = std::min(1.0f, std::min((g_numer * NdotWo) / WodotH, (g_numer * NdotWe) / WodotH));
 
-    // Evaluate the geometric term
-    float geo_numer = 2.0f * NdotH;
-    float geo_denom = VdotH;
-    float geo = std::min(1.0f, std::min((geo_numer * NdotV) / geo_denom, (geo_numer * NdotL) / geo_denom));
+		// Calculate the microfacet distribution based roughness
+		float r_scalar = 1.0f / (4.0f * RR * NdotH * NdotH * NdotH * NdotH);
+		float r_exponent = (NdotH * NdotH - 1.0f) / (RR * NdotH * NdotH);
+		float roughness = r_scalar * std::exp(r_exponent);
 
-    // Evaluate the roughness term
-    float rough_a = 1.0f / (4.0f * RR * std::pow(NdotH, 4.0f));
-    float rough_b = NdotH * NdotH - 1.0f;
-    float rough_c = RR * NdotH * NdotH;
-    float rough = rough_a * std::exp(rough_b / rough_c);
+		// Calculate fresnel equations using Schlick's approximations
+		float fresnel = std::pow(1.0f - WodotH, 5.0f);
+		fresnel *= (1.0f - F);
+		fresnel += F;
 
-    // Evaluate the fresnel term
-    float fresnel = std::pow(1.0f - VdotH, 5.0f);
-    fresnel *= 1.0f - F;
-    fresnel += F;
+		// Combine the terms to get reflectance
+		float Rs = (geometric * roughness * fresnel) / (PI * NdotWo * NdotWe + EPSILON);
 
-    // Put the terms together
-    float Rs = (geo * rough * fresnel) / (PI * NdotV * NdotL + EPSILON);
+		// Get the final BRDF scalar value, transmission is 0.0
+		brdf = PI_INV * NdotWe * (Rs * (1.0f - K) + K);
+		btdf = 0.0f;
+	}
 
-    // Calculate the cook-torrance brdf value
-    brdf = (1.0f / PI) * NdotL * (Rs * (1.0f - K) + K);
+	void GlossyMaterial::evalPDF(float & pdf) const
+	{
+		pdf = 1.0f / (2.0f * PI * m_r);
+	}
 
-    // There's no transmission, so btdf stays 0.0f
-    btdf = 0.0f;
-}
+	void GlossyMaterial::evalWi(const vec3 & Wo, const vec3 & N, vec3 & Wr, vec3 & Wt)
+	{
+		// Calculate mirror & random reflection vectors
+		vec3 Wr_mirr = vec3::reflect(Wo.negate(), N).normalize();
+		vec3 Wr_rand = vec3::sampleHemisphere(Wr_mirr, m_r, 1.0f - m_r);
 
-void GlossyMaterial::evalPDF(float &pdf) const
-{
-    pdf = 1.0f / (2.0f * PI * m_r);
-}
+		// Make sure the random ray doesn't go through the hit surface
+		if (vec3::dot(N, Wr_rand) < 0.0f)
+			Wr_rand = vec3::reflect(Wr_rand, N);
 
-void GlossyMaterial::evalWi(const vec3 &Wo, const vec3 &N, vec3 &Wr, vec3 &Wt)
-{
-    // Calculate mirror / random reflection vectors
-    vec3 Wr_mirr = vec3::reflect(Wo.negate(), N).normalize();
-    vec3 Wr_rand = vec3::sampleHemisphere(Wr_mirr, m_r, 1.0f - m_r);
+		// Assign the reflected ray to Wr
+		Wr = Wr_rand.normalize();
 
-    // Make sure the random ray doesn't go through surface
-    if (vec3::dot(N, Wr_rand) < 0.0f)
-    {
-        Wr_rand = vec3::reflect(Wr_rand, N);
-    }
-
-    // Assign the reflected ray to Wr
-    Wr = Wr_rand.normalize();
-
-    // No transmission, so Wt stays 0.0f
-    Wt = vec3();
-}
+		// No transmission, so Wt stays 0.0f
+		Wt = vec3();
+	}
 
 }

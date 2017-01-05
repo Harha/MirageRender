@@ -1,4 +1,4 @@
-// std includes
+﻿// std includes
 #include <iostream>
 
 // mirage includes
@@ -18,23 +18,24 @@ namespace mirage
 
 	}
 
-	// INFO: Nearly whole implementation of this glass BSDF was adapted from smallpt
-	// TODO: Make this better / more suited for MirageRender
-	void GlassMaterial::evalBSDF(const vec3 &P, const vec3 &N, const vec3 &Wr, const vec3 &Wt, const vec3 &Wo, float &brdf, float &btdf) const
+	// Explaining fresnel equations and the schlick approximations:
+	// https://graphics.stanford.edu/courses/cs148-10-summer/docs/2006--degreve--reflection_refraction.pdf
+	// Optimized versions of the functions:
+	// http://www.kevinbeason.com/smallpt/
+	void GlassMaterial::evalBSDF(const vec3 & P, const vec3 & N, const vec3 & Wr, const vec3 & Wt, const vec3 & Wo, float & brdf, float & btdf) const
 	{
-		// Re-orient the normal, are we going into the medium or out of it?
-		vec3 n = vec3::dot(N, Wo) > 0.0f ? N : N.negate();
-		bool into = vec3::dot(N, n) > 0.0f;
+		// Are we going into the medium or out of it?
+		auto normal = vec3::dot(N, Wo) > 0.0f ? N : N.negate();
+		bool direct = vec3::dot(N, normal) > 0.0f;					// > 0.0 = going into the medium
 
-		// Calculate the ratio of indices of refraction accordingly
-		float nc = 1.0f;
-		float eta = into ? nc / m_ior : m_ior;
+		// Calculate the ratio of indices of refraction
+		float eta = direct ? 1.0f / m_ior : m_ior;
 
-		// Calculate some required variables for dielectric transmission / reflection
-		float NdotWo = vec3::dot(n, Wo.negate());
+		// Calculate variables for transmission or reflection
+		float NdotWo = vec3::dot(normal, Wo);
 		float cos2t = 1.0f - eta * eta * (1.0f - NdotWo * NdotWo);
 
-		// Total internal reflection? (|Wt| = 0.0f) Handle accordingly, light is only reflected
+		// Reflect the ray
 		if (cos2t < 0.0f)
 		{
 			brdf = 1.0f;
@@ -42,49 +43,57 @@ namespace mirage
 			return;
 		}
 
-		// Choose reflection or refraction based on fresnel equations
-		float a = m_ior - nc, b = m_ior + nc, R0 = a * a / (b * b), c = 1.0f - (into ? -NdotWo : vec3::dot(Wt, N));
-		float Re = R0 + (1.0f - R0) * c * c * c * c * c, Tr = 1.0f - Re, P_ = 0.25f + 0.5f * Re, RP = Re / P_, TP = Tr / (1.0f - P_);
+		// Calculate fresnel equations using Schlick's approximations
+		// θi = incidence, θr = reflection, θt = refraction
+		float n1 = m_ior - 1.0f;
+		float n2 = m_ior + 1.0f;
+		float R0 = n1 * n1 / (n2 * n2);								// R0 = ((n1 - n2) / (n1 + n2))^2
+		float c = 1.0f - (direct ? NdotWo : vec3::dot(Wt, N));		// c  = (1.0 - cos(θi ? θt))^5
+		float Rs = R0 + (1.0f - R0) * c * c * c * c * c;			// Rschlick(θi) = R0 + (1.0 - R0) * (1.0 - cos(θi ? θt))^5
+		float Tr = 1.0f - Rs;
+		float P_ = 0.5f * Rs + 0.25f;
+		float R = Rs / P_;
+		float T = Tr / (1.0f - P_);
 
-		// Assign brdf / btdf correct values
+		// Assign reflectivity and refractivity
 		if (btdf > 2.0f)
 		{
-			float rand_float = pseudorand();
-			brdf = (rand_float < P_) ? RP : 0.0f;
-			btdf = (rand_float > P_) ? TP : 0.0f;
+			float r = pseudorand();
+			brdf = (r < P_) ? R : 0.0f;
+			btdf = (r > P_) ? T : 0.0f;
 		}
 		else
 		{
-			brdf = Re;
+			brdf = Rs;
 			btdf = Tr;
 		}
 	}
 
-	void GlassMaterial::evalBSDF_direct(const vec3 &P, const vec3 &N, const vec3 &We, const vec3 &Wr, const vec3 &Wt, const vec3 &Wo, float &brdf, float &btdf) const
+	void GlassMaterial::evalBSDF_direct(const vec3 & P, const vec3 & N, const vec3 & We, const vec3 & Wr, const vec3 & Wt, const vec3 & Wo, float & brdf, float & btdf) const
 	{
 		brdf = 0.0f;
 		btdf = 0.0f;
 	}
 
-	void GlassMaterial::evalPDF(float &pdf) const
+	void GlassMaterial::evalPDF(float & pdf) const
 	{
 		pdf = 1.0f;
 	}
 
-	void GlassMaterial::evalWi(const vec3 &Wo, const vec3 &N, vec3 &Wr, vec3 &Wt)
+	void GlassMaterial::evalWi(const vec3 & Wo, const vec3 & N, vec3 & Wr, vec3 & Wt)
 	{
-		// Re-orient the normal, are we going into the medium or out of it?
-		vec3 n = vec3::dot(N, Wo) > 0.0f ? N : N.negate();
-		bool into = vec3::dot(N, n) > 0.0f;
+		// Are we going into the medium or out of it?
+		auto normal = vec3::dot(N, Wo) > 0.0f ? N : N.negate();
+		bool direct = vec3::dot(N, normal) > 0.0f;
 
 		// Calculate the reflected ray
 		Wr = vec3::reflect(Wo.negate(), N).normalize();
 
-		// Calculate the ratio of indices of refraction accordingly
-		float eta = into ? 1.0f / m_ior : m_ior;
+		// Calculate the ratio of indices of refraction
+		float eta = direct ? 1.0f / m_ior : m_ior;
 
 		// Refract the ray through the surface, Wt becomes |0.0f| if total internal reflection
-		Wt = vec3::refract(Wo.negate(), n, eta).normalize();
+		Wt = vec3::refract(Wo.negate(), normal, eta).normalize();
 	}
 
 }
