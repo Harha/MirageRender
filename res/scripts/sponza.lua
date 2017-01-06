@@ -32,7 +32,7 @@ function init()
 	mat_diff_white = NewDiffMaterial(col_white)
 	mat_diff_green = NewDiffMaterial(col_green)
 	mat_mirror = NewSpecMaterial(col_max)
-	mat_glass = NewGlassMaterial(col_max, 1.52)
+	mat_glass = NewDielectricMaterial(col_max, 1.52)
 	
 	-- Cameras
 	v_camera = NewVector3(12.56, 1.66, -1.77)

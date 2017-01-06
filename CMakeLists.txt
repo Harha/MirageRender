@@ -85,6 +85,9 @@ set (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/CMakeModules"
 # Add to be linked executables to project
 add_executable (MirageRender ${SOURCES})
 
+# Group source files properly for VS
+source_group ("src" FILES ${SOURCES})
+
 # Compiler flags for each generator
 if (MSVC)
 	MESSAGE (STATUS "Compiler flags: MSVC Detected.")

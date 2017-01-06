@@ -98,7 +98,7 @@ namespace mirage
 						case 6:
 						case 7:
 						case 9:
-							loadedMaterials[face.material] = m_objFactory->initGlassMaterial(wf_material.Kd, wf_material.Ks, wf_material.Ke, wf_material.Ni);
+							loadedMaterials[face.material] = m_objFactory->initDielectricMaterial(wf_material.Kd, wf_material.Ks, wf_material.Ke, wf_material.Ni);
 							break;
 						case 3:
 						case 8:

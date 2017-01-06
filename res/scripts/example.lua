@@ -10,7 +10,7 @@ function init()
 	SetMThreadInitInfo(16)
 	
 	-- Define display
-	SetDisplayInitInfo(256, 256, 1)
+	SetDisplayInitInfo(256, 256, 2)
 	
 	-- Define scene rendering settings
 	SetRadianceClamping(10.0)
@@ -32,7 +32,7 @@ function init()
 	mat_diff_white = NewDiffMaterial(col_white)
 	mat_diff_lime = NewDiffMaterial(col_lime)
 	mat_mirror = NewSpecMaterial(col_max)
-	mat_glass = NewGlassMaterial(col_lime, 1.523)
+	mat_glass = NewDielectricMaterial(col_lime, 1.523)
 	mat_gold = NewGlossyMaterial(col_gold, 0.075, 0.95, 0.005)
 	
 	-- Cameras

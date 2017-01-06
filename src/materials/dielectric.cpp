@@ -2,18 +2,18 @@
 #include <iostream>
 
 // mirage includes
-#include "glassmat.h"
+#include "dielectric.h"
 #include "../macros.h"
 
 namespace mirage
 {
 
-	GlassMaterial::GlassMaterial(vec3 kd, vec3 ks, vec3 ke, float ior) : Material(nullptr, nullptr, nullptr, kd, ks, ke, true), m_ior(ior)
+	DielectricMaterial::DielectricMaterial(vec3 kd, vec3 ks, vec3 ke, float ior) : Material(nullptr, nullptr, nullptr, kd, ks, ke, true), m_ior(ior)
 	{
 
 	}
 
-	GlassMaterial::~GlassMaterial()
+	DielectricMaterial::~DielectricMaterial()
 	{
 
 	}
@@ -22,7 +22,7 @@ namespace mirage
 	// https://graphics.stanford.edu/courses/cs148-10-summer/docs/2006--degreve--reflection_refraction.pdf
 	// Optimized versions of the functions:
 	// http://www.kevinbeason.com/smallpt/
-	void GlassMaterial::evalBSDF(const vec3 & P, const vec3 & N, const vec3 & Wr, const vec3 & Wt, const vec3 & Wo, float & brdf, float & btdf) const
+	void DielectricMaterial::evalBSDF(const vec3 & P, const vec3 & N, const vec3 & Wr, const vec3 & Wt, const vec3 & Wo, float & brdf, float & btdf) const
 	{
 		// Are we going into the medium or out of it?
 		auto normal = vec3::dot(N, Wo) > 0.0f ? N : N.negate();
@@ -69,18 +69,18 @@ namespace mirage
 		}
 	}
 
-	void GlassMaterial::evalBSDF_direct(const vec3 & P, const vec3 & N, const vec3 & We, const vec3 & Wr, const vec3 & Wt, const vec3 & Wo, float & brdf, float & btdf) const
+	void DielectricMaterial::evalBSDF_direct(const vec3 & P, const vec3 & N, const vec3 & We, const vec3 & Wr, const vec3 & Wt, const vec3 & Wo, float & brdf, float & btdf) const
 	{
 		brdf = 0.0f;
 		btdf = 0.0f;
 	}
 
-	void GlassMaterial::evalPDF(float & pdf) const
+	void DielectricMaterial::evalPDF(float & pdf) const
 	{
 		pdf = 1.0f;
 	}
 
-	void GlassMaterial::evalWi(const vec3 & Wo, const vec3 & N, vec3 & Wr, vec3 & Wt)
+	void DielectricMaterial::evalWi(const vec3 & Wo, const vec3 & N, vec3 & Wr, vec3 & Wt)
 	{
 		// Are we going into the medium or out of it?
 		auto normal = vec3::dot(N, Wo) > 0.0f ? N : N.negate();

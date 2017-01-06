@@ -23,18 +23,18 @@ void dispose()
 {
 	SDL_Quit();
 
-	LOG("Main: atexit(dispose) Hook called.");
+	MLOG_INFO("Main: atexit(dispose) Hook called.");
 }
 
 int main(int argc, char * argv[])
 {
 	// Print info and version
-	LOG("Main: MirageRender, version " << VERSION_R << "." << VERSION_B << "." << VERSION_A);
+	MLOG_INFO("Main: MirageRender, version %d.%d.%d", VERSION_R, VERSION_B, VERSION_A);
 
 	// Initialize SDL2
 	if (SDL_Init(SDL_INIT_VIDEO) != 0)
 	{
-		ERR("Main: SDL_Init Error: " << SDL_GetError());
+		MLOG_ERROR("Main: SDL_Init Error: %s", SDL_GetError());
 		return 1;
 	}
 	SDL_Event event;
@@ -74,13 +74,16 @@ int main(int argc, char * argv[])
 	// Initialize render threads
 	const unsigned tcount = lua::g_mThreadInitInfo.rThreadCount;
 	std::thread *threads = new std::thread[tcount];
-	LOG("Main: Initialized " << tcount << " rendering thread(s)...");
+
+	MLOG_INFO("MThreading: Using %u threads for rendering.", tcount);
 
 	// Initialize the main display
-	Display display("MirageRender",
-		lua::g_dispInitInfo.width,
-		lua::g_dispInitInfo.height,
-		lua::g_dispInitInfo.scale);
+	Display display("MirageRender v" +
+		std::to_string(VERSION_R) + "." + std::to_string(VERSION_B) + "." + std::to_string(VERSION_A),
+		lua::g_dispInitInfo.width, lua::g_dispInitInfo.height, lua::g_dispInitInfo.scale
+	);
+
+	MLOG_INFO("MThreading: Split the screen into %d pixel vertical slices.", display.getHeight() / tcount);
 
 	// Choose a camera and an accelerator
 	Camera * camera = scene.getCamera();

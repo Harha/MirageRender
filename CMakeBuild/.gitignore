@@ -1,0 +1,15 @@
+# Directories
+/CMakeFiles
+/MirageRender.dir
+/Release
+/Debug
+/x64
+/res
+/.vs
+
+*.txt
+*.cmake
+*.VC.db
+*.sln
+*.vcproj
+*.dll
