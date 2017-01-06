@@ -26,6 +26,10 @@ LOG | Main: atexit(dispose) Hook called.
 Example images
 --------------
 
+![Dabrovic sponza test](images/dabrovic_sponza.png "Dabrovic sponza, test")
+
+_a Dabrovic sponza scene rendered with indirect illumination._
+
 ![Crytek sponza test](images/sponza_crytek_textures.png "Crytek sponza, test")
 
 _a Crytek sponza scene rendered with direct and indirect illumination._
