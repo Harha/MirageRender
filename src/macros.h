@@ -24,25 +24,25 @@
 #define MLOG_LEVEL 3
 
 #if MLOG_LEVEL > 3
-#define MLOG_DEBUG(msg_, ...)	printf("DBG | " msg_ "\n", __VA_ARGS__)
+#define MLOG_DEBUG(msg_, ...)	printf("DBG | " msg_ "\n", ##__VA_ARGS__)
 #else
 #define MLOG_DEBUG(msg, ...) do {} while(0)
 #endif
 
 #if MLOG_LEVEL > 2
-#define MLOG_INFO(msg_, ...)	printf("INF | " msg_ "\n", __VA_ARGS__)
+#define MLOG_INFO(msg_, ...)	printf("INF | " msg_ "\n", ##__VA_ARGS__)
 #else
 #define MLOG_INFO(msg, ...) do {} while(0)
 #endif
 
 #if MLOG_LEVEL > 1
-#define MLOG_WARNING(msg_, ...)	printf("WRN | " msg_ "\n", __VA_ARGS__)
+#define MLOG_WARNING(msg_, ...)	printf("WRN | " msg_ "\n", ##__VA_ARGS__)
 #else
 #define MLOG_WARNING(msg, ...) do {} while(0)
 #endif
 
 #if MLOG_LEVEL > 0
-#define MLOG_ERROR(msg_, ...)	printf("ERR | " msg_ "\n", __VA_ARGS__)
+#define MLOG_ERROR(msg_, ...)	printf("ERR | " msg_ "\n", ##__VA_ARGS__)
 #else
 #define MLOG_ERROR(msg, ...) do {} while(0)
 #endif

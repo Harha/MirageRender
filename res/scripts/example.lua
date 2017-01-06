@@ -10,7 +10,7 @@ function init()
 	SetMThreadInitInfo(16)
 	
 	-- Define display
-	SetDisplayInitInfo(256, 256, 2)
+	SetDisplayInitInfo(256, 256, 1)
 	
 	-- Define scene rendering settings
 	SetRadianceClamping(10.0)
