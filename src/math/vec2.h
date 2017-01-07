@@ -24,66 +24,66 @@ namespace mirage
 
 		std::string toString() const;
 
-		bool operator==(const vec2 &other) const
+		inline bool operator==(const vec2 &other) const
 		{
 			return x == other.x && y == other.y;
 		}
 
-		bool operator!=(const vec2 &other) const
+		inline bool operator!=(const vec2 &other) const
 		{
 			return !(*this == other);
 		}
 
-		vec2 &operator+=(const vec2 &other)
+		inline vec2 &operator+=(const vec2 &other)
 		{
 			x += other.x;
 			y += other.y;
 			return *this;
 		}
 
-		vec2 &operator+=(const float f)
+		inline vec2 &operator+=(const float f)
 		{
 			x += f;
 			y += f;
 			return *this;
 		}
 
-		vec2 &operator-=(const vec2 &other)
+		inline vec2 &operator-=(const vec2 &other)
 		{
 			x -= other.x;
 			y -= other.y;
 			return *this;
 		}
 
-		vec2 &operator-=(const float f)
+		inline vec2 &operator-=(const float f)
 		{
 			x -= f;
 			y -= f;
 			return *this;
 		}
 
-		vec2 &operator*=(const vec2 &other)
+		inline vec2 &operator*=(const vec2 &other)
 		{
 			x *= other.x;
 			y *= other.y;
 			return *this;
 		}
 
-		vec2 &operator*=(const float f)
+		inline vec2 &operator*=(const float f)
 		{
 			x *= f;
 			y *= f;
 			return *this;
 		}
 
-		vec2 &operator/=(const vec2 &other)
+		inline vec2 &operator/=(const vec2 &other)
 		{
 			x /= other.x;
 			y /= other.y;
 			return *this;
 		}
 
-		vec2 &operator/=(const float f)
+		inline vec2 &operator/=(const float f)
 		{
 			float f_inv = 1.0f / f;
 			x *= f_inv;
@@ -91,84 +91,84 @@ namespace mirage
 			return *this;
 		}
 
-		vec2 operator+(const vec2 &other) const
+		inline vec2 operator+(const vec2 &other) const
 		{
 			return vec2(x + other.x, y + other.y);
 		}
 
-		vec2 operator+(const float f) const
+		inline vec2 operator+(const float f) const
 		{
 			return vec2(x + f, y + f);
 		}
 
-		vec2 operator-(const vec2 &other) const
+		inline vec2 operator-(const vec2 &other) const
 		{
 			return vec2(x - other.x, y - other.y);
 		}
 
-		vec2 operator-(const float f) const
+		inline vec2 operator-(const float f) const
 		{
 			return vec2(x - f, y - f);
 		}
 
-		vec2 operator*(const vec2 &other) const
+		inline vec2 operator*(const vec2 &other) const
 		{
 			return vec2(x * other.x, y * other.y);
 		}
 
-		vec2 operator*(const float f) const
+		inline vec2 operator*(const float f) const
 		{
 			return vec2(x * f, y * f);
 		}
 
-		vec2 operator/(const vec2 &other) const
+		inline vec2 operator/(const vec2 &other) const
 		{
 			return vec2(x / other.x, y / other.y);
 		}
 
-		vec2 operator/(const float f) const
+		inline vec2 operator/(const float f) const
 		{
 			float f_inv = 1.0f / f;
 			return vec2(x * f_inv, y * f_inv);
 		}
 
-		float operator[](int i) const
+		inline float operator[](int i) const
 		{
 			return (&x)[i];
 		}
 
-		float &operator[](int i)
+		inline float &operator[](int i)
 		{
 			return (&x)[i];
 		}
 
-		vec2 negate() const
+		inline vec2 negate() const
 		{
 			return vec2(-x, -y);
 		}
 
-		float length() const
+		inline float length() const
 		{
 			return std::sqrt(x * x + y * y);
 		}
 
-		vec2 normalize() const
+		inline vec2 normalize() const
 		{
 			float l = 1.0f / length();
 			return vec2(x * l, y * l);
 		}
 
-		static float dot(const vec2 &left, const vec2 &right)
+		static inline float dot(const vec2 &left, const vec2 &right)
 		{
 			return left.x * right.x + left.y * right.y;
 		}
 
-		static vec2 reflect(const vec2 &I, const vec2 &N)
+		static inline vec2 reflect(const vec2 &I, const vec2 &N)
 		{
 			return I - (N * dot(N, I) * 2.0f);
 		}
 
-		static vec2 refract(const vec2 &I, const vec2 &N, float eta)
+		static inline vec2 refract(const vec2 &I, const vec2 &N, float eta)
 		{
 			float k = 1.0f - eta * eta * (1.0f - dot(N, I) * dot(N, I));
 			if (k < 0.0f)
@@ -177,7 +177,7 @@ namespace mirage
 				return eta * I - (eta * dot(N, I) + std::sqrt(k)) * N;
 		}
 
-		static vec2 powv(const vec2 &v, float f)
+		static inline vec2 powv(const vec2 &v, float f)
 		{
 			auto x = std::pow(v.x, f);
 			auto y = std::pow(v.y, f);
@@ -185,7 +185,7 @@ namespace mirage
 			return vec2(x, y);
 		}
 
-		static vec2 clampv(const vec2 &v, float min, float max)
+		static inline vec2 clampv(const vec2 &v, float min, float max)
 		{
 			auto x = clampf(v.x, min, max);
 			auto y = clampf(v.y, min, max);

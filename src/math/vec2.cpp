@@ -1,4 +1,3 @@
-// mirage includes
 #include "vec2.h"
 
 namespace mirage

@@ -1,4 +1,3 @@
-// mirage includes
 #include "quaternion.h"
 
 namespace mirage

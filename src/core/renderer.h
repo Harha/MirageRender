@@ -11,13 +11,13 @@
 namespace mirage
 {
 
-class Renderer
-{
-public:
-    virtual void render(const Scene *scene, Display *display, const unsigned w, const unsigned h, const unsigned xa, const unsigned ya) = 0;
-private:
-protected:
-};
+	class Renderer
+	{
+	public:
+		virtual void render(const Scene * const scene, Display * const display, const unsigned w, const unsigned h, const unsigned xa, const unsigned ya) = 0;
+	private:
+	protected:
+	};
 
 }
 

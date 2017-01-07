@@ -22,17 +22,17 @@ namespace mirage
 
 		std::string toString() const;
 
-		bool operator==(const quaternion &other) const
+		inline bool operator==(const quaternion &other) const
 		{
 			return w == other.w && x == other.x && y == other.y && z == other.z;
 		}
 
-		bool operator!=(const quaternion &other) const
+		inline bool operator!=(const quaternion &other) const
 		{
 			return !(*this == other);
 		}
 
-		quaternion operator*(const quaternion &q) const
+		inline quaternion operator*(const quaternion &q) const
 		{
 			quaternion result;
 
@@ -44,7 +44,7 @@ namespace mirage
 			return result;
 		}
 
-		quaternion operator*(const vec3 &v) const
+		inline quaternion operator*(const vec3 &v) const
 		{
 			quaternion result;
 
@@ -56,7 +56,7 @@ namespace mirage
 			return result;
 		}
 
-		quaternion identity()
+		inline quaternion identity()
 		{
 			w = 1.0f;
 			x = 0.0f;
@@ -66,7 +66,7 @@ namespace mirage
 			return *this;
 		}
 
-		quaternion euler(const float x, const float y, const float z, float theta)
+		inline quaternion euler(const float x, const float y, const float z, float theta)
 		{
 			theta = 0.5f * theta * PI / 180.0f;
 
@@ -78,7 +78,7 @@ namespace mirage
 			return *this;
 		}
 
-		quaternion lookAt(const vec3 &pos, const vec3 &dest)
+		inline quaternion lookAt(const vec3 &pos, const vec3 &dest)
 		{
 			if ((pos + dest).length() <= EPSILON)
 			{
@@ -103,11 +103,10 @@ namespace mirage
 			vec3 r_axs = vec3::cross(f_old, f_new).normalize();
 
 			quaternion q = quaternion().euler(r_axs.x, r_axs.y, r_axs.z, theta * 180.0f / PI);
-			//quaternion s = quaternion().fromTo(q.getUpVector(), u_old);
 			return q;
 		}
 
-		quaternion fromTo(const vec3 &u, const vec3 &v)
+		inline quaternion fromTo(const vec3 &u, const vec3 &v)
 		{
 			float k = std::sqrt(vec3::dot(u, u) * vec3::dot(v, v));
 			float k_cos_theta = k + vec3::dot(u, v);
@@ -126,33 +125,33 @@ namespace mirage
 			return quaternion(k_cos_theta, w.x, w.y, w.z).normalize();
 		}
 
-		quaternion conjugate() const
+		inline quaternion conjugate() const
 		{
 			return quaternion(w, -x, -y, -z);
 		}
 
-		float length() const
+		inline float length() const
 		{
 			return std::sqrt(w * w + x * x + y * y + z * z);
 		}
 
-		quaternion normalize() const
+		inline quaternion normalize() const
 		{
 			float l = 1.0f / length();
 			return quaternion(w * l, x * l, y * l, z * l);
 		}
 
-		vec3 getRightVector() const
+		inline vec3 getRightVector() const
 		{
 			return vec3(1, 0, 0) **this;
 		}
 
-		vec3 getUpVector() const
+		inline vec3 getUpVector() const
 		{
 			return vec3(0, 1, 0) **this;
 		}
 
-		vec3 getForwardVector() const
+		inline vec3 getForwardVector() const
 		{
 			return vec3(0, 0, 1) **this;
 		}

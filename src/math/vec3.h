@@ -5,6 +5,7 @@
 #include <string>
 
 // mirage includes
+#include "macros.h"
 #include "math.h"
 
 namespace mirage
@@ -24,17 +25,17 @@ namespace mirage
 
 		std::string toString() const;
 
-		bool operator==(const vec3 &other) const
+		inline bool operator==(const vec3 &other) const
 		{
 			return x == other.x && y == other.y && z == other.z;
 		}
 
-		bool operator!=(const vec3 &other) const
+		inline bool operator!=(const vec3 &other) const
 		{
 			return !(*this == other);
 		}
 
-		vec3 &operator+=(const vec3 &other)
+		inline vec3 &operator+=(const vec3 &other)
 		{
 			x += other.x;
 			y += other.y;
@@ -42,7 +43,7 @@ namespace mirage
 			return *this;
 		}
 
-		vec3 &operator+=(const float f)
+		inline vec3 &operator+=(const float f)
 		{
 			x += f;
 			y += f;
@@ -50,7 +51,7 @@ namespace mirage
 			return *this;
 		}
 
-		vec3 &operator-=(const vec3 &other)
+		inline vec3 &operator-=(const vec3 &other)
 		{
 			x -= other.x;
 			y -= other.y;
@@ -58,7 +59,7 @@ namespace mirage
 			return *this;
 		}
 
-		vec3 &operator-=(const float f)
+		inline vec3 &operator-=(const float f)
 		{
 			x -= f;
 			y -= f;
@@ -66,7 +67,7 @@ namespace mirage
 			return *this;
 		}
 
-		vec3 &operator*=(const vec3 &other)
+		inline vec3 &operator*=(const vec3 &other)
 		{
 			x *= other.x;
 			y *= other.y;
@@ -74,7 +75,7 @@ namespace mirage
 			return *this;
 		}
 
-		vec3 &operator*=(const float f)
+		inline vec3 &operator*=(const float f)
 		{
 			x *= f;
 			y *= f;
@@ -82,7 +83,7 @@ namespace mirage
 			return *this;
 		}
 
-		vec3 &operator/=(const vec3 &other)
+		inline vec3 &operator/=(const vec3 &other)
 		{
 			x /= other.x;
 			y /= other.y;
@@ -90,7 +91,7 @@ namespace mirage
 			return *this;
 		}
 
-		vec3 &operator/=(const float f)
+		inline vec3 &operator/=(const float f)
 		{
 			float f_inv = 1.0f / f;
 			x *= f_inv;
@@ -99,74 +100,74 @@ namespace mirage
 			return *this;
 		}
 
-		vec3 operator+(const vec3 &other) const
+		inline vec3 operator+(const vec3 &other) const
 		{
 			return vec3(x + other.x, y + other.y, z + other.z);
 		}
 
-		vec3 operator+(const float f) const
+		inline vec3 operator+(const float f) const
 		{
 			return vec3(x + f, y + f, z + f);
 		}
 
-		vec3 operator-(const vec3 &other) const
+		inline vec3 operator-(const vec3 &other) const
 		{
 			return vec3(x - other.x, y - other.y, z - other.z);
 		}
 
-		vec3 operator-(const float f) const
+		inline vec3 operator-(const float f) const
 		{
 			return vec3(x - f, y - f, z - f);
 		}
 
-		vec3 operator*(const vec3 &other) const
+		inline vec3 operator*(const vec3 &other) const
 		{
 			return vec3(x * other.x, y * other.y, z * other.z);
 		}
 
-		vec3 operator*(const float f) const
+		inline vec3 operator*(const float f) const
 		{
 			return vec3(x * f, y * f, z * f);
 		}
 
-		vec3 operator/(const vec3 &other) const
+		inline vec3 operator/(const vec3 &other) const
 		{
 			return vec3(x / other.x, y / other.y, z / other.z);
 		}
 
-		vec3 operator/(const float f) const
+		inline vec3 operator/(const float f) const
 		{
 			float f_inv = 1.0f / f;
 			return vec3(x * f_inv, y * f_inv, z * f_inv);
 		}
 
-		float operator[](int i) const
+		inline float operator[](int i) const
 		{
 			return (&x)[i];
 		}
 
-		float &operator[](int i)
+		inline float &operator[](int i)
 		{
 			return (&x)[i];
 		}
 
-		vec3 negate() const
+		inline vec3 negate() const
 		{
 			return vec3(-x, -y, -z);
 		}
 
-		float length() const
+		inline float length() const
 		{
 			return std::sqrt(x * x + y * y + z * z);
 		}
 
-		vec3 normalize() const
+		inline vec3 normalize() const
 		{
 			float l = 1.0f / length();
 			return vec3(x * l, y * l, z * l);
 		}
 
-		static vec3 orthogonal(const vec3 &v)
+		static inline vec3 orthogonal(const vec3 &v)
 		{
 			float x = std::abs(v.x);
 			float y = std::abs(v.y);
@@ -176,22 +177,22 @@ namespace mirage
 			return vec3::cross(v, other);
 		}
 
-		static float dot(const vec3 &left, const vec3 &right)
+		static inline float dot(const vec3 &left, const vec3 &right)
 		{
 			return left.x * right.x + left.y * right.y + left.z * right.z;
 		}
 
-		static vec3 cross(const vec3 &left, const vec3 &right)
+		static inline vec3 cross(const vec3 &left, const vec3 &right)
 		{
 			return vec3(left.y * right.z - right.y * left.z, left.z * right.x - right.z * left.x, left.x * right.y - right.x * left.y);
 		}
 
-		static vec3 reflect(const vec3 &I, const vec3 &N)
+		static inline vec3 reflect(const vec3 &I, const vec3 &N)
 		{
 			return I - (N * dot(N, I) * 2.0f);
 		}
 
-		static vec3 refract(const vec3 &I, const vec3 &N, float eta)
+		static inline vec3 refract(const vec3 &I, const vec3 &N, float eta)
 		{
 			float k = 1.0f - eta * eta * (1.0f - dot(N, I) * dot(N, I));
 			if (k < 0.0f)
@@ -200,7 +201,7 @@ namespace mirage
 				return eta * I - (eta * dot(N, I) + std::sqrt(k)) * N;
 		}
 
-		static vec3 sampleHemisphere(const vec3 &N)
+		static inline vec3 sampleHemisphere(const vec3 &N)
 		{
 			float r1 = pseudorand02pi(); // Spherical coordinates
 			float r2 = pseudorand();
@@ -211,7 +212,7 @@ namespace mirage
 			return (u * std::cos(r1) * r2s + v * std::sin(r1) * r2s + w * std::sqrt(1.0f - r2)).normalize();
 		}
 
-		static vec3 sampleHemisphere(const vec3 &N, float scalar, float chance)
+		static inline vec3 sampleHemisphere(const vec3 &N, float scalar, float chance)
 		{
 			std::uniform_real_distribution<float>brdf_dis(0.0f, scalar);
 
@@ -230,7 +231,7 @@ namespace mirage
 			return (u * std::cos(r1) * r2s + v * std::sin(r1) * r2s + w * std::sqrt(1.0f - r2)).normalize();
 		}
 
-		static vec3 powv(const vec3 &v, float f)
+		static inline vec3 powv(const vec3 &v, float f)
 		{
 			auto x = std::pow(v.x, f);
 			auto y = std::pow(v.y, f);
@@ -239,7 +240,7 @@ namespace mirage
 			return vec3(x, y, z);
 		}
 
-		static vec3 clampv(const vec3 &v, float min, float max)
+		static inline vec3 clampv(const vec3 &v, float min, float max)
 		{
 			auto x = clampf(v.x, min, max);
 			auto y = clampf(v.y, min, max);

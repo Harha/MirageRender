@@ -9,6 +9,12 @@
 #define VERSION_B 1
 #define VERSION_A 2
 
+// Use SIMD optimizations in critical functions
+// #define MIRAGE_SIMD
+
+// Use OpenCL for accelerated rendering
+// #define MIRAGE_OPENCL
+
 // Gamma correction
 #define GAMMA 1.0f / 2.2f
 
