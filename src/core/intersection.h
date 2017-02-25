@@ -12,12 +12,12 @@ namespace mirage
 	class Intersection
 	{
 	public:
-		Intersection(float t = INFINITY, vec3 position = vec3(), vec3 normal = vec3(), vec2 texcoord = vec2(), Material *material = nullptr);
+		Intersection(float t = INFINITY, vec3 position = vec3(), vec3 normal = vec3(), vec2 texcoord = vec2(), Material * material = nullptr);
 		void setT(const float t);
-		void setPosition(const vec3 &v);
-		void setNormal(const vec3 &v);
-		void setTexcoord(const vec2 &v);
-		void setMaterial(Material *m);
+		void setPosition(const vec3 & v);
+		void setNormal(const vec3 & v);
+		void setTexcoord(const vec2 & v);
+		void setMaterial(Material * m);
 		float getT() const;
 		vec3 getPosition() const;
 		vec3 getNormal() const;

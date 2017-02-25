@@ -18,7 +18,7 @@ namespace mirage
 		return "AABB[" + m_pmin.toString() + " " + m_pmax.toString() + "]";
 	}
 
-	AABB AABB::addPoint(const vec3 &p) const
+	AABB AABB::addPoint(const vec3 & p) const
 	{
 		AABB result;
 
@@ -32,7 +32,7 @@ namespace mirage
 		return result;
 	}
 
-	AABB AABB::addBox(const AABB &b) const
+	AABB AABB::addBox(const AABB & b) const
 	{
 		AABB result;
 
@@ -56,7 +56,7 @@ namespace mirage
 		return result;
 	}
 
-	bool AABB::intersectP(const Ray &ray, float &tHit0, float &tHit1) const
+	bool AABB::intersectP(const Ray & ray, float & tHit0, float & tHit1) const
 	{
 		vec3 ro = ray.getOrigin();
 		vec3 rd_inv = ray.getDirectionInv();
@@ -82,7 +82,7 @@ namespace mirage
 		return true;
 	}
 
-	bool AABB::overlaps(const AABB &b) const
+	bool AABB::overlaps(const AABB & b) const
 	{
 		bool x = (m_pmax.x >= b.m_pmin.x) && (m_pmin.x <= b.m_pmax.x);
 		bool y = (m_pmax.y >= b.m_pmin.y) && (m_pmin.y <= b.m_pmax.y);
@@ -91,7 +91,7 @@ namespace mirage
 		return (x && y && z);
 	}
 
-	bool AABB::inside(const vec3 &p) const
+	bool AABB::inside(const vec3 & p) const
 	{
 		return (p.x >= m_pmin.x && p.x <= m_pmax.x &&
 			p.y >= m_pmin.y && p.y <= m_pmax.y &&

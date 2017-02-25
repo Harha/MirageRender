@@ -102,7 +102,7 @@ int main(int argc, char * argv[])
 		uint32_t t_start = SDL_GetTicks();
 
 		// F1, print information about the rendering process
-		if (g_keys[SDL_SCANCODE_F1])
+		if (g_iKeys[SDL_SCANCODE_F1])
 		{
 			LOG("Frames: " << frameCount << ", Delta: " << frameDelta << "ms, Samples per pixel: " << camera->getFilm().getSample(0, 0).getNumSamples());
 			LOG("Camera pos: " << camera->getTransform().getPosition().toString());
@@ -110,7 +110,7 @@ int main(int argc, char * argv[])
 		}
 
 		// F2, save the current framebuffer to a .ppm image file
-		if (g_keys[SDL_SCANCODE_F2])
+		if (g_iKeys[SDL_SCANCODE_F2])
 		{
 			display.saveToPPM("render_" + std::to_string(frameCount) + "sppx.ppm");
 		}
@@ -119,7 +119,7 @@ int main(int argc, char * argv[])
 		if (camera && accelerator)
 		{
 			// Update everything
-			camera->update(0.025, g_keys);
+			camera->update(0.025);
 
 			// Give a portion of the screen as a task for each thread
 			int width = camera->getFilm().getResolutionX();
@@ -170,18 +170,18 @@ int main(int argc, char * argv[])
 			case SDL_KEYDOWN:
 			{
 				auto id = event.key.keysym.scancode;
-				if (id > 0 && id < sizeof(g_keys) / sizeof(*g_keys))
+				if (id > 0 && id < sizeof(g_iKeys) / sizeof(*g_iKeys))
 				{
-					g_keys[id] = true;
+					g_iKeys[id] = true;
 				}
 			}
 			break;
 			case SDL_KEYUP:
 			{
 				auto id = event.key.keysym.scancode;
-				if (id > 0 && id < sizeof(g_keys) / sizeof(*g_keys))
+				if (id > 0 && id < sizeof(g_iKeys) / sizeof(*g_iKeys))
 				{
-					g_keys[id] = false;
+					g_iKeys[id] = false;
 				}
 			}
 			break;

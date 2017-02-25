@@ -23,17 +23,17 @@ namespace mirage
 	void GlossyMaterial::evalBSDF(const vec3 & P, const vec3 & N, const vec3 & Wr, const vec3 & Wt, const vec3 & Wo, float & brdf, float & btdf) const
 	{
 		// Surface properties
-		float R = m_r + EPSILON;									// Roughness
+		float R = m_r + EPSILON; // Roughness
 		float RR = R * R;
-		float F = m_k;												// Fresnel reflectance
-		float K = m_d;												// Fraction of diffuse reflection
+		float F = m_k; // Fresnel reflectance
+		float K = m_d; // Fraction of diffuse reflection
 
 		// Calculate the half vector
 		auto halfV = (Wo + Wr).normalize();
 
 		// Dot products at the incident
-		float NdotWo = vec3::dot(N, Wo);							// θi = incidence
-		float NdotWr = vec3::dot(N, Wr);							// θr = reflection
+		float NdotWo = vec3::dot(N, Wo); // θi = incidence
+		float NdotWr = vec3::dot(N, Wr); // θr = reflection
 		float NdotH = vec3::dot(N, halfV);
 		float WodotH = vec3::dot(Wo, halfV);
 
@@ -64,17 +64,17 @@ namespace mirage
 	void GlossyMaterial::evalBSDF_direct(const vec3 & P, const vec3 & N, const vec3 & We, const vec3 & Wr, const vec3 & Wt, const vec3 & Wo, float & brdf, float & btdf) const
 	{
 		// Surface properties
-		float R = m_r + EPSILON;									// Roughness
+		float R = m_r + EPSILON; // Roughness
 		float RR = R * R;
-		float F = m_k;												// Fresnel reflectance
-		float K = m_d;												// Fraction of diffuse reflection
+		float F = m_k; // Fresnel reflectance
+		float K = m_d; // Fraction of diffuse reflection
 
 		// Calculate the half vector
 		auto halfV = (Wo + We).normalize();
 
 		// Dot products at the incident
-		float NdotWo = vec3::dot(N, Wo);							// θi = incidence
-		float NdotWe = vec3::dot(N, We);							// θr = reflection
+		float NdotWo = vec3::dot(N, Wo); // θi = incidence
+		float NdotWe = vec3::dot(N, We); // θr = reflection
 		float NdotH = vec3::dot(N, halfV);
 		float WodotH = vec3::dot(Wo, halfV);
 

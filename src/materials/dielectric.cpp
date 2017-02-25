@@ -26,7 +26,7 @@ namespace mirage
 	{
 		// Are we going into the medium or out of it?
 		auto normal = vec3::dot(N, Wo) > 0.0f ? N : N.negate();
-		bool direct = vec3::dot(N, normal) > 0.0f;					// > 0.0 = going into the medium
+		bool direct = vec3::dot(N, normal) > 0.0f; // > 0.0 = going into the medium
 
 		// Calculate the ratio of indices of refraction
 		float eta = direct ? 1.0f / m_ior : m_ior;
@@ -47,9 +47,9 @@ namespace mirage
 		// θi = incidence, θr = reflection, θt = refraction
 		float n1 = m_ior - 1.0f;
 		float n2 = m_ior + 1.0f;
-		float R0 = n1 * n1 / (n2 * n2);								// R0 = ((n1 - n2) / (n1 + n2))^2
-		float c = 1.0f - (direct ? NdotWo : vec3::dot(Wt, N));		// c  = (1.0 - cos(θi ? θt))^5
-		float Rs = R0 + (1.0f - R0) * c * c * c * c * c;			// Rschlick(θi) = R0 + (1.0 - R0) * (1.0 - cos(θi ? θt))^5
+		float R0 = n1 * n1 / (n2 * n2); // R0 = ((n1 - n2) / (n1 + n2))^2
+		float c = 1.0f - (direct ? NdotWo : vec3::dot(Wt, N)); // c  = (1.0 - cos(θi ? θt))^5
+		float Rs = R0 + (1.0f - R0) * c * c * c * c * c; // Rschlick(θi) = R0 + (1.0 - R0) * (1.0 - cos(θi ? θt))^5
 		float Tr = 1.0f - Rs;
 		float P_ = 0.5f * Rs + 0.25f;
 		float R = Rs / P_;

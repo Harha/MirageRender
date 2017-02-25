@@ -30,7 +30,7 @@ namespace mirage
 			SDL_RenderPresent(m_renderer);
 		}
 
-		inline void clear(const int32_t &color)
+		inline void clear(const int32_t & color)
 		{
 			unsigned resolution = static_cast<unsigned>(m_width * m_height);
 			for (size_t i = 0; i < resolution; i++)

@@ -25,7 +25,7 @@ namespace mirage
 
 	}
 
-	void DiffuseMaterial::evalBSDF(const vec3 &P, const vec3 &N, const vec3 &Wr, const vec3 &Wt, const vec3 &Wo, float &brdf, float &btdf) const
+	void DiffuseMaterial::evalBSDF(const vec3 & P, const vec3 & N, const vec3 & Wr, const vec3 & Wt, const vec3 & Wo, float & brdf, float & btdf) const
 	{
 		// Calculate the cosi term
 		float cosi = vec3::dot(Wr, N);
@@ -37,7 +37,7 @@ namespace mirage
 		btdf = 0.0f;
 	}
 
-	void DiffuseMaterial::evalBSDF_direct(const vec3 &P, const vec3 &N, const vec3 &We, const vec3 &Wr, const vec3 &Wt, const vec3 &Wo, float &brdf, float &btdf) const
+	void DiffuseMaterial::evalBSDF_direct(const vec3 & P, const vec3 & N, const vec3 & We, const vec3 & Wr, const vec3 & Wt, const vec3 & Wo, float & brdf, float & btdf) const
 	{
 		// Calculate the cosi term
 		float cosi = std::max(vec3::dot(We, N), 0.0f);
@@ -49,12 +49,12 @@ namespace mirage
 		btdf = 0.0f;
 	}
 
-	void DiffuseMaterial::evalPDF(float &pdf) const
+	void DiffuseMaterial::evalPDF(float & pdf) const
 	{
 		pdf = 1.0f / (2.0f * PI);
 	}
 
-	void DiffuseMaterial::evalWi(const vec3 &Wo, const vec3 &N, vec3 &Wr, vec3 &Wt)
+	void DiffuseMaterial::evalWi(const vec3 & Wo, const vec3 & N, vec3 & Wr, vec3 & Wt)
 	{
 		// Uniform hemispherical sampling
 		Wr = vec3::sampleHemisphere(N).normalize();

@@ -4,6 +4,6 @@
 namespace mirage
 {
 
-bool g_keys[256] =  { false };
+	bool g_iKeys[256] = { false };
 
 }

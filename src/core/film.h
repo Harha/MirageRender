@@ -10,25 +10,25 @@
 namespace mirage
 {
 
-class Film
-{
-public:
-    Film(int resolutionX = 128, int resolutionY = 128);
-    void setSample(int x, int y, const vec3 &sample);
-    void addSample(int x, int y, const vec3 &sample);
-    void decSample(int x, int y, const vec3 &sample);
-    void clearSamples();
-    int getResolutionX() const;
-    int getResolutionY() const;
-    float getAspectRatio() const;
-    std::vector<Sample> getSamples() const;
-    Sample &getSample(int x, int y);
-private:
-    int m_resolutionX;
-    int m_resolutionY;
-    float m_aspectRatio;
-    std::vector<Sample> m_samples;
-};
+	class Film
+	{
+	public:
+		Film(int resolutionX = 128, int resolutionY = 128);
+		void setSample(int x, int y, const vec3 & sample);
+		void addSample(int x, int y, const vec3 & sample);
+		void decSample(int x, int y, const vec3 & sample);
+		void clearSamples();
+		int getResolutionX() const;
+		int getResolutionY() const;
+		float getAspectRatio() const;
+		const std::vector<Sample> & getSamples() const;
+		Sample & getSample(int x, int y);
+	private:
+		int m_resolutionX;
+		int m_resolutionY;
+		float m_aspectRatio;
+		std::vector<Sample> m_samples;
+	};
 
 }
 

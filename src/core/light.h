@@ -15,8 +15,8 @@ namespace mirage
 	public:
 		Light(Transform l2w = Transform(), vec3 emission = vec3(1, 1, 1));
 		virtual ~Light();
-		virtual void Le(const vec3 &P, const vec3 &N, const vec3 &Wi, const vec3 &Wo, vec3 &Le) const = 0;
-		virtual void evalWe(const vec3 &P, const vec3 &N, const vec3 &Wo, vec3 &We) const = 0;
+		virtual void Le(const vec3 & P, const vec3 & N, const vec3 & Wi, const vec3 & Wo, vec3 & Le) const = 0;
+		virtual void evalWe(const vec3 & P, const vec3 & N, const vec3 & Wo, vec3 & We) const = 0;
 		Transform getL2W() const;
 	private:
 	protected:
