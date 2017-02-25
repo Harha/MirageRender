@@ -35,13 +35,13 @@ set (VERSION_A 1)
 if (MIRAGE_BIN)
 	set (BIN_DIR "${PROJECT_SOURCE_DIR}/${MIRAGE_BIN}")
 else ()
-	set (BIN_DIR "${PROJECT_SOURCE_DIR}/bin_${MIRAGE_COMPILER}_${ARCH}")
+	set (BIN_DIR "${PROJECT_SOURCE_DIR}/3rdparty/bin_${MIRAGE_COMPILER}_${ARCH}")
 endif ()
-set (DLL_DIR "${PROJECT_SOURCE_DIR}/bin/${MIRAGE_COMPILER}/${ARCH}")
+set (DLL_DIR "${PROJECT_SOURCE_DIR}/3rdparty/bin/${MIRAGE_COMPILER}/${ARCH}")
 set (RES_DIR "${PROJECT_SOURCE_DIR}/res")
 
 # Set project lib directory
-set (LIB_DIR "${PROJECT_SOURCE_DIR}/lib/${MIRAGE_COMPILER}/${ARCH}")
+set (LIB_DIR "${PROJECT_SOURCE_DIR}/3rdparty/lib/${MIRAGE_COMPILER}/${ARCH}")
 
 MESSAGE (STATUS "Resolved library dir: ${LIB_DIR}")
 
@@ -52,8 +52,8 @@ file (GLOB_RECURSE RESOURCES "${PROJECT_SOURCE_DIR}/res/*")
 # SDL2 and Lua 5.3.x
 if (MSVC)
 	# Include directories
-	set (SDL2_INCLUDE_DIR ${SDL2_INCLUDE_DIR} "${PROJECT_SOURCE_DIR}/include")
-	set (LUA_INCLUDE_DIR ${LUA_INCLUDE_DIR} "${PROJECT_SOURCE_DIR}/include")
+	set (SDL2_INCLUDE_DIR ${SDL2_INCLUDE_DIR} "${PROJECT_SOURCE_DIR}/3rdparty/include")
+	set (LUA_INCLUDE_DIR ${LUA_INCLUDE_DIR} "${PROJECT_SOURCE_DIR}/3rdparty/include")
 
 	# Library directories
 	set (SDL2_LIBRARY ${SDL2_LIBRARY} "${LIB_DIR}/SDL2main.lib" "${LIB_DIR}/SDL2.lib")
@@ -61,10 +61,10 @@ if (MSVC)
 else ()
 	# Include directories
 	if (MINGW)
-		set (SDL2_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/include")
+		set (SDL2_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/3rdparty/include")
 		set (SDL2_PATH "${PROJECT_SOURCE_DIR}")
 		set (ENV{SDL2DIR} "${PROJECT_SOURCE_DIR}")
-		set (LUA_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/include")
+		set (LUA_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/3rdparty/include")
 	endif ()
 
 	# Library directories
