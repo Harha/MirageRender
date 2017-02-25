@@ -6,7 +6,6 @@
 #include <sstream>
 
 // mirage includes
-#include "../config.h"
 #include "../macros.h"
 #include "../utils/strutils.h"
 

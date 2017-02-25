@@ -3,6 +3,7 @@
 
 // mirage includes
 #include "objfactory.h"
+#include "../macros.h"
 #include "../math/vec3.h"
 #include "../math/vec4.h"
 #include "../math/mat4.h"
@@ -23,8 +24,6 @@
 #include "../materials/glossymat.h"
 #include "../materials/specmat.h"
 #include "texture.h"
-#include "../macros.h"
-#include "../config.h"
 
 namespace mirage
 {

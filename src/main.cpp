@@ -8,7 +8,6 @@
 #include <SDL2/SDL.h>
 
 // mirage includes
-#include "config.h"
 #include "macros.h"
 #include "utils/strutils.h"
 #include "core/input.h"

@@ -36,7 +36,7 @@ namespace mirage
 
 	void Display::init()
 	{
-		m_window = SDL_CreateWindow(m_title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, m_width * m_scale, m_height * m_scale, SDL_WINDOW_SHOWN);
+		m_window = SDL_CreateWindow(m_title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, m_width * m_scale, m_height * m_scale, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
 		if (m_window == nullptr)
 		{
 			ERR("SDL_CreateWindow Error: " << SDL_GetError());
