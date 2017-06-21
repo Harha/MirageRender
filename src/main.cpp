@@ -71,8 +71,9 @@ int main(int argc, char * argv[])
 	lua::load(std::string("./res/scripts/") + script);
 
 	// Initialize render threads
+	lua::g_mThreadInitInfo.rThreadCount = (lua::g_mThreadInitInfo.rThreadCount != 0) ? lua::g_mThreadInitInfo.rThreadCount : static_cast<unsigned>(SDL_GetCPUCount());
 	const unsigned tcount = lua::g_mThreadInitInfo.rThreadCount;
-	std::thread *threads = new std::thread[tcount];
+	std::thread * threads = new std::thread[tcount];
 
 	MLOG_INFO("MThreading: Using %u threads for rendering.", tcount);
 
@@ -199,7 +200,7 @@ int main(int argc, char * argv[])
 	DELETEA(threads);
 
 	// Inform that the program exit successfully
-	LOG("MirageRender, exit program successfully.");
+	MLOG_INFO("MirageRender, exit program successfully.");
 
 	return 0;
 }

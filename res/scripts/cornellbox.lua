@@ -6,11 +6,11 @@
 function init()
 	print("MirageRender example.lua script file init() function.")
 	
-	-- Define multithreading info
-	SetMThreadInitInfo(16)
+	-- Define multithreading info (0 for SDL_GetCPUCount())
+	SetMThreadInitInfo(0)
 	
 	-- Define display
-	SetDisplayInitInfo(256, 256, 1)
+	SetDisplayInitInfo(512, 512, 1)
 	
 	-- Define scene rendering settings
 	SetRadianceClamping(100.0)
